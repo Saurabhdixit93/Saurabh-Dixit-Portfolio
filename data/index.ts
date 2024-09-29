@@ -101,10 +101,10 @@ export const projects = [
     id: 4,
     title: "FarmOs Project",
     pinTitle: "FarmOs",
-    des: "Implemented FarmOS, an open-source farm management system that significantly enhanced data collection processes. This implementation reduced manual data entry by 40% and provided actionable insights, facilitating better decision-making for farm management.",
+    des: "Implemented FarmOS in my organization as a platform for farmers to monitor their fields with multiple AI features and benefits. This implementation reduced manual data entry by 40% and provided actionable insights, facilitating better decision-making for farm management. It is available on subscription plans.",
     img: "/farmos.svg",
     iconLists: ["/next.svg", "/tail.svg", "node.svg"],
-    link: "https://farmos.sensegrass.com",
+    link: "https://farmos.sensegrass.com"
   },
   {
     id: 5,
