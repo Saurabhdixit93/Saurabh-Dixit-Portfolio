@@ -131,7 +131,7 @@ export const projects = [
     des: "Built a portfolio website using Next.js and Tailwind CSS, ensuring a visually captivating user experience.",
     img: "/Project6.svg",
     iconLists: ["/next.svg", "/tail.svg"],
-    link: "https://saurabh-portfolio.vercel.app/",
+    link: "https://saurabh-dixit-portfolio.vercel.app/",
   },
 ];
 
