@@ -1,7 +1,8 @@
 export const navItems = [
   { name: "About", link: "#about" },
   { name: "Projects", link: "#projects" },
-  { name: "Testimonials", link: "#testimonials" },
+  { name: "Experience", link: "#experience" },
+  { name: "Education", link: "#education" },
   { name: "Contact", link: "#contact" },
 ];
 
@@ -291,6 +292,17 @@ const message = "Hello! I would like to chat with you.";
 const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
   message
 )}`;
+export const education = [
+  {
+    id: 1,
+    title: "Bachelor of Science (Maths & Science)",
+    institution: "Bundelkhand University, Jhansi",
+    duration: "2019 - 2022",
+    desc: "Strong academic foundation in Mathematics and Science. While my formal education was in the sciences, my interest and passion for the software industry have been there since the very beginning.",
+    icon: "/education.png",
+  },
+];
+
 export const socialMedia = [
   {
     id: 1,
