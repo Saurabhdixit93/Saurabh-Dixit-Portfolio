@@ -8,16 +8,16 @@ import Image from "next/image";
 
 const Experience = () => {
   return (
-    <div className="py-12 w-full" id="experience">
+    <div className="py-20 w-full" id="experience">
       <h1 className="heading">
         My <span className="text-purple">work experience</span>
       </h1>
 
-      <div className="w-full max-w-6xl mx-auto mt-8 relative">
+      <div className="w-full max-w-6xl mx-auto mt-12 relative">
         {/* THE SPINE LINE (Mathematical Anchor) */}
         <div className="absolute left-[16px] md:left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-purple/50 via-blue-500/50 to-transparent pointer-events-none z-10" />
 
-        <div className="flex flex-col gap-8 md:gap-16">
+        <div className="flex flex-col gap-10 md:gap-20">
           {workExperience.map((card, index) => (
             <div
               key={card.id}
