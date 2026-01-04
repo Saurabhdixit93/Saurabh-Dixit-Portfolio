@@ -272,7 +272,7 @@ export const workExperience = [
     className: "md:col-span-2",
     thumbnail: "/exp3.svg",
     company: "Sensegrass",
-    duration: "2023 - 2023",
+    duration: "2023 - 2024",
     isCurrent: false,
   },
   {
