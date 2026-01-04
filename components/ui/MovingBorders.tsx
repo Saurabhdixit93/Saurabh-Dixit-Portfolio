@@ -42,16 +42,15 @@ export function Button({
       {...otherProps}
     >
       <div
-        className="absolute inset-0 rounde-[1.75rem]"
+        className="absolute inset-0 rounded-[1.75rem]"
         style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
       >
         <MovingBorder duration={duration} rx="30%" ry="30%">
-          <div
-            className={cn(
-              "h-20 w-20 opacity-[0.8] bg-[radial-gradient(#CBACF9_40%,transparent_60%)]",
-              borderClassName
-            )}
-          />
+          {borderClassName ? (
+            <div className={cn("h-20 w-20 opacity-[0.8]", borderClassName)} />
+          ) : (
+            <div className="h-20 w-20 opacity-[0.8] bg-[radial-gradient(#CBACF9_40%,transparent_60%)]" />
+          )}
         </MovingBorder>
       </div>
 
