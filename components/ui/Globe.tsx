@@ -1,13 +1,18 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
+import { Color } from "three";
 import ThreeGlobe from "three-globe";
-import { useThree, Object3DNode, Canvas, extend } from "@react-three/fiber";
+import {
+  useThree,
+  Canvas,
+  extend,
+  type ThreeElement,
+} from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "@/data/globe.json";
 declare module "@react-three/fiber" {
   interface ThreeElements {
-    threeGlobe: Object3DNode<ThreeGlobe, typeof ThreeGlobe>;
+    threeGlobe: ThreeElement<typeof ThreeGlobe>;
   }
 }
 
@@ -71,6 +76,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       }[]
     | null
   >(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const globeRef = useRef<ThreeGlobe | null>(null);
 
@@ -91,12 +97,13 @@ export function Globe({ globeConfig, data }: WorldProps) {
     ...globeConfig,
   };
 
-  useEffect(() => {
-    if (globeRef.current) {
-      _buildData();
-      _buildMaterial();
+  // Callback ref to handle initialization when threeGlobe is mounted
+  const handleGlobeRef = (node: ThreeGlobe | null) => {
+    if (node && !globeRef.current) {
+      globeRef.current = node;
+      setIsInitialized(true);
     }
-  }, [globeRef.current]);
+  };
 
   const _buildMaterial = () => {
     if (!globeRef.current) return;
@@ -115,7 +122,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
   const _buildData = () => {
     const arcs = data;
-    let points = [];
+    const points = [];
     for (let i = 0; i < arcs.length; i++) {
       const arc = arcs[i];
       const rgb = hexToRgb(arc.color) as { r: number; g: number; b: number };
@@ -148,6 +155,15 @@ export function Globe({ globeConfig, data }: WorldProps) {
     setGlobeData(filteredPoints);
   };
 
+  // Initialize when globe is ready
+  useEffect(() => {
+    if (isInitialized && globeRef.current) {
+      _buildData();
+      _buildMaterial();
+    }
+  }, [isInitialized]);
+
+  // Configure globe when data is ready
   useEffect(() => {
     if (globeRef.current && globeData) {
       globeRef.current
@@ -157,7 +173,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
         .showAtmosphere(defaultProps.showAtmosphere)
         .atmosphereColor(defaultProps.atmosphereColor)
         .atmosphereAltitude(defaultProps.atmosphereAltitude)
-        .hexPolygonColor((e) => {
+        .hexPolygonColor(() => {
           return defaultProps.polygonColor;
         });
       startAnimation();
@@ -173,17 +189,17 @@ export function Globe({ globeConfig, data }: WorldProps) {
       .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
       .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
       .arcEndLng((d) => (d as { endLng: number }).endLng * 1)
-      .arcColor((e: any) => (e as { color: string }).color)
+      .arcColor((e: unknown) => (e as { color: string }).color)
       .arcAltitude((e) => {
         return (e as { arcAlt: number }).arcAlt * 1;
       })
-      .arcStroke((e) => {
+      .arcStroke(() => {
         return [0.32, 0.28, 0.3][Math.round(Math.random() * 2)];
       })
       .arcDashLength(defaultProps.arcLength)
       .arcDashInitialGap((e) => (e as { order: number }).order * 1)
       .arcDashGap(15)
-      .arcDashAnimateTime((e) => defaultProps.arcTime);
+      .arcDashAnimateTime(() => defaultProps.arcTime);
 
     globeRef.current
       .pointsData(data)
@@ -194,7 +210,10 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
     globeRef.current
       .ringsData([])
-      .ringColor((e: any) => (t: any) => e.color(t))
+      .ringColor(
+        (e: unknown) => (t: number) =>
+          (e as { color: (t: number) => string }).color(t)
+      )
       .ringMaxRadius(defaultProps.maxRings)
       .ringPropagationSpeed(RING_PROPAGATION_SPEED)
       .ringRepeatPeriod(
@@ -202,6 +221,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       );
   };
 
+  // Ring animation interval
   useEffect(() => {
     if (!globeRef.current || !globeData) return;
 
@@ -221,11 +241,11 @@ export function Globe({ globeConfig, data }: WorldProps) {
     return () => {
       clearInterval(interval);
     };
-  }, [globeRef.current, globeData]);
+  }, [globeData, data.length]);
 
   return (
     <>
-      <threeGlobe ref={globeRef} />
+      <threeGlobe ref={handleGlobeRef} />
     </>
   );
 }
@@ -244,23 +264,31 @@ export function WebGLRendererConfig() {
 
 export function World(props: WorldProps) {
   const { globeConfig } = props;
-  const scene = new Scene();
-  scene.fog = new Fog(0xffffff, 400, 2000);
   return (
-    <Canvas scene={scene} camera={new PerspectiveCamera(50, aspect, 180, 1800)}>
+    <Canvas
+      camera={{
+        fov: 50,
+        aspect: aspect,
+        near: 180,
+        far: 1800,
+        position: [0, 0, cameraZ],
+      }}
+      gl={{ antialias: true, alpha: true }}
+    >
+      <fog attach="fog" args={[0xffffff, 400, 2000]} />
       <WebGLRendererConfig />
       <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
       <directionalLight
         color={globeConfig.directionalLeftLight}
-        position={new Vector3(-400, 100, 400)}
+        position={[-400, 100, 400]}
       />
       <directionalLight
         color={globeConfig.directionalTopLight}
-        position={new Vector3(-200, 500, 200)}
+        position={[-200, 500, 200]}
       />
       <pointLight
         color={globeConfig.pointLight}
-        position={new Vector3(-200, 500, 200)}
+        position={[-200, 500, 200]}
         intensity={0.8}
       />
       <Globe {...props} />
