@@ -1,12 +1,10 @@
-export default {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,
   },
-
   output: "standalone",
-
-  webpack(config, { isServer }) {
-    return config;
-  },
 };
+
+export default nextConfig;
