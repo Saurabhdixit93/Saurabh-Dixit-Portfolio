@@ -349,7 +349,7 @@ export const AskSaurabh: React.FC = () => {
           >
             {/* Live Indicator Dot */}
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
 
@@ -405,7 +405,7 @@ export const AskSaurabh: React.FC = () => {
                 <header className="px-5 py-4 border-b border-hairline bg-surface/80 backdrop-blur flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2.5">
                     <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+                      <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
                     </span>
                     <div>
@@ -523,7 +523,7 @@ export const AskSaurabh: React.FC = () => {
                             {renderFormattedContent(msg.content)}
                             {/* Animated Typewriter Caret while streaming */}
                             {isStreaming && msg.role === "assistant" && msg.content && (
-                              <span className="inline-block w-1.5 h-3.5 ml-1 bg-accent animate-pulse align-middle" />
+                              <span className="inline-block w-1.5 h-3.5 ml-1 bg-accent animate-pulse motion-reduce:animate-none align-middle" />
                             )}
                           </div>
 
@@ -564,16 +564,16 @@ export const AskSaurabh: React.FC = () => {
                         <span className="text-accent font-semibold">[SAURABH.AI]</span>
                         <span>·</span>
                         <span className="text-accent flex items-center gap-1">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-ping motion-reduce:hidden" />
                           REASONING
                         </span>
                       </div>
                       <div className="p-3.5 rounded bg-surface border border-hairline flex flex-col gap-2 text-muted font-mono text-xs shadow-sm max-w-[90%]">
                         <div className="flex items-center gap-2 text-text">
                           <span className="flex gap-1 items-center">
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.3s]" />
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce motion-reduce:animate-none [animation-delay:-0.3s]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce motion-reduce:animate-none [animation-delay:-0.15s]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce motion-reduce:animate-none" />
                           </span>
                           <span className="text-xs font-mono text-accent">
                             Querying verified portfolio telemetry...
@@ -589,7 +589,7 @@ export const AskSaurabh: React.FC = () => {
 
                   {/* Error Notification Banner */}
                   {errorMessage && (
-                    <div className="p-3 rounded bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-start gap-2">
+                    <div className="p-3 rounded bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-400 text-xs flex items-start gap-2">
                       <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                       <div className="space-y-1">
                         <p className="font-semibold">Query Interrupted</p>
@@ -629,7 +629,7 @@ export const AskSaurabh: React.FC = () => {
                         }}
                         rows={2}
                         placeholder="Inquire about leadership, stack, or projects..."
-                        className="w-full resize-none p-2.5 pr-14 rounded bg-bg border border-hairline focus:border-accent text-sm text-text placeholder:text-muted/60 outline-none transition-colors"
+                        className="w-full resize-none p-2.5 pr-14 rounded bg-bg border border-hairline focus:border-accent text-sm text-text placeholder:text-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors"
                         disabled={isLoading || isStreaming}
                         aria-label="Message to Saurabh Dixit's AI assistant"
                       />
@@ -647,7 +647,7 @@ export const AskSaurabh: React.FC = () => {
                     <button
                       type="submit"
                       disabled={!input.trim() || isLoading || isStreaming}
-                      className="p-3 rounded bg-accent text-white hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md shrink-0"
+                      className="p-3 rounded bg-accent text-[var(--accent-contrast)] hover:bg-accent/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md shrink-0"
                       aria-label="Send query"
                     >
                       <Send className="w-4 h-4" />

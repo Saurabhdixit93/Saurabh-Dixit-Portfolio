@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import { GIT_EXPERIENCE_DATA, GitExperienceItem } from "./experienceGitData";
 import { GitTrackSvg } from "./GitTrackSvg";
 import { GitCommitCard } from "./GitCommitCard";

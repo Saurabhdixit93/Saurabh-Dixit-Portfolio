@@ -21,7 +21,7 @@ export const AssistantTeaser: React.FC = () => {
         <div className="space-y-3 max-w-2xl">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
             <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
@@ -56,7 +56,7 @@ export const AssistantTeaser: React.FC = () => {
         <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-center gap-3 shrink-0">
           <button
             onClick={() => openAssistant()}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-accent text-white font-mono text-xs font-semibold uppercase tracking-wider hover:bg-accent/90 transition-all shadow-md group"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded bg-accent text-[var(--accent-contrast)] font-mono text-xs font-semibold uppercase tracking-wider hover:bg-accent/90 transition-all shadow-md group"
             aria-label="Launch Ask Saurabh AI Assistant"
           >
             <Bot className="w-4 h-4" />

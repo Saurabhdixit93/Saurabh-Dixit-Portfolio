@@ -11,7 +11,10 @@ export const Footer: React.FC = () => {
 
   const scrollToTop = () => {
     if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const prefersReduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
     }
   };
 
@@ -100,7 +103,7 @@ export const Footer: React.FC = () => {
               onClick={scrollToTop}
               type="button"
               aria-label="Return to top of page"
-              className="font-mono text-xs text-muted hover:text-text flex items-center gap-1.5 pt-2 transition-colors self-start cursor-pointer focus:outline-none focus:text-accent"
+              className="font-mono text-xs text-muted hover:text-text flex items-center gap-1.5 pt-2 transition-colors self-start cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
             >
               <span>↑</span> {contactContent.footer.backToTopText}
             </button>

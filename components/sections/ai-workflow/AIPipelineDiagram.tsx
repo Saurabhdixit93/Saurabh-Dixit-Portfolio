@@ -15,7 +15,9 @@ export const AIPipelineDiagram: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-hairline/60">
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+            {!prefersReducedMotion && (
+              <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+            )}
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent shadow-[0_0_8px_var(--accent)]" />
           </span>
           <span className="font-mono text-xs uppercase tracking-wider text-accent font-bold">
@@ -26,7 +28,11 @@ export const AIPipelineDiagram: React.FC = () => {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span
+            className={`w-1.5 h-1.5 rounded-full bg-accent2 ${
+              prefersReducedMotion ? "" : "animate-pulse motion-reduce:animate-none"
+            }`}
+          />
           <span className="font-mono text-[11px] text-text font-medium">
             Continuous Invariant Enforcement
           </span>
@@ -37,7 +43,9 @@ export const AIPipelineDiagram: React.FC = () => {
       <div className="relative w-full py-3 space-y-3">
         {/* Continuous Traveling Shimmer Progress Rail */}
         <div className="relative w-full h-1.5 bg-surface/90 rounded-full overflow-hidden border border-hairline/80">
-          <div className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-accent to-transparent animate-pipeline-shimmer" />
+          {!prefersReducedMotion && (
+            <div className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-accent to-transparent animate-pipeline-shimmer motion-reduce:hidden" />
+          )}
         </div>
 
         {/* 4 Interactive Node Stage Indicators with Synchronized Pulse */}
@@ -46,10 +54,12 @@ export const AIPipelineDiagram: React.FC = () => {
             <div key={stage.step} className="flex flex-col items-center text-center space-y-1.5">
               {/* Concentric Radar Node Dot */}
               <div className="relative flex items-center justify-center">
-                <span
-                  className="absolute w-6 h-6 rounded-full bg-accent/25 animate-ping"
-                  style={{ animationDelay: `${idx * 0.4}s`, animationDuration: "2.4s" }}
-                />
+                {!prefersReducedMotion && (
+                  <span
+                    className="absolute w-6 h-6 rounded-full bg-accent/25 animate-ping motion-reduce:hidden"
+                    style={{ animationDelay: `${idx * 0.4}s`, animationDuration: "2.4s" }}
+                  />
+                )}
                 <span
                   className="relative w-3.5 h-3.5 rounded-full bg-surface border-2 border-accent shadow-[0_0_8px_var(--accent)] flex items-center justify-center"
                 >

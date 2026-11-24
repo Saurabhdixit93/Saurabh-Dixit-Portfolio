@@ -5,7 +5,7 @@ import { ArrowLeft, Terminal } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-bg text-text flex items-center justify-center py-20 px-4 relative overflow-hidden">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-bg text-text flex items-center justify-center py-20 px-4 relative overflow-hidden outline-none">
       {/* Background blueprint grid */}
       <div className="absolute inset-0 bg-blueprint-grid opacity-30 pointer-events-none" />
 
@@ -42,7 +42,7 @@ export default function NotFound() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md font-mono text-xs font-medium bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md font-mono text-xs font-medium bg-accent text-[var(--accent-contrast)] hover:bg-accent/90 transition-colors shadow-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Return to Root Home →</span>

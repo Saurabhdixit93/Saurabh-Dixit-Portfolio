@@ -424,9 +424,183 @@ export async function runSeoValidation(): Promise<SeoValidationResult> {
     throw new Error(`trackEvent failed under SSR: ${err.message}`);
   }
 
+  // Negative privacy regression tests (runtime property allowlisting across history, CustomEvent, and providers)
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, "window");
+  const prevWindow = (globalThis as any).window;
+  const hadCustomEvent = Object.prototype.hasOwnProperty.call(globalThis, "CustomEvent");
+  const prevCustomEvent = (globalThis as any).CustomEvent;
+
+  try {
+    const customEventDetails: any[] = [];
+    const vaPayloads: any[] = [];
+    const plausiblePayloads: any[] = [];
+    const gtagPayloads: any[] = [];
+
+    class MockCustomEvent {
+      type: string;
+      detail: any;
+      constructor(type: string, init?: { detail?: any }) {
+        this.type = type;
+        this.detail = init?.detail;
+      }
+    }
+
+    const mockWindow: any = {
+      dispatchEvent: (ev: any) => {
+        customEventDetails.push(ev.detail);
+        return true;
+      },
+      va: (type: string, data: any) => {
+        vaPayloads.push({ type, data });
+      },
+    };
+
+    (globalThis as any).CustomEvent = MockCustomEvent;
+    (globalThis as any).window = mockWindow;
+
+    clearEventHistory();
+
+    // 1) assistant_message with disallowed prompt/query fields (va + CustomEvent + history)
+    trackEvent("assistant_message", {
+      role: "user",
+      query: "super-secret-user-prompt",
+      queryLength: 24,
+      suggestedPrompt: false,
+    } as any);
+
+    // 2) contact_submit with disallowed PII fields (va + CustomEvent + history)
+    trackEvent("contact_submit", {
+      intent: "full-time",
+      message: "super-secret-contact-text",
+      email: "secret@example.com",
+      messageLength: 24,
+    } as any);
+
+    // 3) plausible provider branch
+    delete mockWindow.va;
+    mockWindow.plausible = (event: string, options?: { props: Record<string, unknown> }) => {
+      plausiblePayloads.push({ event, props: options?.props });
+    };
+    trackEvent("assistant_message", {
+      role: "user",
+      query: "super-secret-user-prompt",
+      queryLength: 24,
+      suggestedPrompt: false,
+    } as any);
+    trackEvent("contact_submit", {
+      intent: "full-time",
+      message: "super-secret-contact-text",
+      email: "secret@example.com",
+      messageLength: 24,
+    } as any);
+
+    // 4) gtag provider branch
+    delete mockWindow.plausible;
+    mockWindow.gtag = (command: string, action: string, params: Record<string, unknown>) => {
+      gtagPayloads.push({ command, action, params });
+    };
+    trackEvent("assistant_message", {
+      role: "user",
+      query: "super-secret-user-prompt",
+      queryLength: 24,
+      suggestedPrompt: false,
+    } as any);
+    trackEvent("contact_submit", {
+      intent: "full-time",
+      message: "super-secret-contact-text",
+      email: "secret@example.com",
+      messageLength: 24,
+    } as any);
+
+    const recent = getRecentEvents();
+    const assistantRecords = recent.filter((r) => r.event === "assistant_message");
+    const contactRecords = recent.filter((r) => r.event === "contact_submit");
+
+    if (assistantRecords.length !== 3 || contactRecords.length !== 3) {
+      throw new Error("Expected 3 assistant_message and 3 contact_submit records during privacy test");
+    }
+
+    for (const rec of assistantRecords) {
+      const props = rec.properties as Record<string, unknown> | undefined;
+      if (!props || props.role !== "user" || props.queryLength !== 24 || props.suggestedPrompt !== false) {
+        throw new Error("assistant_message allowed properties were not preserved");
+      }
+      if ("query" in props || "prompt" in props || "message" in props || "content" in props || "text" in props) {
+        throw new Error("Privacy violation: disallowed assistant_message property leaked into eventHistory");
+      }
+    }
+
+    for (const rec of contactRecords) {
+      const props = rec.properties as Record<string, unknown> | undefined;
+      if (!props || props.intent !== "full-time" || props.messageLength !== 24) {
+        throw new Error("contact_submit allowed properties were not preserved");
+      }
+      if ("message" in props || "email" in props || "name" in props) {
+        throw new Error("Privacy violation: disallowed contact_submit PII leaked into eventHistory");
+      }
+    }
+
+    const serializedChannels = JSON.stringify({
+      customEventDetails,
+      vaPayloads,
+      plausiblePayloads,
+      gtagPayloads,
+    });
+    for (const forbiddenSecret of [
+      "super-secret-user-prompt",
+      "super-secret-contact-text",
+      "secret@example.com",
+    ]) {
+      if (serializedChannels.includes(forbiddenSecret)) {
+        throw new Error(
+          `Privacy violation: forbidden secret "${forbiddenSecret}" leaked into CustomEvent or provider payloads`
+        );
+      }
+    }
+
+    for (const detail of customEventDetails) {
+      const props = detail?.properties ?? {};
+      if ("query" in props || "message" in props || "email" in props) {
+        throw new Error("Privacy violation: disallowed key leaked into CustomEvent detail");
+      }
+    }
+
+    for (const payload of vaPayloads) {
+      const data = payload?.data ?? {};
+      if ("query" in data || "message" in data || "email" in data) {
+        throw new Error("Privacy violation: disallowed key leaked into window.va payload");
+      }
+    }
+
+    for (const payload of plausiblePayloads) {
+      const props = payload?.props ?? {};
+      if ("query" in props || "message" in props || "email" in props) {
+        throw new Error("Privacy violation: disallowed key leaked into window.plausible payload");
+      }
+    }
+
+    for (const payload of gtagPayloads) {
+      const params = payload?.params ?? {};
+      if ("query" in params || "message" in params || "email" in params) {
+        throw new Error("Privacy violation: disallowed key leaked into window.gtag payload");
+      }
+    }
+  } finally {
+    if (hadWindow) {
+      (globalThis as any).window = prevWindow;
+    } else {
+      delete (globalThis as any).window;
+    }
+    if (hadCustomEvent) {
+      (globalThis as any).CustomEvent = prevCustomEvent;
+    } else {
+      delete (globalThis as any).CustomEvent;
+    }
+  }
+
   checksPassed++;
   details.push(
-    "7. Analytics dispatch verified: all 8 typed event channels functional, SSR-safe, privacy-preserving"
+    "7. Analytics dispatch verified: all 8 typed event channels functional, SSR-safe, runtime allowlist blocks query & PII across all channels"
   );
 
   // =========================================================================

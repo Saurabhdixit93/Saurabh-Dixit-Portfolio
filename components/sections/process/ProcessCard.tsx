@@ -23,7 +23,7 @@ export const ProcessCard: React.FC<ProcessCardProps> = ({
       tabIndex={0}
       role="article"
       aria-label={`Phase ${phase.phase}: ${phase.title} (${sequence})`}
-      className={`group relative flex flex-col justify-between p-6 sm:p-7 bg-surface/90 backdrop-blur-md border border-hairline transition-all duration-200 hover:border-accent/60 hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent shadow-sm ${className}`}
+      className={`group relative flex flex-col justify-between p-6 sm:p-7 bg-surface/90 backdrop-blur-md border border-hairline transition-all duration-200 hover:border-accent/60 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent shadow-sm ${className}`}
     >
       {/* Corner registration mark */}
       <div

@@ -49,7 +49,7 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
               <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
                 // 0{index + 1} · {project.year}
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" aria-hidden="true" />
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse motion-reduce:animate-none" aria-hidden="true" />
               <span className="font-mono text-[11px] text-muted uppercase tracking-wide">
                 {project.role}
               </span>
@@ -113,7 +113,7 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
                     linkType: "case_study",
                   })
                 }
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium bg-accent text-white hover:bg-accent/90 active:scale-[0.98] transition-all shadow-sm"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium bg-accent text-[var(--accent-contrast)] hover:bg-accent/90 active:scale-[0.98] transition-all shadow-sm"
               >
                 <span>Case study</span>
                 <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -179,7 +179,7 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
                 alt={`${project.title} architectural overview`}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-                priority={index === 0}
+                priority={false}
                 className="object-cover object-top opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface/90 via-surface/20 to-transparent pointer-events-none" />

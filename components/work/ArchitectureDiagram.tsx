@@ -454,9 +454,9 @@ export function ArchitectureDiagram({
         </summary>
         <div className="mt-3 pt-3 border-t border-hairline/60 space-y-3">
           <div>
-            <h4 className="font-semibold text-text uppercase text-[11px] mb-1.5">
+            <h3 className="font-semibold text-text uppercase text-[11px] mb-1.5">
               1. System Nodes ({nodes.length})
-            </h4>
+            </h3>
             <ul className="list-disc pl-5 space-y-1">
               {nodes.map((node) => (
                 <li key={node.id}>
@@ -468,9 +468,9 @@ export function ArchitectureDiagram({
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-text uppercase text-[11px] mb-1.5">
+            <h3 className="font-semibold text-text uppercase text-[11px] mb-1.5">
               2. Data Flow & Signal Pipelines ({edges.length})
-            </h4>
+            </h3>
             <ul className="list-disc pl-5 space-y-1">
               {edges.map((edge, idx) => {
                 const fromNode = nodeMap.get(edge.from);

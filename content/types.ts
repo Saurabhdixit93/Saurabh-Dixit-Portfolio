@@ -50,8 +50,8 @@ export interface ExperienceItem {
   company: string;
   role: string;
   period: string;
-  startDate: string; // ISO date or Year with VERIFIED if month unconfirmed
-  endDate: string; // ISO date, 'Present', or Year with VERIFIED
+  startDate: string; // ISO date or Year with TODO(owner) if month unconfirmed
+  endDate: string; // ISO date, 'Present', or Year with TODO(owner)
   isCurrent: boolean;
   description: string;
   achievements?: string[];

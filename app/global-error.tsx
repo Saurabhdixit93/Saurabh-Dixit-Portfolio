@@ -37,7 +37,7 @@ export default function GlobalError({
             <button
               onClick={() => reset()}
               type="button"
-              className="px-4 py-2 bg-[#FF6A2B] text-white hover:bg-[#FF6A2B]/90 transition-colors rounded text-xs font-mono uppercase tracking-wider font-semibold cursor-pointer"
+              className="px-4 py-2 bg-[#FF6A2B] text-[#0B0D10] hover:bg-[#FF6A2B]/90 transition-colors rounded text-xs font-mono uppercase tracking-wider font-semibold cursor-pointer"
             >
               Retry Pipeline ↺
             </button>

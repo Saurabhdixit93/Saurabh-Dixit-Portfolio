@@ -1,5 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, GitBranch, ShieldAlert } from "lucide-react";
@@ -7,8 +8,11 @@ import { getAllCaseStudies, getCaseStudy, getAdjacentCaseStudies } from "@/conte
 import { projects } from "@/content/projects";
 import { Container } from "@/components/primitives/Container";
 import { Tag } from "@/components/primitives/Tag";
-import { ArchitectureDiagram } from "@/components/work/ArchitectureDiagram";
 import { OwnerTodoCallout } from "@/components/work/OwnerTodoCallout";
+
+const ArchitectureDiagram = dynamic(() =>
+  import("@/components/work/ArchitectureDiagram").then((mod) => mod.ArchitectureDiagram)
+);
 
 interface CaseStudyPageProps {
   params: Promise<{
@@ -113,7 +117,8 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
     : [];
 
   return (
-    <article className="min-h-screen bg-bg text-text pt-24 pb-20 relative overflow-x-hidden selection:bg-accent/20 selection:text-accent">
+    <main id="main-content" tabIndex={-1} className="outline-none">
+      <article className="min-h-screen bg-bg text-text pt-24 pb-20 relative overflow-x-hidden selection:bg-accent/20 selection:text-accent">
       {/* Background blueprint grid */}
       <div className="absolute inset-0 bg-blueprint-grid opacity-25 pointer-events-none" />
 
@@ -171,9 +176,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               )}
               <div>
                 <span className="text-muted block text-[10px] uppercase">// STATUS</span>
-                <span className="text-emerald-500 font-semibold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  VERIFIED DEPLOYMENT
+                <span className="text-accent2 font-semibold flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent2 animate-pulse motion-reduce:animate-none" />
+                  PRODUCTION CASE STUDY
                 </span>
               </div>
             </div>
@@ -184,7 +189,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                   href={caseStudy.links.live}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium bg-accent text-[var(--accent-contrast)] hover:bg-accent/90 transition-colors shadow-sm"
                 >
                   <span>Live Site</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -416,7 +421,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                     key={oIdx}
                     className="p-5 rounded-lg border border-hairline bg-surface/60 font-mono text-xs text-text flex items-start gap-3"
                   >
-                    <span className="text-emerald-500 font-bold shrink-0">✓</span>
+                    <span className="text-accent2 font-bold shrink-0">✓</span>
                     <span>{outcome}</span>
                   </div>
                 ))}
@@ -475,6 +480,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           </Link>
         </nav>
       </Container>
-    </article>
+      </article>
+    </main>
   );
 }

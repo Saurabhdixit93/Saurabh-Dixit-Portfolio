@@ -3,14 +3,12 @@ import { Instrument_Serif, Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
 import { ThemeProvider } from "./provider";
-import {
-  CommandPaletteProvider,
-  CommandPalette,
-} from "@/components/CommandPalette";
+import { CommandPaletteProvider } from "@/components/CommandPalette";
+import { CommandPalette } from "@/components/navigation/CommandPaletteLazy";
 import { ScrollHUD } from "@/components/ScrollHUD";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AssistantProvider } from "@/components/assistant/AssistantContext";
-import { AskSaurabh } from "@/components/assistant/AskSaurabh";
+import { AskSaurabh } from "@/components/assistant/AskSaurabhLazy";
 import { JsonLd } from "@/components/seo/JsonLd";
 
 const instrumentSerif = Instrument_Serif({
@@ -157,7 +155,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="icon" href="/logo.png" sizes="any" />
         <script
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
@@ -167,6 +164,12 @@ export default function RootLayout({
         className={`${instrumentSerif.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-accent focus:text-[var(--accent-contrast)] focus:font-mono focus:text-xs focus:rounded-sm focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="graphite"

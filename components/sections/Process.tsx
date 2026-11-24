@@ -42,9 +42,12 @@ export const Process: React.FC<ProcessProps> = ({
     const el = scrollContainerRef.current;
     if (!el) return;
     const scrollAmount = el.clientWidth * 0.75;
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     el.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
+      behavior: prefersReduced ? "auto" : "smooth",
     });
   };
 
@@ -110,7 +113,7 @@ export const Process: React.FC<ProcessProps> = ({
         role="region"
         aria-label="Engineering Delivery Lifecycle Phases"
         tabIndex={0}
-        className="flex flex-col lg:flex-row lg:overflow-x-auto snap-none lg:snap-x lg:snap-mandatory gap-6 pt-6 pb-2 scrollbar-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        className="flex flex-col lg:flex-row lg:overflow-x-auto snap-none lg:snap-x lg:snap-mandatory gap-6 pt-6 pb-2 scrollbar-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         {processPhases.map((phase, index) => (
           <div

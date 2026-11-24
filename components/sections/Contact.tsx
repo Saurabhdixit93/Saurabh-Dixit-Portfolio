@@ -175,7 +175,7 @@ export const Contact: React.FC<ContactProps> = ({
               {status === "error" && errorMessage && (
                 <div
                   role="alert"
-                  className="p-3 bg-red-500/10 border border-red-500/40 text-red-400 font-mono text-xs"
+                  className="p-3 bg-red-500/10 border border-red-500/40 text-red-700 dark:text-red-400 font-mono text-xs"
                 >
                   {errorMessage}
                 </div>
@@ -205,13 +205,13 @@ export const Contact: React.FC<ContactProps> = ({
                     aria-describedby={
                       fieldErrors.name ? "contact-name-error" : undefined
                     }
-                    className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50"
+                    className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors disabled:opacity-50"
                   />
                   {fieldErrors.name && (
                     <p
                       id="contact-name-error"
                       role="alert"
-                      className="font-mono text-[10px] text-red-400 mt-1"
+                      className="font-mono text-[10px] text-red-700 dark:text-red-400 mt-1"
                     >
                       {fieldErrors.name}
                     </p>
@@ -240,13 +240,13 @@ export const Contact: React.FC<ContactProps> = ({
                     aria-describedby={
                       fieldErrors.email ? "contact-email-error" : undefined
                     }
-                    className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50"
+                    className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors disabled:opacity-50"
                   />
                   {fieldErrors.email && (
                     <p
                       id="contact-email-error"
                       role="alert"
-                      className="font-mono text-[10px] text-red-400 mt-1"
+                      className="font-mono text-[10px] text-red-700 dark:text-red-400 mt-1"
                     >
                       {fieldErrors.email}
                     </p>
@@ -274,7 +274,7 @@ export const Contact: React.FC<ContactProps> = ({
                   aria-describedby={
                     fieldErrors.intent ? "contact-intent-error" : undefined
                   }
-                  className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50"
+                  className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text rounded-sm font-sans text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors disabled:opacity-50"
                 >
                   {contactContent.intents.map((item) => (
                     <option key={item.value} value={item.value}>
@@ -286,7 +286,7 @@ export const Contact: React.FC<ContactProps> = ({
                   <p
                     id="contact-intent-error"
                     role="alert"
-                    className="font-mono text-[10px] text-red-400 mt-1"
+                    className="font-mono text-[10px] text-red-700 dark:text-red-400 mt-1"
                   >
                     {fieldErrors.intent}
                   </p>
@@ -316,13 +316,13 @@ export const Contact: React.FC<ContactProps> = ({
                   aria-describedby={
                     fieldErrors.message ? "contact-message-error" : undefined
                   }
-                  className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors resize-y disabled:opacity-50"
+                  className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent transition-colors resize-y disabled:opacity-50"
                 />
                 {fieldErrors.message && (
                   <p
                     id="contact-message-error"
                     role="alert"
-                    className="font-mono text-[10px] text-red-400 mt-1"
+                    className="font-mono text-[10px] text-red-700 dark:text-red-400 mt-1"
                   >
                     {fieldErrors.message}
                   </p>
@@ -383,10 +383,10 @@ export const Contact: React.FC<ContactProps> = ({
               </span>
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent2 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent2" />
                 </span>
-                <span className="font-mono text-xs text-emerald-400 font-medium">
+                <span className="font-mono text-xs text-accent2 font-medium">
                   {profile.availability.label}
                 </span>
               </div>

@@ -200,7 +200,13 @@ export function CommandPalette() {
         const id = target.slice(1);
         const element = document.getElementById(id);
         if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
+          const prefersReduced =
+            shouldReduceMotion ||
+            (typeof window !== "undefined" &&
+              window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+          element.scrollIntoView({
+            behavior: prefersReduced ? "auto" : "smooth",
+          });
         } else {
           // If on subpage (e.g. /dev/tokens), navigate to home with hash
           router.push(`/${target}`);
@@ -211,7 +217,7 @@ export function CommandPalette() {
         router.push(target);
       }
     },
-    [close, router]
+    [close, router, shouldReduceMotion]
   );
 
   // Social link helpers

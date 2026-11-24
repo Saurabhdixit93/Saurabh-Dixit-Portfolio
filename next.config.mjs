@@ -1,8 +1,27 @@
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+
+let withBundleAnalyzer = (config) => config;
+if (process.env.ANALYZE === "true") {
+  try {
+    const bundleAnalyzer = require("@next/bundle-analyzer");
+    withBundleAnalyzer = bundleAnalyzer({ enabled: true });
+  } catch {
+    console.warn(
+      "[@next/bundle-analyzer] Package not installed; continuing Next.js production build without interactive bundle analyzer."
+    );
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,
+  },
+  images: {
+    formats: ["image/avif", "image/webp"],
   },
   output: "standalone",
   poweredByHeader: false,
@@ -43,4 +62,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

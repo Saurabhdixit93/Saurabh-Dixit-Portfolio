@@ -164,16 +164,59 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
     };
   }, [mobileMenuOpen]);
 
-  // Close mobile drawer on Escape key
+  // Focus trap, initial focus & Escape key handling for mobile drawer
   React.useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    // Move initial focus to first focusable element inside mobile drawer
+    const focusTimer = window.setTimeout(() => {
+      const container = mobileNavRef.current;
+      if (!container) return;
+      const focusables = container.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusables.length > 0) {
+        focusables[0].focus();
+      }
+    }, 50);
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && mobileMenuOpen) {
+      if (e.key === "Escape") {
         setMobileMenuOpen(false);
         menuButtonRef.current?.focus();
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const container = mobileNavRef.current;
+        if (!container) return;
+        const focusables = Array.from(
+          container.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first || !container.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !container.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [mobileMenuOpen]);
 
   const handleNavClick = (href: string) => {
@@ -182,7 +225,10 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
       const id = href.slice(1);
       const element = document.getElementById(id);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+        const prefersReduced =
+          typeof window !== "undefined" &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        element.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth" });
       }
     }
   };
@@ -245,8 +291,8 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
               title={profile.availability.headline || "Open to high-impact opportunities"}
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent2 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent2" />
               </span>
               <span className="tracking-wide">{profile.availability.label}</span>
             </Link>
@@ -359,7 +405,7 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="fixed inset-0 top-14 sm:top-16 z-[9999] h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] w-full bg-[#0B0D10] dark:bg-[#0B0D10] paper:bg-[#F3F0E8] text-text border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden"
+              className="fixed inset-0 top-14 sm:top-16 z-[9999] h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] w-full bg-bg text-text border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden"
               role="dialog"
               aria-modal="true"
               aria-label="Mobile Navigation Menu"
@@ -420,10 +466,10 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
                 {isAvailable && (
                   <div className="flex items-center gap-2.5 p-3 rounded-sm border border-hairline bg-surface/80 text-xs font-mono text-muted">
                     <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                      <span className="animate-ping motion-reduce:hidden absolute inline-flex h-full w-full rounded-full bg-accent2 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent2" />
                     </span>
-                    <span className="text-emerald-400 font-medium">
+                    <span className="text-accent2 font-medium">
                       {profile.availability.label}
                     </span>
                   </div>

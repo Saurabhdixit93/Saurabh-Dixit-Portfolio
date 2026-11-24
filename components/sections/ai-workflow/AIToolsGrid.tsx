@@ -59,11 +59,11 @@ export const AIToolsGrid: React.FC = () => {
                   <span
                     className={`font-mono text-[10px] px-1.5 py-0.5 rounded border ${
                       isTodo
-                        ? "bg-amber-500/10 text-amber-400 border-amber-500/30"
+                        ? "bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/30"
                         : "bg-accent/10 text-accent border-accent/20"
                     }`}
                   >
-                    {tool.badge || (isTodo ? "VERIFIED" : "VERIFIED")}
+                    {isTodo ? "TODO(owner)" : (tool.badge || "VERIFIED")}
                   </span>
                 </div>
 

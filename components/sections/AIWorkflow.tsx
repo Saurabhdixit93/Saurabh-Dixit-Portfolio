@@ -6,7 +6,7 @@ import { aiWorkflow } from "@/content/ai-workflow";
 import { AIPipelineDiagram } from "./ai-workflow/AIPipelineDiagram";
 import { AIToolsGrid } from "./ai-workflow/AIToolsGrid";
 import { AssistantTeaser } from "./ai-workflow/AssistantTeaser";
-import { ShieldCheck, Compass, CheckCircle2 } from "lucide-react";
+import { Compass, CheckCircle2 } from "lucide-react";
 
 export interface AIWorkflowProps {
   id?: string;
@@ -69,7 +69,7 @@ export const AIWorkflow: React.FC<AIWorkflowProps> = ({
         {/* 4-Stage Idea to Production Pipeline Diagram */}
         <AIPipelineDiagram />
 
-        {/* Verified Tools Grid with VERIFIED Badges */}
+        {/* Verified Tools Grid with TODO(owner) Badges */}
         <AIToolsGrid />
 
         {/* Live Assistant Teaser Card */}

@@ -3,7 +3,7 @@ import { AIWorkflowContent } from "./types";
 /**
  * AI Workflow & Tooling Content
  * Strictly typed content layer for the AI Workflow section and Ask Saurabh assistant teaser.
- * In accordance with PRD Prompt 8 & Project Integrity Rules, unconfirmed tools are tagged with VERIFIED.
+ * In accordance with PRD Prompt 8 & Project Integrity Rules, unconfirmed tools are tagged with TODO(owner).
  */
 export const aiWorkflow: AIWorkflowContent = {
   eyebrow: "// 06 · AI TOOLING & SYSTEM WORKFLOW",
@@ -47,7 +47,7 @@ export const aiWorkflow: AIWorkflowContent = {
       description:
         "In-editor multi-file refactoring, fast scaffold exploration, and automated regression test generation.",
       verificationStatus: "todo-owner",
-      badge: "VERIFIED",
+      badge: "TODO(owner)",
     },
     {
       id: "tool-langchain",
@@ -57,7 +57,7 @@ export const aiWorkflow: AIWorkflowContent = {
       description:
         "Context chunking, episodic long-term memory retrieval, and multi-tenant tool orchestration.",
       verificationStatus: "todo-owner",
-      badge: "VERIFIED",
+      badge: "TODO(owner)",
     },
     {
       id: "tool-zod-guardrails",

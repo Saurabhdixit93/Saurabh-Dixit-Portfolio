@@ -16,7 +16,7 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-bg text-text">
+    <main id="main-content" tabIndex={-1} className="min-h-[70vh] flex items-center justify-center px-4 py-16 bg-bg text-text outline-none">
       <div className="max-w-md w-full bg-surface border border-hairline p-8 relative space-y-6">
         {/* Corner registration mark */}
         <div className="absolute top-0 right-0 p-3 font-mono text-xs text-muted/60 pointer-events-none select-none">
@@ -53,6 +53,6 @@ export default function ErrorBoundary({
           </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

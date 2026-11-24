@@ -75,7 +75,8 @@ export const SystemCoreDiagram: React.FC<SystemCoreDiagramProps> = ({
                 stroke-dasharray: none !important;
               }
               .sys-pulse-ring,
-              .sys-pulse-ring-2 {
+              .sys-pulse-ring-2,
+              .sys-packet {
                 display: none !important;
               }
             }
@@ -166,7 +167,7 @@ export const SystemCoreDiagram: React.FC<SystemCoreDiagramProps> = ({
           cy="25"
           r="3.5"
           fill="#34D399"
-          className="animate-ping opacity-75"
+          className="animate-ping motion-reduce:hidden opacity-75"
         />
         <circle cx="380" cy="25" r="2.5" fill="#34D399" />
         <text
@@ -299,42 +300,42 @@ export const SystemCoreDiagram: React.FC<SystemCoreDiagramProps> = ({
         />
 
         {/* REALISTIC ANIMATED FLYING DATA PACKETS */}
-        <circle r="3" fill="#4DE1C1" filter="url(#packet-glow)">
+        <circle r="3" fill="#4DE1C1" filter="url(#packet-glow)" className="sys-packet motion-reduce:hidden">
           <animateMotion
             dur="1.8s"
             repeatCount="indefinite"
             path="M 104 176 L 136 176"
           />
         </circle>
-        <circle r="3" fill="#4DE1C1" filter="url(#packet-glow)">
+        <circle r="3" fill="#4DE1C1" filter="url(#packet-glow)" className="sys-packet motion-reduce:hidden">
           <animateMotion
             dur="2.8s"
             repeatCount="indefinite"
             path="M 220 166 C 236 166 236 96 252 96"
           />
         </circle>
-        <circle r="3" fill="#4DE1C1" filter="url(#packet-glow)">
+        <circle r="3" fill="#4DE1C1" filter="url(#packet-glow)" className="sys-packet motion-reduce:hidden">
           <animateMotion
             dur="3.1s"
             repeatCount="indefinite"
             path="M 220 186 C 236 186 236 256 252 256"
           />
         </circle>
-        <circle r="3.5" fill="#FF6A2B" filter="url(#core-glow)">
+        <circle r="3.5" fill="#FF6A2B" filter="url(#core-glow)" className="sys-packet motion-reduce:hidden">
           <animateMotion
             dur="2.4s"
             repeatCount="indefinite"
             path="M 342 96 C 356 96 356 166 368 166"
           />
         </circle>
-        <circle r="3.5" fill="#FF6A2B" filter="url(#core-glow)">
+        <circle r="3.5" fill="#FF6A2B" filter="url(#core-glow)" className="sys-packet motion-reduce:hidden">
           <animateMotion
             dur="2.6s"
             repeatCount="indefinite"
             path="M 342 256 C 356 256 356 186 368 186"
           />
         </circle>
-        <circle r="2.5" fill="#FFD166">
+        <circle r="2.5" fill="#FFD166" className="sys-packet motion-reduce:hidden">
           <animateMotion
             dur="4.2s"
             repeatCount="indefinite"

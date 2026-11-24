@@ -43,7 +43,7 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
       "bg-surface/85 text-text border-hairline hover:border-accent/70 hover:bg-surface";
     if (isActive) {
       stateStyles =
-        "bg-accent text-accent-contrast border-accent ring-2 ring-accent/40 shadow-[0_0_14px_rgba(255,106,43,0.4)] z-20";
+        "bg-accent text-[var(--accent-contrast)] border-accent ring-2 ring-accent/40 shadow-[0_0_14px_rgba(255,106,43,0.4)] z-20";
     } else if (isRelated) {
       stateStyles =
         "bg-accent/15 text-accent border-accent/80 ring-1 ring-accent/30 shadow-[0_0_10px_rgba(255,106,43,0.2)] z-10";
@@ -55,7 +55,6 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
       <button
         ref={ref}
         type="button"
-        role="button"
         aria-pressed={isActive}
         aria-label={`${item.name} (${item.level || "core"})`}
         data-tech-name={item.name}
@@ -89,7 +88,7 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
           <span
             className={`pointer-events-none font-mono text-[10px] px-1 py-0.2 rounded-xs border ${
               isActive
-                ? "border-accent-contrast/30 text-accent-contrast"
+                ? "border-[var(--accent-contrast)]/30 text-[var(--accent-contrast)]"
                 : "border-hairline text-accent"
             }`}
           >
@@ -104,7 +103,7 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
         <span
           className={`pointer-events-none w-1.5 h-1.5 rounded-full shrink-0 ${
             isActive
-              ? "bg-accent-contrast shadow-[0_0_4px_rgba(0,0,0,0.5)]"
+              ? "bg-[var(--accent-contrast)] shadow-[0_0_4px_rgba(0,0,0,0.5)]"
               : item.level === "core"
               ? "bg-accent shadow-[0_0_4px_rgba(255,106,43,0.6)]"
               : "bg-muted/60"
