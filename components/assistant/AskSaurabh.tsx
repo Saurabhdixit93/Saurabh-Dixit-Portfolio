@@ -13,6 +13,7 @@ import {
   Sparkles,
   AlertCircle,
   ExternalLink,
+  Mail,
 } from "lucide-react";
 import { useAssistant } from "./AssistantContext";
 import { aiWorkflow } from "@/content/ai-workflow";
@@ -270,10 +271,10 @@ export const AskSaurabh: React.FC = () => {
     }
   };
 
-  // Render markdown-like link citations in assistant responses
+  // Render markdown-like link citations and dynamic clickable mailto links in assistant responses
   const renderFormattedContent = (content: string) => {
-    // Matches [#section] or Markdown link [text](url)
-    const linkRegex = /\[(.*?)\]\((.*?)\)|\[(#\w+)\]/g;
+    // Matches [#section], Markdown link [text](url), or raw email address
+    const linkRegex = /\[(.*?)\]\((.*?)\)|\[(#\w+)\]|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
@@ -287,22 +288,24 @@ export const AskSaurabh: React.FC = () => {
         // [text](url)
         const text = match[1];
         const url = match[2];
-        const isExternal = url.startsWith("http");
+        const isMailto = url.startsWith("mailto:");
+        const isExternal = url.startsWith("http") || isMailto;
         parts.push(
           <a
             key={match.index}
             href={url}
-            target={isExternal ? "_blank" : undefined}
-            rel={isExternal ? "noopener noreferrer" : undefined}
-            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs inline-flex items-center gap-0.5"
+            target={isExternal && !isMailto ? "_blank" : undefined}
+            rel={isExternal && !isMailto ? "noopener noreferrer" : undefined}
+            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs inline-flex items-center gap-1 font-semibold transition-colors"
             onClick={() => {
               if (url.startsWith("#")) {
                 closeAssistant();
               }
             }}
           >
-            {text}
-            {isExternal && <ExternalLink className="w-3 h-3 ml-0.5" />}
+            {isMailto && <Mail className="w-3.5 h-3.5 inline-block shrink-0" />}
+            <span>{text}</span>
+            {isExternal && !isMailto && <ExternalLink className="w-3 h-3 ml-0.5" />}
           </a>
         );
       } else if (match[3]) {
@@ -312,10 +315,24 @@ export const AskSaurabh: React.FC = () => {
           <a
             key={match.index}
             href={anchor}
-            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs"
+            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs font-semibold"
             onClick={() => closeAssistant()}
           >
             {anchor}
+          </a>
+        );
+      } else if (match[4]) {
+        // Raw email address detected: auto-convert to interactive mailto link with pre-filled subject & body
+        const email = match[4];
+        const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent("Inquiry via Systems Blueprint Portfolio")}&body=${encodeURIComponent("Hi Saurabh,\n\nI was reviewing your Systems Blueprint portfolio and wanted to connect regarding:\n\n")}`;
+        parts.push(
+          <a
+            key={match.index}
+            href={mailtoUrl}
+            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs inline-flex items-center gap-1 font-semibold transition-colors"
+          >
+            <Mail className="w-3.5 h-3.5 inline-block shrink-0" />
+            <span>{email}</span>
           </a>
         );
       }

@@ -46,8 +46,8 @@ export const aiWorkflow: AIWorkflowContent = {
       role: "Agentic IDE Workflows",
       description:
         "In-editor multi-file refactoring, fast scaffold exploration, and automated regression test generation.",
-      verificationStatus: "verified",
-      badge: "VERIFIED",
+      verificationStatus: "todo-owner",
+      badge: "TODO(owner)",
     },
     {
       id: "tool-langchain",
@@ -56,8 +56,8 @@ export const aiWorkflow: AIWorkflowContent = {
       role: "RAG & Memory Systems",
       description:
         "Context chunking, episodic long-term memory retrieval, and multi-tenant tool orchestration.",
-      verificationStatus: "verified",
-      badge: "VERIFIED",
+      verificationStatus: "todo-owner",
+      badge: "TODO(owner)",
     },
     {
       id: "tool-zod-guardrails",

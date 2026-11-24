@@ -1,7 +1,17 @@
 import { assistantKnowledge } from '@/content/assistant-knowledge';
 import { profile } from '@/content/profile';
 
-export const REFUSAL_TEXT = `I don't have that information in Saurabh's verified portfolio. You can reach him directly at ${profile.email}.`;
+export function buildMailtoLink(
+  email: string = profile.email,
+  subject: string = 'Inquiry via Systems Blueprint Portfolio',
+  body: string = 'Hi Saurabh,\n\nI was reviewing your Systems Blueprint portfolio (https://www.saurabhdixit93.site) and wanted to connect regarding:\n\n'
+): string {
+  const encSubject = encodeURIComponent(subject);
+  const encBody = encodeURIComponent(body);
+  return `mailto:${email}?subject=${encSubject}&body=${encBody}`;
+}
+
+export const REFUSAL_TEXT = `I don't have that information in Saurabh's verified portfolio. You can reach him directly at [${profile.email}](${buildMailtoLink(profile.email, 'Portfolio Inquiry - Additional Context', 'Hi Saurabh,\n\nI was inquiring through your portfolio assistant and wanted to follow up with you directly regarding:\n\n')}).`;
 
 const STOP_WORDS = new Set([
   'what',
@@ -183,7 +193,12 @@ export function findBestKnowledgeMatch(query: string): string {
     normalized.includes('call') ||
     normalized.includes('touch')
   ) {
-    return `You can contact Saurabh directly via email at ${profile.email}, connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93), or review his code on GitHub (https://github.com/saurabhdixit93). He is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and technical advisory ([#contact]).\n\nSource: Inquiries & Advisory ([#contact])`;
+    const contactMailto = buildMailtoLink(
+      profile.email,
+      'Architecture & Engineering Inquiry',
+      'Hi Saurabh,\n\nI am reaching out regarding engineering opportunities and technical collaboration:\n\n'
+    );
+    return `You can contact Saurabh directly via email at [${profile.email}](${contactMailto}), connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93), or review his code on GitHub (https://github.com/saurabhdixit93). He is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and technical advisory ([#contact]).\n\nSource: Inquiries & Advisory ([#contact])`;
   }
 
   // Fast path for canonical suggested prompts
@@ -196,7 +211,12 @@ export function findBestKnowledgeMatch(query: string): string {
   }
 
   if (normalized.includes('open to') || normalized.includes('hire') || normalized.includes('roles') || normalized.includes('opportunities') || normalized.includes('available')) {
-    return `Saurabh is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and select technical advisory engagements. You can reach out directly via email at ${profile.email} or connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93).\n\nSource: Contact & Availability ([#contact])`;
+    const rolesMailto = buildMailtoLink(
+      profile.email,
+      'Engineering Leadership & Advisory Opportunity',
+      'Hi Saurabh,\n\nI would like to discuss potential leadership or advisory roles with you:\n\n'
+    );
+    return `Saurabh is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and select technical advisory engagements. You can reach out directly via email at [${profile.email}](${rolesMailto}) or connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93).\n\nSource: Contact & Availability ([#contact])`;
   }
 
   if (normalized.includes('strongest project') || normalized.includes('flagship') || normalized.includes('best project')) {
