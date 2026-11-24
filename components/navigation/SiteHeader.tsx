@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -14,6 +15,7 @@ import { useCommandPalette } from "./CommandPaletteContext";
 import { ThemeToggle } from "@/components/primitives/ThemeToggle";
 import { ISTClock } from "./ISTClock";
 import { profile } from "@/content";
+import { trackEvent } from "@/lib/analytics";
 
 export interface NavLinkItem {
   href: string;
@@ -111,11 +113,13 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
   const [activeSection, setActiveSection] = React.useState<string>("about");
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState<boolean>(false);
   const [isMac, setIsMac] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState<boolean>(false);
 
   const mobileNavRef = React.useRef<HTMLDivElement | null>(null);
   const menuButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   React.useEffect(() => {
+    setMounted(true);
     if (typeof window !== "undefined") {
       setIsMac(/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent));
     }
@@ -262,6 +266,11 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
                 href={link.href}
                 onClick={(e) => {
                   e.preventDefault();
+                  trackEvent("cta_click", {
+                    target: link.label,
+                    location: "header_nav",
+                    href: link.href,
+                  });
                   handleNavClick(link.href);
                 }}
                 className={`relative px-2 py-1 rounded-sm transition-colors duration-150 uppercase tracking-wider text-[11px] xl:text-xs ${
@@ -287,7 +296,10 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
           {/* ⌘K Command Palette Button (Compact) */}
           <button
             type="button"
-            onClick={openCommandPalette}
+            onClick={() => {
+              trackEvent("palette_open", { source: "button" });
+              openCommandPalette();
+            }}
             className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono border border-hairline rounded-sm bg-surface text-muted hover:text-accent hover:border-accent transition-colors shadow-sm focus-visible:outline-accent"
             title="Open Command Palette (⌘K / Ctrl+K)"
             aria-label="Open command palette"
@@ -307,6 +319,9 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
             target="_blank"
             rel="noopener noreferrer"
             download="Saurabh_Dixit_Resume.pdf"
+            onClick={() => {
+              trackEvent("resume_download", { source: "header" });
+            }}
             className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors shadow-sm focus-visible:outline-accent"
             title="Download Saurabh Dixit's Resume (PDF)"
           >
@@ -333,127 +348,134 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
         </div>
       </div>
 
-      {/* Mobile Full-Screen Overlay Menu (Solid Backdrop Blur, Clean Card Layout) */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            id="mobile-navigation"
-            ref={mobileNavRef}
-            variants={overlayVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed inset-x-0 top-14 sm:top-16 bottom-0 z-50 bg-[#0B0D10]/98 dark:bg-[#0B0D10]/98 paper:bg-[#F3F0E8]/98 backdrop-blur-2xl border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Mobile Navigation Menu"
-          >
-            {/* Top Navigation Links Grid */}
-            <motion.nav
-              variants={listVariants}
+      {/* Mobile Full-Screen Overlay Menu (Solid Backdrop via React Portal to prevent CSS containing block truncation) */}
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              id="mobile-navigation"
+              ref={mobileNavRef}
+              variants={overlayVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-2.5 py-2"
+              className="fixed inset-0 top-14 sm:top-16 z-[9999] h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] w-full bg-[#0B0D10] dark:bg-[#0B0D10] paper:bg-[#F3F0E8] text-text border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile Navigation Menu"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-hairline/60">
-                <span className="font-mono text-[10px] text-muted uppercase tracking-widest">
-                  // NAVIGATION NODES
-                </span>
-                <span className="font-mono text-[10px] text-accent">
-                  {NAV_LINKS.length} SECTIONS
-                </span>
-              </div>
-
-              {NAV_LINKS.map((link) => {
-                const isActive = activeSection === link.id;
-                return (
-                  <motion.div key={link.id} variants={itemVariants}>
-                    <a
-                      href={link.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleNavClick(link.href);
-                      }}
-                      className={`flex items-center justify-between p-3.5 rounded-sm border transition-all ${
-                        isActive
-                          ? "border-accent bg-accent/15 text-accent font-semibold shadow-sm"
-                          : "border-hairline bg-surface/90 text-text hover:border-accent hover:bg-surface"
-                      }`}
-                    >
-                      <div>
-                        <div className="font-mono text-sm tracking-wider uppercase font-medium">
-                          {link.label}
-                        </div>
-                        {link.subtitle && (
-                          <div className="text-xs text-muted mt-0.5">
-                            {link.subtitle}
-                          </div>
-                        )}
-                      </div>
-                      <ArrowUpRight className="w-4 h-4 text-accent shrink-0" />
-                    </a>
-                  </motion.div>
-                );
-              })}
-            </motion.nav>
-
-            {/* Bottom Actions inside Mobile Drawer */}
-            <div className="pt-6 border-t border-hairline space-y-4">
-              {/* Opportunities Status Pill */}
-              {isAvailable && (
-                <div className="flex items-center gap-2.5 p-3 rounded-sm border border-hairline bg-surface/80 text-xs font-mono text-muted">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-                  </span>
-                  <span className="text-emerald-400 font-medium">
-                    {profile.availability.label}
-                  </span>
-                </div>
-              )}
-
-              {/* Action Buttons: Theme Toggle & Resume */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center justify-center p-2.5 rounded-sm border border-hairline bg-surface/80">
-                  <ThemeToggle />
-                </div>
-
-                <a
-                  href={profile.resumePath}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  download="Saurabh_Dixit_Resume.pdf"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 p-2.5 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface/80 text-text hover:border-accent hover:text-accent transition-colors"
-                >
-                  <FileText className="w-4 h-4 text-accent" />
-                  <span>RESUME PDF</span>
-                </a>
-              </div>
-
-              {/* Command Palette Mobile Action */}
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openCommandPalette();
-                }}
-                className="w-full flex items-center justify-center gap-2 p-3 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors"
+              {/* Top Navigation Links Grid */}
+              <motion.nav
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="space-y-2.5 py-2"
               >
-                <Command className="w-4 h-4 text-accent" />
-                <span>OPEN COMMAND PALETTE (⌘K)</span>
-              </button>
+                <div className="flex items-center justify-between pb-2 border-b border-hairline/60">
+                  <span className="font-mono text-[10px] text-muted uppercase tracking-widest">
+                    // NAVIGATION NODES
+                  </span>
+                  <span className="font-mono text-[10px] text-accent">
+                    {NAV_LINKS.length} SECTIONS
+                  </span>
+                </div>
 
-              {/* Footer Row: Live IST Clock */}
-              <div className="flex items-center justify-between pt-2 text-xs font-mono text-muted">
-                <span>LOCAL TIME (INDIA):</span>
-                <ISTClock showSeconds showLabel />
+                {NAV_LINKS.map((link) => {
+                  const isActive = activeSection === link.id;
+                  return (
+                    <motion.div key={link.id} variants={itemVariants}>
+                      <a
+                        href={link.href}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleNavClick(link.href);
+                        }}
+                        className={`flex items-center justify-between p-3.5 rounded-sm border transition-all ${
+                          isActive
+                            ? "border-accent bg-accent/15 text-accent font-semibold shadow-sm"
+                            : "border-hairline bg-surface/90 text-text hover:border-accent hover:bg-surface"
+                        }`}
+                      >
+                        <div>
+                          <div className="font-mono text-sm tracking-wider uppercase font-medium">
+                            {link.label}
+                          </div>
+                          {link.subtitle && (
+                            <div className="text-xs text-muted mt-0.5">
+                              {link.subtitle}
+                            </div>
+                          )}
+                        </div>
+                        <ArrowUpRight className="w-4 h-4 text-accent shrink-0" />
+                      </a>
+                    </motion.div>
+                  );
+                })}
+              </motion.nav>
+
+              {/* Bottom Actions inside Mobile Drawer */}
+              <div className="pt-6 border-t border-hairline space-y-4">
+                {/* Opportunities Status Pill */}
+                {isAvailable && (
+                  <div className="flex items-center gap-2.5 p-3 rounded-sm border border-hairline bg-surface/80 text-xs font-mono text-muted">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                    </span>
+                    <span className="text-emerald-400 font-medium">
+                      {profile.availability.label}
+                    </span>
+                  </div>
+                )}
+
+                {/* Action Buttons: Theme Toggle & Resume */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center justify-center p-2.5 rounded-sm border border-hairline bg-surface/80">
+                    <ThemeToggle />
+                  </div>
+
+                  <a
+                    href={profile.resumePath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download="Saurabh_Dixit_Resume.pdf"
+                    onClick={() => {
+                      trackEvent("resume_download", { source: "header_mobile" });
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 p-2.5 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface/80 text-text hover:border-accent hover:text-accent transition-colors"
+                  >
+                    <FileText className="w-4 h-4 text-accent" />
+                    <span>RESUME PDF</span>
+                  </a>
+                </div>
+
+                {/* Command Palette Mobile Action */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    trackEvent("palette_open", { source: "button" });
+                    setMobileMenuOpen(false);
+                    openCommandPalette();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 p-3 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors cursor-pointer"
+                >
+                  <Command className="w-4 h-4 text-accent" />
+                  <span>OPEN COMMAND PALETTE (⌘K)</span>
+                </button>
+
+                {/* Footer Row: Live IST Clock */}
+                <div className="flex items-center justify-between pt-2 text-xs font-mono text-muted">
+                  <span>LOCAL TIME (INDIA):</span>
+                  <ISTClock showSeconds showLabel />
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </header>
   );
 }

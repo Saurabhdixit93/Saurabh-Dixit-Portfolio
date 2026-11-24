@@ -21,6 +21,7 @@ export const profile: Profile = {
   timezone: 'Asia/Kolkata',
   utcOffset: 'UTC+5:30',
   email: 'smartds2550@gmail.com',
+  siteUrl: 'https://www.saurabhdixit93.site',
   socials: [
     {
       platform: 'github',

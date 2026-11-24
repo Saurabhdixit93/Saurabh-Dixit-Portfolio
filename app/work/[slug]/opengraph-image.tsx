@@ -94,7 +94,7 @@ export default async function Image({
         <div style={{ display: "flex", flexDirection: "column", gap: "18px", maxWidth: "1000px" }}>
           <div
             style={{
-              display: "inline-flex",
+              display: "flex",
               alignItems: "center",
               padding: "6px 14px",
               borderRadius: "4px",
@@ -104,7 +104,7 @@ export default async function Image({
               fontSize: "16px",
               fontWeight: 600,
               fontFamily: "monospace",
-              width: "fit-content",
+              alignSelf: "flex-start",
             }}
           >
             ROLE: {role.toUpperCase()}

@@ -25,7 +25,7 @@ export const StackTelemetry: React.FC<StackTelemetryProps> = ({
 
   return (
     <div
-      className={`border border-hairline bg-surface/90 backdrop-blur-md px-4 py-2.5 rounded-none flex items-center justify-between gap-3 text-xs font-mono min-h-[54px] shadow-sm ${className}`}
+      className={`border border-hairline bg-surface/90 backdrop-blur-md px-4 py-0 rounded-none flex items-center justify-between gap-3 text-xs font-mono h-[52px] min-h-[52px] max-h-[52px] box-border shadow-sm overflow-hidden ${className}`}
     >
       {/* Invisible Screen Reader Live Region */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">
@@ -33,7 +33,7 @@ export const StackTelemetry: React.FC<StackTelemetryProps> = ({
       </div>
 
       {activeTech ? (
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0 h-full">
           <div className="inline-flex items-center gap-1.5 text-accent font-semibold shrink-0">
             <span className="w-2 h-2 rounded-full bg-accent animate-ping" />
             <span>[INSPECTING: {activeTech}]</span>
@@ -49,7 +49,7 @@ export const StackTelemetry: React.FC<StackTelemetryProps> = ({
             {relatedTechs.map((name) => (
               <span
                 key={name}
-                className="px-1.5 py-0.5 rounded-xs border border-accent/40 bg-accent/10 text-accent font-mono text-[11px] whitespace-nowrap"
+                className="px-1.5 py-0.5 rounded-xs border border-accent/40 bg-accent/10 text-accent font-mono text-[11px] whitespace-nowrap leading-tight"
               >
                 {name}
               </span>
@@ -57,7 +57,7 @@ export const StackTelemetry: React.FC<StackTelemetryProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-2 text-muted truncate">
+        <div className="flex items-center gap-2 text-muted truncate h-full">
           <Activity className="w-3.5 h-3.5 text-accent animate-pulse shrink-0" />
           <span className="truncate">
             // ARCHITECTURAL TELEMETRY: HOVER OR FOCUS ANY NODE TO TRACE

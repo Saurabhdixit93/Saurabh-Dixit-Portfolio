@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export interface ThemeToggleProps {
   className?: string;
@@ -70,6 +71,10 @@ export function ThemeToggle({ className = "", showLabel = false }: ThemeTogglePr
   const toggleTheme = React.useCallback(() => {
     const nextTheme = theme === "graphite" ? "paper" : "graphite";
     setTheme(nextTheme);
+    trackEvent("theme_toggle", {
+      theme: nextTheme,
+      source: "toggle_button",
+    });
 
     try {
       localStorage.setItem("theme", nextTheme);

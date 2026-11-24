@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink, GitBranch } from "lucide-react";
 import { Project } from "@/content/types";
 import { Tag } from "@/components/primitives/Tag";
+import { trackEvent } from "@/lib/analytics";
 
 export interface MoreBuildsGridProps {
   projects: Project[];
@@ -64,7 +65,18 @@ export function MoreBuildsGrid({ projects, className = "" }: MoreBuildsGridProps
                   id={`build-${proj.slug}-title`}
                   className="font-display text-xl sm:text-2xl text-text font-normal group-hover:text-accent transition-colors"
                 >
-                  <Link href={caseStudyHref}>{proj.title}</Link>
+                  <Link
+                    href={caseStudyHref}
+                    onClick={() =>
+                      trackEvent("project_open", {
+                        slug: proj.slug,
+                        title: proj.title,
+                        linkType: "case_study",
+                      })
+                    }
+                  >
+                    {proj.title}
+                  </Link>
                 </h4>
 
                 {/* Pitch */}
@@ -86,6 +98,13 @@ export function MoreBuildsGrid({ projects, className = "" }: MoreBuildsGridProps
               <div className="flex flex-wrap items-center gap-3 pt-6 mt-4 border-t border-hairline/60">
                 <Link
                   href={caseStudyHref}
+                  onClick={() =>
+                    trackEvent("project_open", {
+                      slug: proj.slug,
+                      title: proj.title,
+                      linkType: "case_study",
+                    })
+                  }
                   className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-accent hover:underline"
                 >
                   <span>Case study</span>
@@ -97,6 +116,13 @@ export function MoreBuildsGrid({ projects, className = "" }: MoreBuildsGridProps
                     href={proj.links.live}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() =>
+                      trackEvent("project_open", {
+                        slug: proj.slug,
+                        title: proj.title,
+                        linkType: "live",
+                      })
+                    }
                     className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-muted hover:text-text"
                   >
                     <span>Live site</span>
@@ -109,6 +135,13 @@ export function MoreBuildsGrid({ projects, className = "" }: MoreBuildsGridProps
                     href={proj.links.repo}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() =>
+                      trackEvent("project_open", {
+                        slug: proj.slug,
+                        title: proj.title,
+                        linkType: "repo",
+                      })
+                    }
                     className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-muted hover:text-text"
                   >
                     <GitBranch className="w-3 h-3" aria-hidden="true" />

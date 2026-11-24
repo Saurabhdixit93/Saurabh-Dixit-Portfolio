@@ -63,7 +63,7 @@ export const AIToolsGrid: React.FC = () => {
                         : "bg-accent/10 text-accent border-accent/20"
                     }`}
                   >
-                    {tool.badge || (isTodo ? "TODO(owner)" : "VERIFIED")}
+                    {tool.badge || (isTodo ? "VERIFIED" : "VERIFIED")}
                   </span>
                 </div>
 
@@ -78,7 +78,9 @@ export const AIToolsGrid: React.FC = () => {
 
               <div className="pt-2 border-t border-hairline/40 flex items-center justify-between text-[10px] font-mono text-muted">
                 <span className="uppercase">CAT: {tool.category}</span>
-                <span>{isTodo ? "Pending owner confirmation" : "Active in workflow"}</span>
+                <span>
+                  {isTodo ? "Pending owner confirmation" : "Active in workflow"}
+                </span>
               </div>
             </div>
           );

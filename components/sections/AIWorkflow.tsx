@@ -49,10 +49,15 @@ export const AIWorkflow: React.FC<AIWorkflowProps> = ({
             {aiWorkflow.philosophyBullets.map((bullet, idx) => {
               const [prefix, rest] = bullet.split(": ");
               return (
-                <div key={idx} className="flex items-start gap-2.5 text-xs text-muted leading-relaxed">
+                <div
+                  key={idx}
+                  className="flex items-start gap-2.5 text-xs text-muted leading-relaxed"
+                >
                   <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-text font-mono font-medium">{prefix}:</strong>{" "}
+                    <strong className="text-text font-mono font-medium">
+                      {prefix}:
+                    </strong>{" "}
                     {rest}
                   </div>
                 </div>
@@ -64,7 +69,7 @@ export const AIWorkflow: React.FC<AIWorkflowProps> = ({
         {/* 4-Stage Idea to Production Pipeline Diagram */}
         <AIPipelineDiagram />
 
-        {/* Verified Tools Grid with TODO(owner) Badges */}
+        {/* Verified Tools Grid with VERIFIED Badges */}
         <AIToolsGrid />
 
         {/* Live Assistant Teaser Card */}

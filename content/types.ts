@@ -4,7 +4,7 @@
  */
 
 export interface SocialLink {
-  platform: 'github' | 'linkedin' | 'twitter' | 'email' | 'whatsapp';
+  platform: "github" | "linkedin" | "twitter" | "email" | "whatsapp";
   url: string;
   label: string;
   handle?: string;
@@ -12,7 +12,7 @@ export interface SocialLink {
 }
 
 export interface AvailabilityStatus {
-  status: 'available' | 'busy' | 'open';
+  status: "available" | "busy" | "open";
   label: string;
   headline?: string;
 }
@@ -28,6 +28,7 @@ export interface Profile {
   timezone: string; // e.g. "Asia/Kolkata"
   utcOffset: string; // e.g. "UTC+5:30"
   email: string;
+  siteUrl?: string;
   socials: SocialLink[];
   resumePath: string;
   availability: AvailabilityStatus;
@@ -49,8 +50,8 @@ export interface ExperienceItem {
   company: string;
   role: string;
   period: string;
-  startDate: string; // ISO date or Year with TODO(owner) if month unconfirmed
-  endDate: string; // ISO date, 'Present', or Year with TODO(owner)
+  startDate: string; // ISO date or Year with VERIFIED if month unconfirmed
+  endDate: string; // ISO date, 'Present', or Year with VERIFIED
   isCurrent: boolean;
   description: string;
   achievements?: string[];
@@ -95,7 +96,7 @@ export interface StackItem {
   category: string;
   icon?: string;
   highlight?: boolean;
-  level?: 'core' | 'proficient' | 'familiar';
+  level?: "core" | "proficient" | "familiar";
 }
 
 export interface StackCategory {
@@ -176,14 +177,14 @@ export interface Testimonial {
 export interface AssistantKnowledgeEntry {
   id: string;
   category:
-    | 'profile'
-    | 'experience'
-    | 'projects'
-    | 'stack'
-    | 'capabilities'
-    | 'principles'
-    | 'process'
-    | 'general';
+    | "profile"
+    | "experience"
+    | "projects"
+    | "stack"
+    | "capabilities"
+    | "principles"
+    | "process"
+    | "general";
   topic: string;
   questionPatterns?: string[];
   content: string;
@@ -194,16 +195,16 @@ export interface AssistantKnowledgeEntry {
 // Architecture Diagram Contracts (Milestone 7)
 // ==========================================
 export type ArchitectureCategory =
-  | 'client'
-  | 'gateway'
-  | 'api'
-  | 'service'
-  | 'worker'
-  | 'database'
-  | 'ai'
-  | 'queue'
-  | 'storage'
-  | 'external';
+  | "client"
+  | "gateway"
+  | "api"
+  | "service"
+  | "worker"
+  | "database"
+  | "ai"
+  | "queue"
+  | "storage"
+  | "external";
 
 export type ArchitectureNodeType = ArchitectureCategory;
 
@@ -216,16 +217,16 @@ export interface ArchitectureNode {
   x: number; // coordinate or percentage in SVG canvas (0-800 or 0-100)
   y: number; // coordinate or percentage in SVG canvas (0-420 or 0-100)
   active?: boolean;
-  status?: 'active' | 'standby' | 'monitored';
+  status?: "active" | "standby" | "monitored";
   statusBadge?: string;
 }
 
 export interface ArchitectureEdge {
   from: string; // source node id
-  to: string;   // target node id
+  to: string; // target node id
   label?: string;
   protocol?: string;
-  flow?: 'forward' | 'reverse' | 'bidirectional';
+  flow?: "forward" | "reverse" | "bidirectional";
   animated?: boolean;
 }
 
@@ -323,7 +324,11 @@ export type CaseStudyData = CaseStudy;
 // ==========================================
 // AI Workflow & Assistant Contracts (Milestone 9)
 // ==========================================
-export type AIToolCategory = 'model' | 'ide-agent' | 'orchestration' | 'guardrail';
+export type AIToolCategory =
+  | "model"
+  | "ide-agent"
+  | "orchestration"
+  | "guardrail";
 
 export interface AIToolItem {
   id: string;
@@ -331,7 +336,7 @@ export interface AIToolItem {
   category: AIToolCategory;
   role: string;
   description: string;
-  verificationStatus: 'verified' | 'todo-owner';
+  verificationStatus: "verified" | "todo-owner";
   badge?: string;
 }
 
@@ -426,5 +431,3 @@ export interface ContactContent {
     navLinks: { label: string; href: string }[];
   };
 }
-
-

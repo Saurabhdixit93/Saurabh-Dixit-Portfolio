@@ -11,6 +11,7 @@ import { ScrollHUD } from "@/components/ScrollHUD";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AssistantProvider } from "@/components/assistant/AssistantContext";
 import { AskSaurabh } from "@/components/assistant/AskSaurabh";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 const instrumentSerif = Instrument_Serif({
   weight: "400",
@@ -64,6 +65,13 @@ export const metadata: Metadata = {
   ],
   creator: "Saurabh Dixit",
   metadataBase: new URL("https://www.saurabhdixit93.site"),
+  alternates: {
+    canonical: "https://www.saurabhdixit93.site",
+  },
+  icons: {
+    icon: "/icon",
+    apple: "/apple-icon",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -74,10 +82,10 @@ export const metadata: Metadata = {
     siteName: "Saurabh Dixit Portfolio",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Saurabh Dixit - Full Stack Engineer",
+        alt: "Saurabh Dixit | The Systems Blueprint",
       },
     ],
   },
@@ -86,7 +94,7 @@ export const metadata: Metadata = {
     title: "Saurabh Dixit | Full Stack Engineer & VP of Engineering",
     description:
       "Full-Stack Engineer with 3+ years building scalable web apps with React, Next.js, Node.js & AI. VP of Engineering at Sensegrass.",
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -153,54 +161,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "Person",
-                  "@id": "https://www.saurabhdixit93.site/#person",
-                  "name": "Saurabh Dixit",
-                  "jobTitle": "VP of Engineering & Full-Stack Systems Engineer",
-                  "worksFor": {
-                    "@type": "Organization",
-                    "name": "Sensegrass",
-                  },
-                  "url": "https://www.saurabhdixit93.site",
-                  "sameAs": [
-                    "https://github.com/saurabhdixit93",
-                    "https://www.linkedin.com/in/saurabh-dixit-47a82b1b3/",
-                  ],
-                  "knowsAbout": [
-                    "Full-Stack Systems Architecture",
-                    "AI Engineering & LLM Orchestration",
-                    "Distributed Systems & APIs",
-                    "Next.js",
-                    "React",
-                    "TypeScript",
-                    "Node.js",
-                    "FastAPI",
-                    "PostgreSQL",
-                    "Redis",
-                  ],
-                },
-                {
-                  "@type": "WebSite",
-                  "@id": "https://www.saurabhdixit93.site/#website",
-                  "url": "https://www.saurabhdixit93.site",
-                  "name": "Saurabh Dixit Portfolio | The Systems Blueprint",
-                  "description":
-                    "Portfolio of Saurabh Dixit: VP of Engineering and Full-Stack Systems Engineer.",
-                  "publisher": {
-                    "@id": "https://www.saurabhdixit93.site/#person",
-                  },
-                },
-              ],
-            }),
-          }}
-        />
+        <JsonLd />
       </head>
       <body
         className={`${instrumentSerif.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export interface CommandPaletteContextValue {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function CommandPaletteProvider({ children }: CommandPaletteProviderProps
       previousFocusRef.current = document.activeElement as HTMLElement | null;
     }
     setIsOpen(true);
+    trackEvent("palette_open", { source: "hotkey" });
   }, []);
 
   const close = React.useCallback(() => {

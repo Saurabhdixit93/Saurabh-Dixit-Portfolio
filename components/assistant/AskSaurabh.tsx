@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAssistant } from "./AssistantContext";
 import { aiWorkflow } from "@/content/ai-workflow";
+import { trackEvent } from "@/lib/analytics";
 
 interface ChatMessage {
   id: string;
@@ -126,6 +127,12 @@ export const AskSaurabh: React.FC = () => {
       setErrorMessage(null);
       setInput("");
 
+      trackEvent("assistant_message", {
+        role: "user",
+        queryLength: query.length,
+        suggestedPrompt: Boolean(textToSend),
+      });
+
       const userMsgId = `user-${Date.now()}`;
       const assistantMsgId = `asst-${Date.now()}`;
 
@@ -198,6 +205,13 @@ export const AskSaurabh: React.FC = () => {
               msg.id === assistantMsgId ? { ...msg, content: accumulatedText } : msg
             )
           );
+        }
+
+        if (accumulatedText.length > 0) {
+          trackEvent("assistant_message", {
+            role: "assistant",
+            queryLength: accumulatedText.length,
+          });
         }
       } catch (err: unknown) {
         if ((err as Error).name === "AbortError") {
@@ -479,76 +493,96 @@ export const AskSaurabh: React.FC = () => {
                   )}
 
                   {/* Message History Render */}
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`flex flex-col ${
-                        msg.role === "user" ? "items-end" : "items-start"
-                      } space-y-1`}
-                    >
-                      {/* Role Header */}
-                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted uppercase">
-                        <span>{msg.role === "user" ? "[YOU]" : "[SAURABH.AI]"}</span>
-                        <span>·</span>
-                        <span>{msg.timestamp}</span>
-                      </div>
+                  {messages.map((msg) => {
+                    // Do not render empty assistant message placeholder before stream begins
+                    if (msg.role === "assistant" && !msg.content) return null;
 
-                      {/* Message Bubble */}
+                    return (
                       <div
-                        className={`relative max-w-[92%] rounded p-3.5 leading-relaxed text-sm ${
-                          msg.role === "user"
-                            ? "bg-accent/10 border border-accent/30 text-text"
-                            : "bg-surface border border-hairline text-text"
-                        }`}
+                        key={msg.id}
+                        className={`flex flex-col ${
+                          msg.role === "user" ? "items-end" : "items-start"
+                        } space-y-1`}
                       >
-                        <div className="whitespace-pre-wrap">
-                          {renderFormattedContent(msg.content)}
-                          {/* Animated Typewriter Caret while streaming */}
-                          {isStreaming && msg.role === "assistant" && msg.content && (
-                            <span className="inline-block w-1.5 h-3.5 ml-1 bg-accent animate-pulse align-middle" />
-                          )}
+                        {/* Role Header */}
+                        <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted uppercase">
+                          <span>{msg.role === "user" ? "[YOU]" : "[SAURABH.AI]"}</span>
+                          <span>·</span>
+                          <span>{msg.timestamp}</span>
                         </div>
 
-                        {/* Copy Button for Assistant responses */}
-                        {msg.role === "assistant" && msg.content && !isStreaming && (
-                          <div className="mt-2.5 pt-2 border-t border-hairline/60 flex items-center justify-between">
-                            <span className="font-mono text-[10px] text-muted">
-                              VERIFIED FACTS
-                            </span>
-                            <button
-                              onClick={() => handleCopy(msg.id, msg.content)}
-                              className="inline-flex items-center gap-1 font-mono text-[10px] text-muted hover:text-accent transition-colors"
-                              aria-label="Copy response to clipboard"
-                            >
-                              {copiedId === msg.id ? (
-                                <>
-                                  <Check className="w-3 h-3 text-accent" />
-                                  <span className="text-accent font-semibold">Copied!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3 h-3" />
-                                  <span>Copy</span>
-                                </>
-                              )}
-                            </button>
+                        {/* Message Bubble */}
+                        <div
+                          className={`relative max-w-[92%] rounded p-3.5 leading-relaxed text-sm ${
+                            msg.role === "user"
+                              ? "bg-accent/10 border border-accent/30 text-text"
+                              : "bg-surface border border-hairline text-text"
+                          }`}
+                        >
+                          <div className="whitespace-pre-wrap">
+                            {renderFormattedContent(msg.content)}
+                            {/* Animated Typewriter Caret while streaming */}
+                            {isStreaming && msg.role === "assistant" && msg.content && (
+                              <span className="inline-block w-1.5 h-3.5 ml-1 bg-accent animate-pulse align-middle" />
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
 
-                  {/* Loading Skeleton */}
-                  {isLoading && (
-                    <div className="flex flex-col items-start space-y-1">
-                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted uppercase">
-                        <span>[SAURABH.AI]</span>
-                        <span>·</span>
-                        <span>THINKING</span>
+                          {/* Copy Button for Assistant responses */}
+                          {msg.role === "assistant" && msg.content && !isStreaming && (
+                            <div className="mt-2.5 pt-2 border-t border-hairline/60 flex items-center justify-between">
+                              <span className="font-mono text-[10px] text-muted">
+                                VERIFIED FACTS
+                              </span>
+                              <button
+                                onClick={() => handleCopy(msg.id, msg.content)}
+                                className="inline-flex items-center gap-1 font-mono text-[10px] text-muted hover:text-accent transition-colors"
+                                aria-label="Copy response to clipboard"
+                              >
+                                {copiedId === msg.id ? (
+                                  <>
+                                    <Check className="w-3 h-3 text-accent" />
+                                    <span className="text-accent font-semibold">Copied!</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-3 h-3" />
+                                    <span>Copy</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="p-3.5 rounded bg-surface border border-hairline flex items-center gap-2 text-muted font-mono text-xs">
-                        <span className="inline-block w-2 h-2 rounded-full bg-accent animate-ping" />
-                        <span>Retrieving verified portfolio facts...</span>
+                    );
+                  })}
+
+                  {/* High-Tech Reasoning & Retrieval Indicator (No empty boxes) */}
+                  {(isLoading || (isStreaming && messages.some((m) => m.role === "assistant" && !m.content))) && (
+                    <div className="flex flex-col items-start space-y-1.5 py-1">
+                      <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted uppercase">
+                        <span className="text-accent font-semibold">[SAURABH.AI]</span>
+                        <span>·</span>
+                        <span className="text-accent flex items-center gap-1">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
+                          REASONING
+                        </span>
+                      </div>
+                      <div className="p-3.5 rounded bg-surface border border-hairline flex flex-col gap-2 text-muted font-mono text-xs shadow-sm max-w-[90%]">
+                        <div className="flex items-center gap-2 text-text">
+                          <span className="flex gap-1 items-center">
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.3s]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
+                          </span>
+                          <span className="text-xs font-mono text-accent">
+                            Querying verified portfolio telemetry...
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-muted border-t border-hairline/60 pt-1.5">
+                          <span>SYS.STATUS: INFERENCE_PIPELINE</span>
+                          <span className="text-accent">ZERO HALLUCINATIONS</span>
+                        </div>
                       </div>
                     </div>
                   )}

@@ -7,6 +7,7 @@ import { ISTClock } from "@/components/navigation/ISTClock";
 import { profile } from "@/content/profile";
 import { contactContent } from "@/content/contact";
 import { isWhatsAppEnabled } from "@/content/flags";
+import { trackEvent } from "@/lib/analytics";
 
 export interface ContactProps {
   id?: string;
@@ -79,6 +80,10 @@ export const Contact: React.FC<ContactProps> = ({
       }
 
       setStatus("success");
+      trackEvent("contact_submit", {
+        intent: formData.intent,
+        messageLength: formData.message.length,
+      });
       setFormData({
         name: "",
         email: "",
@@ -449,6 +454,9 @@ export const Contact: React.FC<ContactProps> = ({
               href={profile.resumePath || contactContent.resume.downloadPath}
               download={contactContent.resume.fileName}
               data-track="resume_download"
+              onClick={() => {
+                trackEvent("resume_download", { source: "contact" });
+              }}
               className="mt-2 block p-3 bg-bg/70 border border-hairline hover:border-accent/60 transition-colors rounded-sm text-center font-mono text-xs text-text"
             >
               {contactContent.resume.buttonText}

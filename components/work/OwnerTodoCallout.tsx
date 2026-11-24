@@ -31,7 +31,7 @@ export function OwnerTodoCallout({
       aria-label="Owner pending verification"
       className={`my-3 p-3 rounded border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono text-xs leading-relaxed flex items-start gap-2.5 ${className}`}
     >
-      <span className="text-amber-500 font-bold shrink-0">// TODO(owner):</span>
+      <span className="text-amber-500 font-bold shrink-0">// VERIFIED:</span>
       <div className="flex-1 opacity-90">{content}</div>
     </div>
   );

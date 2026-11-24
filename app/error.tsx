@@ -11,6 +11,7 @@ export default function ErrorBoundary({
   reset: () => void;
 }) {
   React.useEffect(() => {
+    // eslint-disable-next-line no-console
     console.error("[APPLICATION_RUNTIME_EXCEPTION]", error);
   }, [error]);
 
@@ -23,26 +24,29 @@ export default function ErrorBoundary({
         </div>
 
         <div className="space-y-2">
-          <span className="font-mono text-xs font-semibold text-red-400 tracking-wider">
-            // RUNTIME_EXCEPTION · 500
+          {/* Exact requirement: 500 // pipeline fault */}
+          <span className="font-mono text-xs font-semibold text-accent tracking-wider block">
+            500 // pipeline fault
           </span>
-          <h1 className="font-display text-2xl text-text">
-            System Execution Interrupted
+          <h1 className="font-display text-2xl text-text font-normal">
+            Execution Pipeline Fault
           </h1>
           <p className="font-mono text-xs text-muted leading-relaxed">
-            An unhandled runtime fault was caught by the boundary supervisor. The error details have been recorded.
+            An unhandled runtime fault was caught by the boundary supervisor. Diagnostic state has been isolated.
           </p>
         </div>
 
-        {error.digest && (
-          <div className="p-3 bg-bg border border-hairline font-mono text-[11px] text-muted break-all">
-            Digest: {error.digest}
-          </div>
-        )}
+        {/* Monospace error telemetry panel */}
+        <div className="p-3 bg-bg border border-hairline font-mono text-[11px] text-muted space-y-1 break-all">
+          <div className="text-accent font-semibold">// ERROR_TELEMETRY</div>
+          <div>STATUS: 500_PIPELINE_FAULT</div>
+          {error.digest && <div>DIGEST: {error.digest}</div>}
+          <div>MESSAGE: {error.message || "Unknown execution exception"}</div>
+        </div>
 
         <div className="pt-2 flex flex-wrap gap-3">
           <Button variant="primary" size="sm" onClick={() => reset()}>
-            Retry Execution ↺
+            Retry Pipeline ↺
           </Button>
           <Button variant="outline" size="sm" href="/">
             Return to Root Home →

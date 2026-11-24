@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { profile } from "@/content/profile";
 import { Container } from "@/components/primitives/Container";
@@ -5,6 +7,7 @@ import { Button } from "@/components/primitives/Button";
 import { Tag } from "@/components/primitives/Tag";
 import { SystemCoreDiagram } from "./hero/SystemCoreDiagram";
 import { HeroMetrics } from "./hero/HeroMetrics";
+import { trackEvent } from "@/lib/analytics";
 
 export interface HeroProps {
   className?: string;
@@ -96,10 +99,32 @@ export const Hero: React.FC<HeroProps> = ({ className = "" }) => {
 
               {/* 3 Call-To-Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1">
-                <Button variant="primary" size="lg" href="#contact">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  href="#contact"
+                  onClick={() =>
+                    trackEvent("cta_click", {
+                      target: "contact",
+                      location: "hero",
+                      href: "#contact",
+                    })
+                  }
+                >
                   Let&apos;s talk
                 </Button>
-                <Button variant="secondary" size="lg" href="#work">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  href="#work"
+                  onClick={() =>
+                    trackEvent("cta_click", {
+                      target: "work",
+                      location: "hero",
+                      href: "#work",
+                    })
+                  }
+                >
                   View work
                 </Button>
                 <Button
@@ -108,6 +133,11 @@ export const Hero: React.FC<HeroProps> = ({ className = "" }) => {
                   href={profile.resumePath}
                   external
                   download
+                  onClick={() =>
+                    trackEvent("resume_download", {
+                      source: "hero",
+                    })
+                  }
                 >
                   Resume
                 </Button>

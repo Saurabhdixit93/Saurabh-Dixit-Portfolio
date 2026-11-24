@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, ExternalLink, GitBranch } from "lucide-react";
 import { Project } from "@/content/types";
 import { Tag } from "@/components/primitives/Tag";
+import { trackEvent } from "@/lib/analytics";
 
 export interface FeaturedProjectCardProps {
   project: Project;
@@ -105,6 +106,13 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link
                 href={caseStudyHref}
+                onClick={() =>
+                  trackEvent("project_open", {
+                    slug: project.slug,
+                    title: project.title,
+                    linkType: "case_study",
+                  })
+                }
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium bg-accent text-white hover:bg-accent/90 active:scale-[0.98] transition-all shadow-sm"
               >
                 <span>Case study</span>
@@ -116,6 +124,13 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
                   href={project.links.live}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent("project_open", {
+                      slug: project.slug,
+                      title: project.title,
+                      linkType: "live",
+                    })
+                  }
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium border border-hairline bg-surface/50 text-text hover:border-accent hover:text-accent active:scale-[0.98] transition-all"
                 >
                   <span>Live site</span>
@@ -128,6 +143,13 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
                   href={project.links.repo}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() =>
+                    trackEvent("project_open", {
+                      slug: project.slug,
+                      title: project.title,
+                      linkType: "repo",
+                    })
+                  }
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-mono text-xs font-medium border border-hairline bg-surface/50 text-text hover:border-accent hover:text-accent active:scale-[0.98] transition-all"
                 >
                   <GitBranch className="w-3.5 h-3.5" aria-hidden="true" />
@@ -141,6 +163,13 @@ export function FeaturedProjectCard({ project, index }: FeaturedProjectCardProps
           <div className="lg:col-span-5">
             <Link
               href={caseStudyHref}
+              onClick={() =>
+                trackEvent("project_open", {
+                  slug: project.slug,
+                  title: project.title,
+                  linkType: "case_study",
+                })
+              }
               tabIndex={-1}
               aria-hidden="true"
               className="group block relative rounded-lg border border-hairline bg-bg overflow-hidden aspect-[16/10] shadow-inner"

@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { useCommandPalette } from "./CommandPaletteContext";
 import { profile, projects } from "@/content";
+import { trackEvent } from "@/lib/analytics";
 
 export interface CommandItem {
   id: string;
@@ -317,7 +318,14 @@ export function CommandPalette() {
           ],
           icon: <FolderGit2 className="w-4 h-4 text-accent2" />,
           badge: hasCaseStudy ? "CASE STUDY" : isLive ? "LIVE SITE" : "VIEW REPO",
-          perform: () => navigateTo(targetUrl),
+          perform: () => {
+            trackEvent("project_open", {
+              slug: proj.slug,
+              title: proj.title,
+              linkType: hasCaseStudy ? "case_study" : isLive ? "live" : "repo",
+            });
+            navigateTo(targetUrl);
+          },
         };
       }),
 
@@ -350,6 +358,7 @@ export function CommandPalette() {
         icon: <FileText className="w-4 h-4 text-accent" />,
         badge: "PDF",
         perform: () => {
+          trackEvent("resume_download", { source: "command_palette" });
           close();
           window.open(profile.resumePath, "_blank", "noopener,noreferrer");
         },

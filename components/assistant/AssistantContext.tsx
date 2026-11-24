@@ -1,11 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export interface AssistantContextValue {
   isOpen: boolean;
   initialPrompt: string | null;
-  openAssistant: (prompt?: string) => void;
+  openAssistant: (prompt?: string, trigger?: string) => void;
   closeAssistant: () => void;
   toggleAssistant: () => void;
 }
@@ -20,11 +21,14 @@ export const AssistantProvider: React.FC<AssistantProviderProps> = ({ children }
   const [isOpen, setIsOpen] = useState(false);
   const [initialPrompt, setInitialPrompt] = useState<string | null>(null);
 
-  const openAssistant = useCallback((prompt?: string) => {
+  const openAssistant = useCallback((prompt?: string, trigger?: string) => {
     if (prompt) {
       setInitialPrompt(prompt);
     }
     setIsOpen(true);
+    trackEvent("assistant_open", {
+      trigger: trigger || (prompt ? "prompt" : "direct"),
+    });
   }, []);
 
   const closeAssistant = useCallback(() => {
@@ -33,7 +37,13 @@ export const AssistantProvider: React.FC<AssistantProviderProps> = ({ children }
   }, []);
 
   const toggleAssistant = useCallback(() => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        trackEvent("assistant_open", { trigger: "toggle" });
+      }
+      return next;
+    });
   }, []);
 
   // Listen to custom 'open-assistant' DOM event for decoupled triggers

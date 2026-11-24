@@ -70,6 +70,11 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
         };
 
         for (const activeCenter of activeCenters) {
+          // Skip straight horizontal lines across neighboring chips in the exact same row (leaves cross-tier architecture lines crisp)
+          if (Math.abs(activeCenter.y - targetCenter.y) < 18) {
+            continue;
+          }
+
           calculatedLines.push({
             startX: activeCenter.x,
             startY: activeCenter.y,
@@ -119,7 +124,8 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
   return (
     <svg
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 w-full h-full z-15 hidden md:block ${className}`}
+      style={{ pointerEvents: "none" }}
+      className={`pointer-events-none absolute inset-0 w-full h-full z-10 hidden md:block select-none ${className}`}
     >
       <defs>
         <filter id="connector-glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -133,7 +139,10 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
         const pathData = `M ${line.startX} ${line.startY} C ${line.startX} ${controlY}, ${line.endX} ${controlY}, ${line.endX} ${line.endY}`;
 
         return (
-          <g key={`${line.targetName}-${line.startX.toFixed(1)}-${line.startY.toFixed(1)}-${idx}`}>
+          <g
+            key={`${line.targetName}-${line.startX.toFixed(1)}-${line.startY.toFixed(1)}-${idx}`}
+            style={{ pointerEvents: "none" }}
+          >
             {/* Soft background glow line */}
             <path
               d={pathData}
@@ -142,6 +151,7 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
               strokeWidth="3"
               strokeOpacity="0.25"
               filter="url(#connector-glow)"
+              style={{ pointerEvents: "none" }}
             />
             {/* Crisp dashed connector line */}
             <path
@@ -151,6 +161,7 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
               strokeWidth="1.5"
               strokeDasharray="4 4"
               strokeOpacity="0.85"
+              style={{ pointerEvents: "none" }}
             />
             {/* Terminal start dot */}
             <circle
@@ -159,6 +170,7 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
               r="3.5"
               fill="var(--accent)"
               className="drop-shadow-[0_0_6px_var(--accent)]"
+              style={{ pointerEvents: "none" }}
             />
             {/* Terminal end dot */}
             <circle
@@ -167,6 +179,7 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
               r="3"
               fill="var(--accent)"
               className="drop-shadow-[0_0_6px_var(--accent)]"
+              style={{ pointerEvents: "none" }}
             />
           </g>
         );

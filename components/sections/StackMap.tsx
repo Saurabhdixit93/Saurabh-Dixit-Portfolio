@@ -84,7 +84,7 @@ export const StackMap: React.FC<StackMapProps> = ({
       }
       leaveTimerRef.current = setTimeout(() => {
         setActiveTech(null);
-      }, 60);
+      }, 150);
     }
   };
 

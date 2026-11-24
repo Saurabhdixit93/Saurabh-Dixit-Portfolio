@@ -113,6 +113,78 @@ export function findBestKnowledgeMatch(query: string): string {
   }
 
   const normalized = query.toLowerCase().trim();
+  const cleanQ = normalized.replace(/[^a-z0-9\s]/gi, '').trim();
+
+  // Conversational Intent: Casual Acknowledgments (e.g., "ok", "okkk", "cool", "got it", "thanks")
+  if (/^(ok+|okk+|cool|nice|got it|great|thanks|thank you|perfect|sounds good|alright|fine|k|sure|cheers)[\s!.]*$/i.test(normalized)) {
+    return `Glad to help! You can ask me anything about Saurabh's engineering leadership at Sensegrass, verified system metrics (+35% velocity, 3× AI scale), architecture case studies ([#work]), 5-tier technical stack ([#stack]), or how to contact him ([#contact]).`;
+  }
+
+  // Conversational Intent: Friendly Greetings (e.g., "hi", "hello", "hey")
+  if (/^(hi+|hello+|hey+|hola|namaste|good (morning|afternoon|evening)|howdy|greetings)[\s!.]*$/i.test(normalized)) {
+    return `Hello! I am Saurabh's verified portfolio assistant. I can answer inquiries about his role as VP of Engineering at Sensegrass, verified metrics (+35% velocity, -45% incidents), production architecture case studies ([#work]), tech stack ([#stack]), and availability ([#contact]). What would you like to know?`;
+  }
+
+  // Identity / Overview / Bio
+  if (
+    normalized === 'about' ||
+    normalized.includes('who is') ||
+    normalized.includes('who are you') ||
+    normalized.includes('tell me about yourself') ||
+    normalized.includes('tell me about saurabh') ||
+    normalized === 'saurabh' ||
+    normalized === 'saurabh dixit'
+  ) {
+    return `Saurabh Dixit is a Full-Stack Engineer and VP of Engineering at Sensegrass based in India (IST, UTC+5:30). He specializes in scalable AI platforms, distributed systems, and high-velocity engineering delivery. He holds a Bachelor of Science (Maths & Science) from Bundelkhand University, Jhansi (2019 — 2022).\n\nSource: Systems Profile & Identity ([#about])`;
+  }
+
+  // Resume / CV inquiries
+  if (
+    normalized.includes('resume') ||
+    normalized.includes('cv') ||
+    normalized.includes('curriculum vitae') ||
+    normalized.includes('download resume') ||
+    normalized.includes('pdf')
+  ) {
+    return `You can download Saurabh Dixit's complete verified resume (PDF) directly from the top navigation bar or the hero section ([#about]). It details his 3+ years of production experience, VP of Engineering leadership at Sensegrass, and verified system metrics.\n\nSource: Resume & Academic Foundation ([#about])`;
+  }
+
+  // Education / Degree / Academic foundation
+  if (
+    normalized.includes('education') ||
+    normalized.includes('degree') ||
+    normalized.includes('university') ||
+    normalized.includes('college') ||
+    normalized.includes('bundelkhand') ||
+    normalized.includes('maths') ||
+    normalized.includes('bsc') ||
+    normalized.includes('bachelor')
+  ) {
+    return `Saurabh holds a Bachelor of Science (B.Sc.) in Mathematics & Science from Bundelkhand University, Jhansi (2019 — 2022). His mathematical foundation in numerical analysis, discrete mathematics, and algorithmic logic underpins his work on distributed systems and deterministic AI guardrails.\n\nSource: Academic Foundation ([#about])`;
+  }
+
+  // Technical Stack / Skills
+  if (
+    normalized.includes('tech stack') ||
+    normalized.includes('technologies') ||
+    normalized.includes('skills') ||
+    normalized.includes('languages') ||
+    normalized.includes('what tools')
+  ) {
+    return `Saurabh's core production stack spans 5 architectural tiers:\n• Tier 01 AI & Intelligent Systems: LangChain, LLM reasoning, RAG pipelines, FastAPI, Python\n• Tier 02 Frontend & UI: Next.js 15, React, TypeScript, Tailwind CSS, Framer Motion\n• Tier 03 Backend & Distributed: Node.js, Express, REST & GraphQL APIs, microservices\n• Tier 04 Data & Storage: PostgreSQL, Redis, MongoDB\n• Tier 05 DevOps & Infra: Docker, AWS, GitHub Actions CI/CD\nYou can inspect every node and relationship in the interactive stack diagram ([#stack]).\n\nSource: The Layered Architecture ([#stack])`;
+  }
+
+  // Contact / Inquiries
+  if (
+    normalized.includes('contact') ||
+    normalized.includes('email') ||
+    normalized.includes('reach') ||
+    normalized.includes('hire') ||
+    normalized.includes('call') ||
+    normalized.includes('touch')
+  ) {
+    return `You can contact Saurabh directly via email at ${profile.email}, connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93), or review his code on GitHub (https://github.com/saurabhdixit93). He is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and technical advisory ([#contact]).\n\nSource: Inquiries & Advisory ([#contact])`;
+  }
 
   // Fast path for canonical suggested prompts
   if (normalized.includes('built with llm') || normalized.includes('llm') || normalized.includes('ai project')) {
@@ -130,8 +202,6 @@ export function findBestKnowledgeMatch(query: string): string {
   if (normalized.includes('strongest project') || normalized.includes('flagship') || normalized.includes('best project')) {
     return `Saurabh's flagship project is the Enterprise AI Code Review Platform, an asynchronous worker pipeline combining rule-based linting with LLM reasoning for automated pull request analysis. Built with Next.js, TypeScript, Node.js, MongoDB, and Redis, it processes webhooks with sub-second feedback and zero token waste.\n\nSource: Enterprise AI Code Review Platform ([#work])`;
   }
-
-  const cleanQ = normalized.replace(/[^a-z0-9\s]/gi, '').trim();
 
   // General keyword and question-pattern scoring across all 15 entries
   let bestScore = 0;

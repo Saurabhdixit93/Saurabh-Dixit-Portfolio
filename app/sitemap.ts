@@ -1,11 +1,11 @@
 import { MetadataRoute } from "next";
-import { caseStudies } from "@/content/case-studies";
+import { projects } from "@/content/projects";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.saurabhdixit93.site";
   const now = new Date();
 
-  // Core static routes
+  // Root route
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -13,17 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1.0,
     },
-    {
-      url: `${baseUrl}/dev/tokens`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.2,
-    },
   ];
 
-  // Dynamic flagship case study routes
-  const projectRoutes: MetadataRoute.Sitemap = caseStudies.map((study) => ({
-    url: `${baseUrl}/work/${study.slug}`,
+  // Dynamically map all 6 flagship projects from content/projects
+  const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
+    url: `${baseUrl}/work/${project.slug}`,
     lastModified: now,
     changeFrequency: "monthly",
     priority: 0.8,
@@ -31,4 +25,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticRoutes, ...projectRoutes];
 }
-

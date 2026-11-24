@@ -138,7 +138,7 @@ export const projects = [
     des: "Modern portfolio built with Next.js, Tailwind CSS, and Framer Motion, featuring dynamic Three.js components.",
     img: "/Project6.svg",
     iconLists: ["/next.svg", "/tail.svg", "/three.svg"],
-    link: "https://saurabh-dixit.vercel.app/",
+    link: "https://www.saurabhdixit93.site",
   },
 ];
 
