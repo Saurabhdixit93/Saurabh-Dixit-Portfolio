@@ -9,11 +9,10 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { Menu, X, Command, FileText, ArrowUpRight, Sparkles } from "lucide-react";
+import { Menu, X, Command, FileText, ArrowUpRight } from "lucide-react";
 import { useCommandPalette } from "./CommandPaletteContext";
 import { ThemeToggle } from "@/components/primitives/ThemeToggle";
 import { ISTClock } from "./ISTClock";
-import { ScrollLifecycleBadge } from "./ScrollHUD";
 import { profile } from "@/content";
 
 export interface NavLinkItem {
@@ -28,7 +27,7 @@ export const NAV_LINKS: NavLinkItem[] = [
   { href: "#work", label: "Work", id: "work", subtitle: "Architecture Case Studies" },
   { href: "#stack", label: "Stack", id: "stack", subtitle: "5-Tier Layered Tech Map" },
   { href: "#experience", label: "Experience", id: "experience", subtitle: "Sensegrass & Timeline" },
-  { href: "#process", label: "Process", id: "process", subtitle: "Discover, Architect, Ship" },
+  { href: "#process", label: "Process", id: "process", subtitle: "4-Stage Delivery Lifecycle" },
   { href: "#contact", label: "Contact", id: "contact", subtitle: "Inquiries & Advisory" },
 ];
 
@@ -109,121 +108,68 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
 
-  const [activeSection, setActiveSection] = React.useState<string>("");
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [isMac, setIsMac] = React.useState(true);
+  const [activeSection, setActiveSection] = React.useState<string>("about");
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState<boolean>(false);
+  const [isMac, setIsMac] = React.useState<boolean>(false);
 
-  const menuButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const mobileNavRef = React.useRef<HTMLDivElement | null>(null);
+  const menuButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
-  // Platform detection for ⌘K vs Ctrl+K shortcut label
   React.useEffect(() => {
-    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
-      const isApple = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent || "");
-      setIsMac(isApple);
+    if (typeof window !== "undefined") {
+      setIsMac(/(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent));
     }
   }, []);
 
-  // Active section highlighting via IntersectionObserver
+  // Track active section via IntersectionObserver on homepage
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (pathname !== "/") return;
 
     const sectionIds = NAV_LINKS.map((link) => link.id);
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[];
-
-    if (elements.length === 0) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleEntries = entries.filter((entry) => entry.isIntersecting);
-        if (visibleEntries.length > 0) {
-          visibleEntries.sort(
-            (a, b) =>
-              Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
-          );
-          setActiveSection(visibleEntries[0].target.id);
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
       },
       {
-        rootMargin: "-20% 0px -60% 0px",
-        threshold: [0, 0.2, 0.5],
+        rootMargin: "-25% 0px -60% 0px",
+        threshold: 0,
       }
     );
 
-    elements.forEach((el) => observer.observe(el));
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
     return () => observer.disconnect();
   }, [pathname]);
 
-  // Mobile menu focus trap and ESC key handler
+  // Lock background body scroll when mobile menu is open
   React.useEffect(() => {
-    if (!mobileMenuOpen) return;
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
-    // Programmatically transfer initial focus to the first interactive element inside drawer
-    const focusTimer = setTimeout(() => {
-      if (mobileNavRef.current) {
-        const focusableElements = mobileNavRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusableElements.length > 0) {
-          focusableElements[0].focus();
-        }
-      }
-    }, 50);
-
+  // Close mobile drawer on Escape key
+  React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
+      if (e.key === "Escape" && mobileMenuOpen) {
         setMobileMenuOpen(false);
         menuButtonRef.current?.focus();
-        return;
-      }
-
-      if (e.key === "Tab" && mobileNavRef.current) {
-        const focusableElements = mobileNavRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusableElements.length === 0) return;
-
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        // Ensure focus stays trapped inside drawer even if focus somehow started outside
-        const isFocusInside = mobileNavRef.current.contains(document.activeElement);
-        if (!isFocusInside) {
-          e.preventDefault();
-          if (e.shiftKey) {
-            lastElement.focus();
-          } else {
-            firstElement.focus();
-          }
-          return;
-        }
-
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
       }
     };
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      clearTimeout(focusTimer);
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileMenuOpen]);
 
   const handleNavClick = (href: string) => {
@@ -239,11 +185,10 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
 
   const isAvailable = profile.availability.status === "available";
 
-  // Framer motion variants for mobile overlay
   const overlayVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.18 } },
-    exit: { opacity: 0, transition: { duration: 0.15 } },
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.15, ease: "easeIn" } },
   };
 
   const listVariants: Variants = {
@@ -251,26 +196,26 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.05,
-        delayChildren: shouldReduceMotion ? 0 : 0.05,
+        staggerChildren: shouldReduceMotion ? 0 : 0.04,
+        delayChildren: shouldReduceMotion ? 0 : 0.03,
       },
     },
     exit: { opacity: 0 },
   };
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -14 },
+    hidden: { opacity: 0, x: shouldReduceMotion ? 0 : -10 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.2 } },
-    exit: { opacity: 0, x: shouldReduceMotion ? 0 : -8, transition: { duration: 0.1 } },
+    exit: { opacity: 0, x: shouldReduceMotion ? 0 : -6, transition: { duration: 0.1 } },
   };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 bg-bg/85 backdrop-blur-md border-b border-hairline transition-colors duration-200 ${className}`}
+      className={`fixed top-0 left-0 right-0 z-40 bg-bg/90 backdrop-blur-md border-b border-hairline transition-colors duration-200 ${className}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-4">
-        {/* Left: Brand Monogram & Status */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
+        {/* Left: Brand Monogram & Name */}
+        <div className="flex items-center gap-3 shrink-0">
           <Link
             href="/"
             className="group flex items-center gap-2.5 focus-visible:outline-accent rounded-sm"
@@ -281,18 +226,18 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
               <span className="font-mono text-xs sm:text-sm font-semibold tracking-wider text-text group-hover:text-accent transition-colors">
                 SAURABH DIXIT
               </span>
-              <span className="font-mono text-[9px] sm:text-[10px] text-muted tracking-widest uppercase hidden md:inline">
+              <span className="font-mono text-[9px] sm:text-[10px] text-muted tracking-widest uppercase hidden sm:inline">
                 VP ENG · AI SYSTEMS
               </span>
             </div>
           </Link>
 
-          {/* Open to Opportunities Live Status Dot */}
+          {/* Open to Opportunities Live Status Dot (Only on ultra-wide desktop to prevent clutter) */}
           {isAvailable && (
             <Link
               href="#contact"
               onClick={() => handleNavClick("#contact")}
-              className="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-hairline bg-surface/70 text-[10px] font-mono text-muted hover:border-accent hover:text-text transition-colors"
+              className="hidden 2xl:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-hairline bg-surface/70 text-[10px] font-mono text-muted hover:border-accent hover:text-text transition-colors"
               title={profile.availability.headline || "Open to high-impact opportunities"}
             >
               <span className="relative flex h-2 w-2">
@@ -304,9 +249,9 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
           )}
         </div>
 
-        {/* Center: Desktop Navigation Links */}
+        {/* Center: Desktop Navigation Links (Compact & Crisp) */}
         <nav
-          className="hidden md:flex items-center gap-1 lg:gap-2 font-mono text-xs"
+          className="hidden lg:flex items-center gap-0.5 xl:gap-1 font-mono text-xs"
           aria-label="Main Navigation"
         >
           {NAV_LINKS.map((link) => {
@@ -319,7 +264,7 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
                   e.preventDefault();
                   handleNavClick(link.href);
                 }}
-                className={`relative px-2.5 py-1.5 rounded-sm transition-colors duration-150 uppercase tracking-wider ${
+                className={`relative px-2 py-1 rounded-sm transition-colors duration-150 uppercase tracking-wider text-[11px] xl:text-xs ${
                   isActive
                     ? "text-accent font-medium bg-accent/10"
                     : "text-muted hover:text-text hover:bg-surface/50"
@@ -328,7 +273,7 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
                 {link.label}
                 {isActive && (
                   <span
-                    className="absolute bottom-0 left-2 right-2 h-[2px] bg-accent rounded-full"
+                    className="absolute bottom-0 left-1.5 right-1.5 h-[2px] bg-accent rounded-full"
                     aria-hidden="true"
                   />
                 )}
@@ -337,37 +282,32 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
           })}
         </nav>
 
-        {/* Right: Actions (Telemetry Slot, IST Clock, ⌘K Hint, Theme Toggle, Resume, Mobile Toggle) */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Telemetry: Request Lifecycle Stage Badge */}
-          <ScrollLifecycleBadge className="hidden xl:inline-flex" />
-
-          {/* Live IST Clock */}
-          <div className="hidden xl:block pr-1 border-r border-hairline">
-            <ISTClock showSeconds={false} showLabel={false} />
-          </div>
-
-          {/* ⌘K Command Palette Button */}
+        {/* Right: Actions (Commands ⌘K, Theme Toggle, Resume, Mobile Toggle) */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* ⌘K Command Palette Button (Compact) */}
           <button
             type="button"
             onClick={openCommandPalette}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono border border-hairline rounded-sm bg-surface text-muted hover:text-accent hover:border-accent transition-colors shadow-sm focus-visible:outline-accent"
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono border border-hairline rounded-sm bg-surface text-muted hover:text-accent hover:border-accent transition-colors shadow-sm focus-visible:outline-accent"
             title="Open Command Palette (⌘K / Ctrl+K)"
             aria-label="Open command palette"
           >
             <Command className="w-3.5 h-3.5 text-accent" />
-            <span className="hidden sm:inline font-semibold">{isMac ? "⌘K" : "Ctrl+K"}</span>
+            <span className="font-semibold">{isMac ? "⌘K" : "Ctrl+K"}</span>
           </button>
 
-          {/* Theme Toggle */}
-          <ThemeToggle />
+          {/* Theme Toggle (Desktop) */}
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
 
-          {/* Resume Download / View Button */}
+          {/* Resume Download Button */}
           <a
             href={profile.resumePath}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors shadow-sm focus-visible:outline-accent"
+            download="Saurabh_Dixit_Resume.pdf"
+            className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors shadow-sm focus-visible:outline-accent"
             title="Download Saurabh Dixit's Resume (PDF)"
           >
             <FileText className="w-3.5 h-3.5 text-accent" />
@@ -379,21 +319,21 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
             ref={menuButtonRef}
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden inline-flex items-center justify-center p-2 rounded-sm border border-hairline bg-surface text-text hover:text-accent hover:border-accent transition-colors focus-visible:outline-accent"
+            className="lg:hidden inline-flex items-center justify-center p-2 rounded-sm border border-hairline bg-surface text-text hover:text-accent hover:border-accent transition-colors focus-visible:outline-accent cursor-pointer"
             aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? (
-              <X className="w-4 h-4 text-accent" />
+              <X className="w-5 h-5 text-accent" />
             ) : (
-              <Menu className="w-4 h-4" />
+              <Menu className="w-5 h-5" />
             )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Full-Screen Overlay Menu */}
+      {/* Mobile Full-Screen Overlay Menu (Solid Backdrop Blur, Clean Card Layout) */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -403,21 +343,26 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-x-0 top-14 sm:top-16 bottom-0 z-50 bg-bg/95 backdrop-blur-xl border-t border-hairline flex flex-col justify-between p-6 overflow-y-auto md:hidden"
+            className="fixed inset-x-0 top-14 sm:top-16 bottom-0 z-50 bg-[#0B0D10]/98 dark:bg-[#0B0D10]/98 paper:bg-[#F3F0E8]/98 backdrop-blur-2xl border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Mobile Navigation Menu"
           >
-            {/* Top Navigation Links */}
+            {/* Top Navigation Links Grid */}
             <motion.nav
               variants={listVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="space-y-2 py-4"
+              className="space-y-2.5 py-2"
             >
-              <div className="font-mono text-[10px] text-muted uppercase tracking-widest mb-3">
-                // NAVIGATION
+              <div className="flex items-center justify-between pb-2 border-b border-hairline/60">
+                <span className="font-mono text-[10px] text-muted uppercase tracking-widest">
+                  // NAVIGATION NODES
+                </span>
+                <span className="font-mono text-[10px] text-accent">
+                  {NAV_LINKS.length} SECTIONS
+                </span>
               </div>
 
               {NAV_LINKS.map((link) => {
@@ -430,14 +375,14 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
                         e.preventDefault();
                         handleNavClick(link.href);
                       }}
-                      className={`flex items-center justify-between p-3 rounded-sm border transition-colors ${
+                      className={`flex items-center justify-between p-3.5 rounded-sm border transition-all ${
                         isActive
-                          ? "border-accent/40 bg-accent/10 text-accent font-medium"
-                          : "border-hairline bg-surface text-text hover:border-accent/60"
+                          ? "border-accent bg-accent/15 text-accent font-semibold shadow-sm"
+                          : "border-hairline bg-surface/90 text-text hover:border-accent hover:bg-surface"
                       }`}
                     >
                       <div>
-                        <div className="font-mono text-sm tracking-wide uppercase">
+                        <div className="font-mono text-sm tracking-wider uppercase font-medium">
                           {link.label}
                         </div>
                         {link.subtitle && (
@@ -446,56 +391,64 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
                           </div>
                         )}
                       </div>
-                      <ArrowUpRight className="w-4 h-4 text-muted shrink-0" />
+                      <ArrowUpRight className="w-4 h-4 text-accent shrink-0" />
                     </a>
                   </motion.div>
                 );
               })}
             </motion.nav>
 
-            {/* Bottom Actions & Telemetry inside Mobile Menu */}
+            {/* Bottom Actions inside Mobile Drawer */}
             <div className="pt-6 border-t border-hairline space-y-4">
               {/* Opportunities Status Pill */}
               {isAvailable && (
-                <div className="flex items-center gap-2 p-2.5 rounded-sm border border-hairline bg-surface/50 text-xs font-mono text-muted">
-                  <span className="relative flex h-2 w-2">
+                <div className="flex items-center gap-2.5 p-3 rounded-sm border border-hairline bg-surface/80 text-xs font-mono text-muted">
+                  <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                   </span>
-                  <span>{profile.availability.label}</span>
+                  <span className="text-emerald-400 font-medium">
+                    {profile.availability.label}
+                  </span>
                 </div>
               )}
 
-              {/* Action Buttons Row */}
+              {/* Action Buttons: Theme Toggle & Resume */}
               <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    openCommandPalette();
-                  }}
-                  className="flex items-center justify-center gap-2 p-2.5 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors"
-                >
-                  <Command className="w-3.5 h-3.5 text-accent" />
-                  <span>COMMANDS (⌘K)</span>
-                </button>
+                <div className="flex items-center justify-center p-2.5 rounded-sm border border-hairline bg-surface/80">
+                  <ThemeToggle />
+                </div>
 
                 <a
                   href={profile.resumePath}
                   target="_blank"
                   rel="noopener noreferrer"
+                  download="Saurabh_Dixit_Resume.pdf"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 p-2.5 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors"
+                  className="flex items-center justify-center gap-2 p-2.5 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface/80 text-text hover:border-accent hover:text-accent transition-colors"
                 >
-                  <FileText className="w-3.5 h-3.5 text-accent" />
+                  <FileText className="w-4 h-4 text-accent" />
                   <span>RESUME PDF</span>
                 </a>
               </div>
 
-              {/* Footer Row: Live IST Clock & Lifecycle Telemetry */}
+              {/* Command Palette Mobile Action */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openCommandPalette();
+                }}
+                className="w-full flex items-center justify-center gap-2 p-3 font-mono text-xs uppercase tracking-wider border border-hairline rounded-sm bg-surface text-text hover:border-accent hover:text-accent transition-colors"
+              >
+                <Command className="w-4 h-4 text-accent" />
+                <span>OPEN COMMAND PALETTE (⌘K)</span>
+              </button>
+
+              {/* Footer Row: Live IST Clock */}
               <div className="flex items-center justify-between pt-2 text-xs font-mono text-muted">
+                <span>LOCAL TIME (INDIA):</span>
                 <ISTClock showSeconds showLabel />
-                <ScrollLifecycleBadge />
               </div>
             </div>
           </motion.div>

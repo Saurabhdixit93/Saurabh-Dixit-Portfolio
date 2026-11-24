@@ -16,7 +16,7 @@ export const PrincipleCard: React.FC<PrincipleCardProps> = ({
 }) => {
   return (
     <article
-      className={`group relative border border-hairline bg-surface/50 hover:bg-surface/80 hover:border-accent/50 transition-all duration-200 p-5 sm:p-6 corner-marks ${className}`}
+      className={`group relative border border-hairline bg-surface/90 backdrop-blur-md hover:bg-surface hover:border-accent/60 transition-all duration-200 p-6 sm:p-7 corner-marks shadow-sm ${className}`}
     >
       {/* Corner Registration Marks */}
       <span className="corner-mark corner-mark-tl" aria-hidden="true" />

@@ -3,7 +3,7 @@
 import React from "react";
 import { useReducedMotion } from "framer-motion";
 import { aiWorkflow } from "@/content/ai-workflow";
-import { CheckCircle2, User, Cpu, FileCode2 } from "lucide-react";
+import { User, Cpu, FileCode2 } from "lucide-react";
 
 export const AIPipelineDiagram: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
@@ -26,7 +26,7 @@ export const AIPipelineDiagram: React.FC = () => {
         </span>
       </div>
 
-      {/* SVG Circuit Connector for Desktop (md+) */}
+      {/* SVG Circuit Connector for Desktop (md+) with Continuous Traveling Electrons */}
       <div className="hidden md:block relative w-full px-6 py-2">
         <svg
           viewBox="0 0 1000 36"
@@ -35,6 +35,39 @@ export const AIPipelineDiagram: React.FC = () => {
           className="w-full h-8 overflow-visible"
           aria-hidden="true"
         >
+          <defs>
+            <filter
+              id="packet-glow-accent"
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feDropShadow
+                dx="0"
+                dy="0"
+                stdDeviation="3"
+                floodColor="#FF6A2B"
+                floodOpacity="0.8"
+              />
+            </filter>
+            <filter
+              id="packet-glow-cyan"
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feDropShadow
+                dx="0"
+                dy="0"
+                stdDeviation="3"
+                floodColor="#4DE1C1"
+                floodOpacity="0.8"
+              />
+            </filter>
+          </defs>
+
           {/* Base circuit rail */}
           <line
             x1="50"
@@ -47,26 +80,57 @@ export const AIPipelineDiagram: React.FC = () => {
             className="text-border-hairline"
           />
 
-          {/* Animated signal pulse if motion allowed */}
+          {/* Animated signal pulses across pipeline stages */}
           {!prefersReducedMotion && (
-            <circle
-              cx="50"
-              cy="18"
-              r="4"
-              className="fill-accent filter drop-shadow-[0_0_6px_var(--accent)]"
-            >
-              <animate
-                attributeName="cx"
-                values="50;950"
-                dur="4s"
-                repeatCount="indefinite"
-              />
-            </circle>
+            <>
+              {/* Pulse 1: Signal Orange */}
+              <circle
+                cx="50"
+                cy="18"
+                r="4"
+                fill="#FF6A2B"
+                filter="url(#packet-glow-accent)"
+              >
+                <animate
+                  attributeName="cx"
+                  values="50;950"
+                  dur="3.2s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+              {/* Pulse 2: High-contrast Cyan */}
+              <circle
+                cx="50"
+                cy="18"
+                r="3"
+                fill="#4DE1C1"
+                filter="url(#packet-glow-cyan)"
+              >
+                <animate
+                  attributeName="cx"
+                  values="50;950"
+                  dur="3.2s"
+                  begin="1.6s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+            </>
           )}
 
-          {/* 4 Stage Nodes on Circuit */}
+          {/* 4 Stage Nodes on Circuit with Pulsing Radar Rings */}
           {[125, 375, 625, 875].map((cx, idx) => (
             <g key={idx}>
+              {!prefersReducedMotion && (
+                <circle
+                  cx={cx}
+                  cy="18"
+                  r="12"
+                  fill="none"
+                  stroke="#FF6A2B"
+                  strokeWidth="1"
+                  className="animate-ping opacity-50"
+                />
+              )}
               <circle
                 cx={cx}
                 cy="18"
@@ -80,12 +144,12 @@ export const AIPipelineDiagram: React.FC = () => {
         </svg>
       </div>
 
-      {/* 4 Pipeline Stage Cards Grid */}
+      {/* 4 Pipeline Stage Cards Grid with High-Contrast Backdrop Blur */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stages.map((stage) => (
           <div
             key={stage.step}
-            className="relative p-4 rounded bg-surface/50 border border-hairline hover:border-accent/60 transition-colors flex flex-col justify-between space-y-3 group"
+            className="relative p-5 rounded-sm bg-surface/90 backdrop-blur-md border border-hairline hover:border-accent/70 transition-all flex flex-col justify-between space-y-3 group shadow-sm"
           >
             {/* Header / Step code */}
             <div>
@@ -110,14 +174,18 @@ export const AIPipelineDiagram: React.FC = () => {
               <div className="flex items-start gap-1.5 text-text">
                 <User className="w-3 h-3 text-accent shrink-0 mt-0.5" />
                 <span>
-                  <strong className="font-mono font-medium text-muted">Human:</strong>{" "}
+                  <strong className="font-mono font-medium text-muted">
+                    Human:
+                  </strong>{" "}
                   {stage.humanRole}
                 </span>
               </div>
               <div className="flex items-start gap-1.5 text-text">
                 <Cpu className="w-3 h-3 text-accent shrink-0 mt-0.5" />
                 <span>
-                  <strong className="font-mono font-medium text-muted">AI Role:</strong>{" "}
+                  <strong className="font-mono font-medium text-muted">
+                    AI Role:
+                  </strong>{" "}
                   {stage.aiRole}
                 </span>
               </div>
@@ -126,9 +194,7 @@ export const AIPipelineDiagram: React.FC = () => {
             {/* Deliverable Tag */}
             <div className="pt-2 border-t border-hairline/40 flex items-center gap-1.5 text-[10px] font-mono text-muted">
               <FileCode2 className="w-3 h-3 text-accent shrink-0" />
-              <span className="truncate">
-                {stage.deliverable}
-              </span>
+              <span className="truncate">{stage.deliverable}</span>
             </div>
           </div>
         ))}

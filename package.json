@@ -1,13 +1,13 @@
 {
   "name": "portfolio",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npx tsx __tests__/process_contact.test.ts && npx tsx __tests__/hero.test.ts && npx tsx __tests__/navigation.test.ts && npx tsx __tests__/content.test.ts && npx tsx __tests__/about_stack.test.ts && npx tsx __tests__/experience.test.ts && npx tsx __tests__/selected_work.test.ts && npx tsx __tests__/assistant.test.ts",
+    "test": "npx tsx __tests__/contact.test.ts && npx tsx __tests__/process_contact.test.ts && npx tsx __tests__/hero.test.ts && npx tsx __tests__/navigation.test.ts && npx tsx __tests__/content.test.ts && npx tsx __tests__/about_stack.test.ts && npx tsx __tests__/experience.test.ts && npx tsx __tests__/selected_work.test.ts && npx tsx __tests__/assistant.test.ts",
     "deploy": "vercel --prod"
   },
   "dependencies": {

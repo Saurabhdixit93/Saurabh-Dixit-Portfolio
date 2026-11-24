@@ -1,60 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { contactRateLimiter } from "@/lib/rateLimit";
+import { contactSchema } from "./schema";
 
-// Contact form input schema
-const contactSchema = z.object({
-  name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name cannot exceed 100 characters"),
-  email: z.string().trim().email("Please provide a valid email address"),
-  intent: z.enum([
-    "full-time",
-    "consulting",
-    "advisory",
-    "collaboration",
-    "general",
-  ]),
-  message: z.string().trim().min(10, "Message must be at least 10 characters").max(3000, "Message cannot exceed 3,000 characters"),
-  // Honeypot field - must be empty
-  website: z.string().max(0, "Bot detected").optional().or(z.literal("")),
-  // Timestamp to detect instant bot submission (<1.5 seconds)
-  loadedAt: z.number().optional(),
-});
-
-// In-memory sliding-window rate limiter (5 submissions per 15 minutes per IP)
-const ipContactAttempts = new Map<string, number[]>();
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const MAX_ATTEMPTS_PER_WINDOW = 5;
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const timestamps = ipContactAttempts.get(ip) || [];
-  const validTimestamps = timestamps.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
-
-  if (validTimestamps.length >= MAX_ATTEMPTS_PER_WINDOW) {
-    ipContactAttempts.set(ip, validTimestamps);
-    return true;
-  }
-
-  validTimestamps.push(now);
-  ipContactAttempts.set(ip, validTimestamps);
-  return false;
+/**
+ * Strips HTML tags and excessive whitespace to guard against stored XSS and log injection.
+ */
+function sanitizeInput(input: string): string {
+  if (!input) return "";
+  return input.replace(/<[^>]*>?/gm, "").trim();
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
 
-    // 1. Rate limiting check
-    if (isRateLimited(ip)) {
+    // 1. Sliding-window rate limit check (5 requests per 15 min per IP)
+    const rateLimit = contactRateLimiter.check(ip);
+    if (!rateLimit.allowed) {
       return NextResponse.json(
         {
           success: false,
-          error: "Rate limit reached. Please wait a few minutes before submitting again.",
+          error:
+            "Rate limit reached. Please wait a few minutes before submitting again.",
         },
-        { status: 429 }
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(rateLimit.retryAfter || 60),
+          },
+        }
       );
     }
 
-    // 2. Parse request body
+    // 2. Parse and validate request body
     const body = await req.json();
     const result = contactSchema.safeParse(body);
 
@@ -76,9 +55,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, intent, message, loadedAt } = result.data;
+    const { email, intent, website, loadedAt } = result.data;
+    const name = sanitizeInput(result.data.name);
+    const message = sanitizeInput(result.data.message);
 
-    // 3. Time-based bot defense (rejected if submitted in under 1200ms)
+    // 3. Honeypot check (defense in depth in addition to zod schema)
+    if (website && website.length > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Validation failed. Please verify the form inputs.",
+          fieldErrors: { website: "Bot detected" },
+        },
+        { status: 400 }
+      );
+    }
+
+    // 4. Time-based bot defense (rejected if submitted in under 1200ms)
     if (loadedAt && Date.now() - loadedAt < 1200) {
       return NextResponse.json(
         { success: false, error: "Submission too fast. Please retry." },
@@ -86,16 +79,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Log or dispatch email
-    console.log(`[CONTACT_SUBMISSION] From: ${name} <${email}> | Intent: ${intent} | Message len: ${message.length}`);
+    // 5. Log structured event for telemetry
+    console.log(
+      `[CONTACT_SUBMISSION] From: ${name} <${email}> | Intent: ${intent} | Message len: ${message.length}`
+    );
 
-    // Optional provider integration (Resend)
+    // 6. Optional email dispatch via Resend REST API
     const resendApiKey = process.env.RESEND_API_KEY;
-    const recipientEmail = process.env.CONTACT_TO_EMAIL || "smartds2550@gmail.com";
+    const recipientEmail =
+      process.env.CONTACT_TO_EMAIL ||
+      process.env.CONTACT_EMAIL ||
+      "smartds2550@gmail.com";
 
     if (resendApiKey) {
       try {
-        await fetch("https://api.resend.com/emails", {
+        const emailRes = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${resendApiKey}`,
@@ -109,6 +107,12 @@ export async function POST(req: NextRequest) {
             text: `Name: ${name}\nEmail: ${email}\nIntent: ${intent}\n\nMessage:\n${message}`,
           }),
         });
+
+        if (!emailRes.ok) {
+          console.error(
+            `[CONTACT_DISPATCH_WARNING] Resend returned status ${emailRes.status}`
+          );
+        }
       } catch (emailErr) {
         console.error("[CONTACT_DISPATCH_ERROR]", emailErr);
       }
@@ -116,17 +120,18 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Thank you for reaching out! I've received your message and will reply within 24 hours.",
+      message:
+        "Thank you for reaching out! I've received your message and will reply within 24 hours.",
     });
   } catch (err: unknown) {
     console.error("[CONTACT_API_ERROR]", err);
     return NextResponse.json(
       {
         success: false,
-        error: "An unexpected error occurred while processing your message. Please reach out via email directly.",
+        error:
+          "An unexpected error occurred while processing your message. Please reach out via email directly.",
       },
       { status: 500 }
     );
   }
 }
-

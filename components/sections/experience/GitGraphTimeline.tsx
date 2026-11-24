@@ -48,10 +48,10 @@ export const GitGraphTimeline: React.FC<GitGraphTimelineProps> = ({
     return () => window.removeEventListener("resize", updatePositions);
   }, [items]);
 
-  // Scroll-linked progress for SVG path drawing
+  // Scroll-linked progress for SVG path drawing & traveler rover traversal
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 80%", "end 60%"],
+    offset: ["start 80%", "end 30%"],
   });
 
   const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);

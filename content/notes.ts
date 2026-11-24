@@ -28,7 +28,7 @@ export const engineeringNotes: EngineeringNote[] = [
     tags: ['Offline AI', 'Vector Search', 'IndexedDB', 'TypeScript'],
     link: {
       url: 'https://github.com/saurabhdixit93',
-      label: 'Read note [TODO: owner link]',
+      label: 'Read note ↗',
       isExternal: true,
     },
   },
@@ -45,7 +45,7 @@ export const engineeringNotes: EngineeringNote[] = [
     tags: ['Distributed Systems', 'IoT', 'Redis Streams', 'Time-Series'],
     link: {
       url: 'https://github.com/saurabhdixit93',
-      label: 'Read note [TODO: owner link]',
+      label: 'Read note ↗',
       isExternal: true,
     },
   },
@@ -62,7 +62,7 @@ export const engineeringNotes: EngineeringNote[] = [
     tags: ['Design Systems', 'Zero-CLS', 'Next.js 15', 'Performance'],
     link: {
       url: 'https://github.com/saurabhdixit93',
-      label: 'Read note [TODO: owner link]',
+      label: 'Read note ↗',
       isExternal: true,
     },
   },

@@ -148,9 +148,9 @@ export function ScrollHUD({ className = "", showBadge = false }: ScrollHUDProps)
 
   return (
     <>
-      {/* 2px Fixed Top Progress Line (Visible on all devices) */}
+      {/* 2px Fixed Top Progress Line (Visible on all devices with dynamic color progress) */}
       <div
-        className={`fixed top-0 left-0 right-0 h-[2px] z-[60] bg-hairline/40 pointer-events-none ${className}`}
+        className={`fixed top-0 left-0 right-0 h-[2.5px] z-[60] bg-hairline/40 pointer-events-none ${className}`}
         role="progressbar"
         aria-valuenow={percentage}
         aria-valuemin={0}
@@ -158,7 +158,7 @@ export function ScrollHUD({ className = "", showBadge = false }: ScrollHUDProps)
         aria-label="Page scroll progress"
       >
         <div
-          className="h-full bg-accent transition-[width] duration-75 ease-out shadow-[0_0_8px_var(--accent)]"
+          className="h-full bg-gradient-to-r from-accent via-[#FF8A50] to-[#4DE1C1] transition-[width] duration-75 ease-out shadow-[0_0_10px_rgba(255,106,43,0.7)]"
           style={{ width: `${percentage}%` }}
         />
       </div>

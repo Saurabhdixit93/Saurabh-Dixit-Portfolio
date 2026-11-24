@@ -44,7 +44,7 @@ export const AIToolsGrid: React.FC = () => {
           return (
             <div
               key={tool.id}
-              className="p-4 rounded bg-surface/40 border border-hairline hover:border-hairline-hover transition-colors space-y-2.5 relative flex flex-col justify-between"
+              className="p-4 rounded-sm bg-surface/90 backdrop-blur-md border border-hairline hover:border-accent/60 transition-colors space-y-2.5 relative flex flex-col justify-between shadow-sm"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">

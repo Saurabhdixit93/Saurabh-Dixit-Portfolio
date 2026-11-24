@@ -2,7 +2,10 @@
 
 import * as React from "react";
 import Section from "@/components/primitives/Section";
-import { engineeringNotes as defaultNotes, notesContent } from "@/content/notes";
+import {
+  engineeringNotes as defaultNotes,
+  notesContent,
+} from "@/content/notes";
 import { isNotesEnabled } from "@/content/flags";
 import { EngineeringNote } from "@/content/types";
 
@@ -48,7 +51,7 @@ export const Notes: React.FC<NotesProps> = ({
             tabIndex={0}
             role="article"
             aria-label={`Engineering note: ${note.title}`}
-            className="group relative flex flex-col justify-between p-6 bg-surface/70 border border-hairline transition-all duration-200 hover:border-accent/50 hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="group relative flex flex-col justify-between p-6 bg-surface/90 backdrop-blur-md border border-hairline transition-all duration-200 hover:border-accent/60 hover:bg-surface focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent shadow-sm"
           >
             {/* Corner registration mark */}
             <div
@@ -62,7 +65,9 @@ export const Notes: React.FC<NotesProps> = ({
               {/* Category / Date & Reading Time Badge */}
               <div className="flex items-center justify-between border-b border-hairline/60 pb-3">
                 <span className="font-mono text-[11px] font-medium text-accent">
-                  {note.category || (note.tags && note.tags[0]) || "Architecture"}
+                  {note.category ||
+                    (note.tags && note.tags[0]) ||
+                    "Architecture"}
                 </span>
                 <span className="font-mono text-[11px] text-muted">
                   {note.readingTime}
@@ -100,7 +105,9 @@ export const Notes: React.FC<NotesProps> = ({
                   <a
                     href={note.link.url}
                     target={note.link.isExternal ? "_blank" : undefined}
-                    rel={note.link.isExternal ? "noopener noreferrer" : undefined}
+                    rel={
+                      note.link.isExternal ? "noopener noreferrer" : undefined
+                    }
                     className="font-mono text-[11px] text-accent hover:underline inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
                     aria-label={`${note.link.label} for ${note.title}`}
                   >

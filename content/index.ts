@@ -17,4 +17,5 @@ export * from './testimonials';
 export * from './assistant-knowledge';
 export * from './ai-workflow';
 export * from './notes';
+export * from './contact';
 export * from './flags';

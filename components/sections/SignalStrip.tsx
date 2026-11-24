@@ -1,4 +1,7 @@
+"use client";
+
 import * as React from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 export interface SignalItem {
   id: string;
@@ -7,16 +10,11 @@ export interface SignalItem {
   highlight?: boolean;
 }
 
-/**
- * Curated list of live verified signals:
- * Alternates proven production metrics from content/metrics.ts
- * with core technologies from content/stack.ts.
- */
 export const SIGNAL_ITEMS: SignalItem[] = [
   {
     id: "vp-eng",
     type: "metric",
-    text: "VP of Engineering @ Sensegrass",
+    text: "VP of Engineering · Sensegrass",
     highlight: true,
   },
   {
@@ -28,12 +26,12 @@ export const SIGNAL_ITEMS: SignalItem[] = [
   {
     id: "tech-next",
     type: "tech",
-    text: "Next.js & React",
+    text: "Next.js 15 & React 19",
   },
   {
     id: "ai-scale",
     type: "metric",
-    text: "3× AI Usage Scale",
+    text: "3× AI Workload Scale",
     highlight: true,
   },
   {
@@ -72,7 +70,7 @@ export const SIGNAL_ITEMS: SignalItem[] = [
   {
     id: "exp-yrs",
     type: "metric",
-    text: "3+ Yrs Production Experience",
+    text: "3+ Yrs Production Systems",
     highlight: true,
   },
   {
@@ -89,124 +87,107 @@ export interface SignalStripProps {
 
 /**
  * SignalStrip
- * Slow infinite marquee running directly below the Hero section:
- * - Edge-to-edge full bleed with hairline border and surface backdrop blur.
- * - Hardware-accelerated CSS keyframe transform loop.
- * - Pauses on hover and focus-within.
- * - Dual track with aria-hidden="true" on the clone.
- * - Converts to a clean static wrapping flex container under prefers-reduced-motion.
+ * High-tech infinite marquee telemetry strip running below the Hero section:
+ * - Powered by Framer Motion Web Animations API for 100% reliable 60fps continuous looping.
+ * - Precision pill-badge capsules with hairline borders and backdrop-blur.
+ * - Dual track with aria-hidden="true" on the clone for gapless seamless looping.
  */
 export const SignalStrip: React.FC<SignalStripProps> = ({
   className = "",
   items = SIGNAL_ITEMS,
 }) => {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <div
-      className={`signal-marquee-container relative w-full overflow-hidden border-b border-hairline bg-surface/60 backdrop-blur-sm py-3.5 select-none ${className}`}
+      className={`relative w-full overflow-hidden border-y border-hairline bg-surface/50 backdrop-blur-md py-3 select-none ${className}`}
       role="region"
       aria-label="Live signals, verified engineering metrics, and core technologies"
     >
-      <style>{`
-        @keyframes signalMarquee {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          100% {
-            transform: translate3d(-50%, 0, 0);
-          }
-        }
-        .signal-marquee-track {
-          animation: signalMarquee 38s linear infinite;
-        }
-        .signal-marquee-container:hover .signal-marquee-track,
-        .signal-marquee-container:focus-within .signal-marquee-track {
-          animation-play-state: paused;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .signal-marquee-track {
-            animation: none !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
-
-      {/* Left/Right Edge Fade Gradients */}
+      {/* Blueprint Left Edge Fade Gradient */}
       <div
-        className="pointer-events-none absolute left-0 top-0 bottom-0 w-10 sm:w-20 bg-gradient-to-r from-bg to-transparent z-10 motion-reduce:hidden"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 sm:w-20 bg-gradient-to-l from-bg to-transparent z-10 motion-reduce:hidden"
+        className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-bg via-bg/80 to-transparent z-10 motion-reduce:hidden"
         aria-hidden="true"
       />
 
-      {/* Marquee Track Container */}
-      <div className="signal-marquee-track flex w-max motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:gap-y-2 motion-reduce:px-4">
-        {/* Track 1: Primary (Announced to accessibility tree) */}
-        <div className="flex items-center shrink-0 space-x-6 sm:space-x-8 pr-6 sm:pr-8 motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:gap-x-4 motion-reduce:pr-0">
+      {/* Blueprint Right Edge Fade Gradient */}
+      <div
+        className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-bg via-bg/80 to-transparent z-10 motion-reduce:hidden"
+        aria-hidden="true"
+      />
+
+      {/* Marquee Track Container (Framer Motion Web Animations API loop) */}
+      <motion.div
+        className="flex w-max"
+        animate={shouldReduceMotion ? { x: 0 } : { x: ["0%", "-50%"] }}
+        transition={
+          shouldReduceMotion
+            ? {}
+            : {
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 28,
+                  ease: "linear",
+                },
+              }
+        }
+      >
+        {/* Track 1: Primary */}
+        <div className="flex items-center shrink-0 space-x-3 sm:space-x-4 pr-3 sm:pr-4">
           {items.map((item) => (
-            <React.Fragment key={`primary-${item.id}`}>
-              <div className="flex items-center space-x-2 font-mono text-xs sm:text-[13px] tracking-wide whitespace-nowrap">
-                {item.highlight && (
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 animate-pulse motion-reduce:animate-none"
-                    aria-hidden="true"
-                  />
-                )}
-                <span
-                  className={
-                    item.highlight
-                      ? "text-text font-medium"
-                      : "text-muted hover:text-text transition-colors"
-                  }
-                >
-                  {item.text}
+            <div
+              key={`primary-${item.id}`}
+              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-mono tracking-wide whitespace-nowrap transition-colors duration-150 ${
+                item.highlight
+                  ? "bg-surface/90 border-accent/40 text-text shadow-[0_0_12px_rgba(255,106,43,0.15)] hover:border-accent"
+                  : "bg-surface/70 border-hairline text-muted hover:text-text hover:border-hairline/80"
+              }`}
+            >
+              {item.highlight ? (
+                <span className="relative flex h-2 w-2 items-center justify-center shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75 motion-reduce:hidden" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent shadow-[0_0_6px_var(--accent)]" />
                 </span>
-              </div>
-              <span
-                className="text-muted/30 font-mono text-xs select-none motion-reduce:last:hidden"
-                aria-hidden="true"
-              >
-                //
+              ) : (
+                <span className="w-1.5 h-1.5 rounded-full bg-accent2/60 shrink-0" />
+              )}
+              <span className={item.highlight ? "font-semibold text-text" : "font-normal"}>
+                {item.text}
               </span>
-            </React.Fragment>
+            </div>
           ))}
         </div>
 
-        {/* Track 2: Clone for seamless looping (Hidden from screen readers and reduced-motion) */}
+        {/* Track 2: Clone for seamless infinite loop */}
         <div
-          className="flex items-center shrink-0 space-x-6 sm:space-x-8 pr-6 sm:pr-8 motion-reduce:hidden"
+          className="flex items-center shrink-0 space-x-3 sm:space-x-4 pr-3 sm:pr-4"
           aria-hidden="true"
         >
           {items.map((item) => (
-            <React.Fragment key={`clone-${item.id}`}>
-              <div className="flex items-center space-x-2 font-mono text-xs sm:text-[13px] tracking-wide whitespace-nowrap">
-                {item.highlight && (
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 animate-pulse motion-reduce:animate-none"
-                    aria-hidden="true"
-                  />
-                )}
-                <span
-                  className={
-                    item.highlight
-                      ? "text-text font-medium"
-                      : "text-muted hover:text-text transition-colors"
-                  }
-                >
-                  {item.text}
+            <div
+              key={`clone-${item.id}`}
+              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-mono tracking-wide whitespace-nowrap transition-colors duration-150 ${
+                item.highlight
+                  ? "bg-surface/90 border-accent/40 text-text shadow-[0_0_12px_rgba(255,106,43,0.15)] hover:border-accent"
+                  : "bg-surface/70 border-hairline text-muted hover:text-text hover:border-hairline/80"
+              }`}
+            >
+              {item.highlight ? (
+                <span className="relative flex h-2 w-2 items-center justify-center shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75 motion-reduce:hidden" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent shadow-[0_0_6px_var(--accent)]" />
                 </span>
-              </div>
-              <span
-                className="text-muted/30 font-mono text-xs select-none"
-                aria-hidden="true"
-              >
-                //
+              ) : (
+                <span className="w-1.5 h-1.5 rounded-full bg-accent2/60 shrink-0" />
+              )}
+              <span className={item.highlight ? "font-semibold text-text" : "font-normal"}>
+                {item.text}
               </span>
-            </React.Fragment>
+            </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

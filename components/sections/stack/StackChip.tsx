@@ -38,15 +38,15 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
       item.icon === "/cloud.svg" ||
       item.name === "Cloudinary";
 
-    // Compute state styling classes
+    // Compute state styling classes (consistent font-medium ensures zero width shifts)
     let stateStyles =
-      "bg-surface/80 text-text border-hairline hover:border-accent/60 hover:bg-surface";
+      "bg-surface/85 text-text border-hairline hover:border-accent/70 hover:bg-surface";
     if (isActive) {
       stateStyles =
-        "bg-accent text-accent-contrast border-accent ring-2 ring-accent/40 shadow-[0_0_16px_rgba(255,106,43,0.45)] scale-[1.03] z-20 font-semibold";
+        "bg-accent text-accent-contrast border-accent ring-2 ring-accent/40 shadow-[0_0_14px_rgba(255,106,43,0.4)] z-20";
     } else if (isRelated) {
       stateStyles =
-        "bg-accent/15 text-accent border-accent/80 ring-1 ring-accent/30 shadow-[0_0_10px_rgba(255,106,43,0.2)] z-10 font-semibold";
+        "bg-accent/15 text-accent border-accent/80 ring-1 ring-accent/30 shadow-[0_0_10px_rgba(255,106,43,0.2)] z-10";
     } else if (isDimmed) {
       stateStyles = "opacity-35 grayscale-[50%] border-hairline/40";
     }
@@ -65,12 +65,12 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
         onMouseLeave={onLeave}
         onFocus={onHover}
         onBlur={onLeave}
-        className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border font-mono text-xs transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-accent select-none ${stateStyles} ${className}`}
+        className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-sm border font-mono text-xs font-medium transition-colors duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-accent select-none ${stateStyles} ${className}`}
       >
         {/* Tech Icon or Monogram */}
         {item.icon ? (
           <span
-            className={`shrink-0 inline-flex items-center justify-center ${
+            className={`pointer-events-none shrink-0 inline-flex items-center justify-center ${
               isWhiteFilledIcon
                 ? "w-4 h-4 rounded-xs bg-[#0B0D10] p-0.5 border border-white/20"
                 : "w-4 h-4"
@@ -81,13 +81,13 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
               alt=""
               width={14}
               height={14}
-              className="w-3.5 h-3.5 object-contain"
+              className="w-3.5 h-3.5 object-contain pointer-events-none"
               unoptimized
             />
           </span>
         ) : (
           <span
-            className={`font-mono text-[10px] px-1 py-0.2 rounded-xs border ${
+            className={`pointer-events-none font-mono text-[10px] px-1 py-0.2 rounded-xs border ${
               isActive
                 ? "border-accent-contrast/30 text-accent-contrast"
                 : "border-hairline text-accent"
@@ -98,11 +98,11 @@ export const StackChip = React.forwardRef<HTMLButtonElement, StackChipProps>(
         )}
 
         {/* Technology Name */}
-        <span className="truncate">{item.name}</span>
+        <span className="pointer-events-none truncate">{item.name}</span>
 
         {/* Level Indicator Pill */}
         <span
-          className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+          className={`pointer-events-none w-1.5 h-1.5 rounded-full shrink-0 ${
             isActive
               ? "bg-accent-contrast shadow-[0_0_4px_rgba(0,0,0,0.5)]"
               : item.level === "core"

@@ -1,7 +1,7 @@
 import React from "react";
 import Tag from "@/components/primitives/Tag";
 import { GitExperienceItem } from "./experienceGitData";
-import { formatExperiencePeriod, getExperiencePeriodTodo } from "./dateUtils";
+import { formatExperiencePeriod } from "./dateUtils";
 import { HighlightMetrics } from "./highlightMetrics";
 
 export interface GitCommitCardProps {
@@ -16,11 +16,10 @@ export const GitCommitCard: React.FC<GitCommitCardProps> = ({
   className = "",
 }) => {
   const formattedDate = formatExperiencePeriod(item.period, isProduction);
-  const todoNote = getExperiencePeriodTodo(item.period);
 
   return (
     <article
-      className={`relative bg-surface/70 border border-hairline p-5 sm:p-6 transition-all duration-200 hover:border-accent/50 ${
+      className={`relative bg-surface/80 backdrop-blur-md border border-hairline p-5 sm:p-6 transition-all duration-200 hover:border-accent/60 ${
         item.git.isLive ? "border-l-2 border-l-emerald-400" : ""
       } ${className}`}
       aria-label={`${item.role} at ${item.company}`}
@@ -51,15 +50,6 @@ export const GitCommitCard: React.FC<GitCommitCardProps> = ({
           <span className="font-mono text-xs font-medium text-text bg-surface px-2 py-0.5 border border-hairline">
             {formattedDate}
           </span>
-
-          {!isProduction && todoNote && (
-            <span
-              className="font-mono text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/30 rounded-sm"
-              title={todoNote}
-            >
-              [TODO: unconfirmed month]
-            </span>
-          )}
         </div>
       </div>
 

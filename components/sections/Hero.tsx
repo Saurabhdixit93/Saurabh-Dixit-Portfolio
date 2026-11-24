@@ -49,10 +49,10 @@ export const Hero: React.FC<HeroProps> = ({ className = "" }) => {
           <span className="corner-mark corner-mark-bl" aria-hidden="true" />
           <span className="corner-mark corner-mark-br" aria-hidden="true" />
 
-          {/* Responsive Split Layout: 7 cols text / 5 cols diagram on desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Responsive Split Layout: 6 cols text / 6 cols diagram on desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             {/* Left Column: Eyebrow, Headline, Subcopy, CTAs, Desktop Metrics */}
-            <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+            <div className="lg:col-span-6 space-y-6 sm:space-y-8">
               <div className="space-y-4 sm:space-y-5">
                 {/* Eyebrow Annotation & Availability Tag */}
                 <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
@@ -120,7 +120,7 @@ export const Hero: React.FC<HeroProps> = ({ className = "" }) => {
             </div>
 
             {/* Right Column: 5-Node Animated SVG System Core Diagram */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="lg:col-span-6 flex justify-center lg:justify-end">
               <SystemCoreDiagram />
             </div>
 

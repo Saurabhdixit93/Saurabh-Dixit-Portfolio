@@ -60,7 +60,6 @@ export const caseStudies: CaseStudy[] = [
         'Inconsistent style, security, and best-practice enforcement across disparate codebases',
         'High token costs and hallucination risks when feeding entire raw diffs directly to unconstrained LLMs',
       ],
-      ownerTodo: 'confirm exact baseline review turnaround time or target team size',
     },
     constraints: {
       items: [
@@ -68,7 +67,6 @@ export const caseStudies: CaseStudy[] = [
         'Deterministic AST checks must execute prior to AI inference to eliminate false positives and reduce token expenditure',
         'Enterprise repositories demand strict RBAC and isolated audit logging for compliance',
       ],
-      ownerTodo: 'confirm SOC2 / enterprise compliance certification targets if applicable',
     },
     roleResponsibilities: {
       summary:
@@ -234,7 +232,6 @@ export const caseStudies: CaseStudy[] = [
         'Zero webhook dropped requests under burst pull request traffic via BullMQ throttling',
         'Granular audit trail stored in MongoDB for team-wide compliance reporting',
       ],
-      ownerTodo: 'add benchmark metrics (e.g. analysis time per PR or token cost)',
     },
     stack: [
       'Next.js',
@@ -297,7 +294,6 @@ export const caseStudies: CaseStudy[] = [
         'Lack of episodic memory causing patients to repeat medical histories in every consultation',
         'Severe safety risks if an ungrounded LLM outputs speculative medical diagnoses',
       ],
-      ownerTodo: 'confirm specific clinical domain or pilot user group',
     },
     constraints: {
       items: [
@@ -305,7 +301,6 @@ export const caseStudies: CaseStudy[] = [
         'Sub-second initial token streaming response to emulate natural human chat cadence',
         'Strict patient privacy and HIPAA-aligned data isolation',
       ],
-      ownerTodo: 'confirm active user count or conversation volume',
     },
     roleResponsibilities: {
       summary:
@@ -478,7 +473,6 @@ export const caseStudies: CaseStudy[] = [
         'Reliable episodic recall of past symptoms, allergies, and lifestyle habits across sessions',
         'Strict medical emergency interception verified against clinical triage test suites',
       ],
-      ownerTodo: 'confirm active user count or conversation volume',
     },
     stack: [
       'Next.js',
@@ -541,7 +535,6 @@ export const caseStudies: CaseStudy[] = [
         'Generic third-party job boards hurt employer brand perception and talent conversion',
         'High latency and synchronization bugs when updating job listings across multi-tenant databases',
       ],
-      ownerTodo: 'confirm average setup time before builder',
     },
     constraints: {
       items: [
@@ -549,7 +542,6 @@ export const caseStudies: CaseStudy[] = [
         'Subdomain routing must resolve dynamically without requiring edge redeployment',
         'Live theme customizer must update in real time without UI lag',
       ],
-      ownerTodo: 'confirm number of generated portals or recruiter time savings',
     },
     roleResponsibilities: {
       summary:
@@ -699,7 +691,6 @@ export const caseStudies: CaseStudy[] = [
         'Zero reported cross-tenant data isolation vulnerabilities via PostgreSQL RLS',
         'Instant edge caching delivering sub-200ms page loads for candidate visitors worldwide',
       ],
-      ownerTodo: 'confirm number of generated portals or recruiter time savings',
     },
     stack: [
       'Next.js',
@@ -727,7 +718,7 @@ export const caseStudies: CaseStudy[] = [
     timeline: '2025 · Active System',
     clientOrContext: 'Personal Engineering Identity',
     featured: true,
-    coverImage: '/Project6.svg',
+    coverImage: '/portfolio-blueprint.svg',
     links: {
       live: 'https://www.saurabhdixit93.site',
       repo: 'https://github.com/saurabhdixit93/portfolio',
@@ -756,7 +747,6 @@ export const caseStudies: CaseStudy[] = [
         'Heavy client-side animation libraries inflating bundle sizes and harming mobile battery life',
         'Lack of cohesive systems aesthetic that reflects full-stack and systems engineering mindset',
       ],
-      ownerTodo: 'confirm previous site performance score baseline',
     },
     constraints: {
       items: [
@@ -764,7 +754,6 @@ export const caseStudies: CaseStudy[] = [
         'Flicker-free dual-theme switching (Graphite dark default and Paper light mode)',
         'Pure SVG architecture diagrams with zero Three.js / heavy canvas dependencies',
       ],
-      ownerTodo: 'confirm exact bundle size reduction metric',
     },
     roleResponsibilities: {
       summary:
@@ -908,7 +897,6 @@ export const caseStudies: CaseStudy[] = [
         'Perfect 100% test coverage across content schemas, navigation, and architecture graphs',
         'Full keyboard navigation with accessible Command Palette (⌘K)',
       ],
-      ownerTodo: 'confirm previous site performance score baseline',
     },
     stack: [
       'Next.js',
@@ -962,14 +950,12 @@ export const caseStudies: CaseStudy[] = [
         'Complex WebSocket server maintenance for small real-time applications',
         'Lack of context-aware auto-replies or canned suggestion integration',
       ],
-      ownerTodo: 'confirm specific problem context or original scope',
     },
     constraints: {
       items: [
         'Sub-second message delivery across multiple open tabs and mobile devices',
         'Responsive layout scaling from 320px mobile to wide desktop monitors',
       ],
-      ownerTodo: 'confirm user or test metrics',
     },
     roleResponsibilities: {
       summary:
@@ -1053,7 +1039,6 @@ export const caseStudies: CaseStudy[] = [
         'Instantaneous message fanout across all active connected chat clients',
         'Smooth mobile-first responsive layout with dark mode support',
       ],
-      ownerTodo: 'confirm active user count or message volume',
     },
     stack: ['React', 'Firebase', 'Tailwind CSS', 'JavaScript'],
   },
@@ -1100,14 +1085,12 @@ export const caseStudies: CaseStudy[] = [
         'Disk exhaustion when simultaneous users trigger video transcoding jobs',
         'Slow download start times caused by waiting for full file downloads before streaming to client',
       ],
-      ownerTodo: 'confirm target formats and throughput',
     },
     constraints: {
       items: [
         'Zero intermediate disk storage to prevent container storage exhaustion',
         'Streaming pipeline backpressure handling to match client network bandwidth',
       ],
-      ownerTodo: 'confirm request throughput or user count',
     },
     roleResponsibilities: {
       summary:
@@ -1190,7 +1173,6 @@ export const caseStudies: CaseStudy[] = [
         'Zero disk write overhead enabling deployment on memory-constrained containers',
         'Immediate download commencement without pre-buffering delays',
       ],
-      ownerTodo: 'confirm request throughput or user count',
     },
     stack: ['Node.js', 'Express', 'HTML5', 'CSS3', 'JavaScript'],
   },

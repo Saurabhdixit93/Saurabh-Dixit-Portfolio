@@ -33,7 +33,7 @@ export const AIWorkflow: React.FC<AIWorkflowProps> = ({
 
       <div className="space-y-12 md:space-y-16">
         {/* Philosophy & Guardrails Narrative Block */}
-        <div className="p-6 md:p-8 rounded bg-surface/40 border border-hairline space-y-4">
+        <div className="p-6 md:p-8 rounded bg-surface/90 backdrop-blur-md border border-hairline space-y-4 shadow-sm">
           <div className="flex items-center gap-2">
             <Compass className="w-4 h-4 text-accent" />
             <h3 className="font-mono text-sm font-semibold tracking-wide text-text uppercase">

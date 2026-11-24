@@ -26,7 +26,7 @@ export const CapabilityCard: React.FC<CapabilityCardProps> = ({
 
   return (
     <article
-      className={`group relative border border-hairline bg-surface/60 hover:bg-surface/90 hover:border-accent/60 transition-colors duration-200 p-5 sm:p-7 corner-marks rounded-none flex flex-col justify-between ${className}`}
+      className={`group relative border border-hairline bg-surface/90 backdrop-blur-md hover:bg-surface hover:border-accent/60 transition-colors duration-200 p-6 sm:p-7 corner-marks rounded-none flex flex-col justify-between shadow-sm ${className}`}
     >
       {/* Blueprint Corner Registration Marks */}
       <span className="corner-mark corner-mark-tl" aria-hidden="true" />
@@ -48,7 +48,8 @@ export const CapabilityCard: React.FC<CapabilityCardProps> = ({
 
           <div className="flex items-center gap-2">
             <span className="font-mono text-[10px] text-muted hidden sm:inline-block">
-              {capability.skills.length} COMPETENCIES · {capability.tools.length} TOOLS
+              {capability.skills.length} COMPETENCIES ·{" "}
+              {capability.tools.length} TOOLS
             </span>
 
             {/* Mobile Accordion Toggle Button (>= 48px tap target) */}

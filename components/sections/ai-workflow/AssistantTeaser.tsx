@@ -10,7 +10,7 @@ export const AssistantTeaser: React.FC = () => {
   const teaser = aiWorkflow.assistantTeaser;
 
   return (
-    <div className="relative p-6 sm:p-8 rounded bg-surface/70 border border-hairline hover:border-accent/50 transition-colors shadow-lg overflow-hidden">
+    <div className="relative p-6 sm:p-8 rounded-sm bg-surface/90 backdrop-blur-md border border-hairline hover:border-accent/50 transition-colors shadow-lg overflow-hidden">
       {/* Background Blueprint Grid Accents */}
       <div className="absolute top-0 right-0 p-3 opacity-10 pointer-events-none">
         <Terminal className="w-32 h-32 text-accent" />

@@ -3,8 +3,10 @@
 import * as React from "react";
 import Section from "@/components/primitives/Section";
 import Button from "@/components/primitives/Button";
-import { profile } from "@/content/profile";
 import { ISTClock } from "@/components/navigation/ISTClock";
+import { profile } from "@/content/profile";
+import { contactContent } from "@/content/contact";
+import { isWhatsAppEnabled } from "@/content/flags";
 
 export interface ContactProps {
   id?: string;
@@ -18,31 +20,39 @@ export const Contact: React.FC<ContactProps> = ({
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
-    intent: "consulting",
+    intent: "full-time",
     message: "",
     website: "", // honeypot
   });
 
-  const [loadedAt] = React.useState<number>(() => Date.now());
-  const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [loadedAt, setLoadedAt] = React.useState<number>(0);
+  const [status, setStatus] = React.useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = React.useState("");
   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
   const [copiedEmail, setCopiedEmail] = React.useState(false);
+
+  React.useEffect(() => {
+    setLoadedAt(Date.now());
+  }, []);
 
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(profile.email);
       setCopiedEmail(true);
-      setTimeout(() => setCopiedEmail(false), 2500);
-    } catch {
-      // Fallback
+      setTimeout(() => {
+        setCopiedEmail(false);
+      }, 2500);
+    } catch (err) {
+      console.error("Failed to copy email", err);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    setErrorMessage(null);
+    setErrorMessage("");
     setFieldErrors({});
 
     try {
@@ -59,10 +69,12 @@ export const Contact: React.FC<ContactProps> = ({
 
       if (!res.ok) {
         setStatus("error");
-        setErrorMessage(data.error || "Failed to submit message.");
         if (data.fieldErrors) {
           setFieldErrors(data.fieldErrors);
         }
+        setErrorMessage(
+          data.error || "Validation failed. Please verify the form inputs."
+        );
         return;
       }
 
@@ -70,27 +82,38 @@ export const Contact: React.FC<ContactProps> = ({
       setFormData({
         name: "",
         email: "",
-        intent: "consulting",
+        intent: "full-time",
         message: "",
         website: "",
       });
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setErrorMessage("Network error occurred. Please contact via direct email.");
+      setErrorMessage(
+        "Network connection error. Please try again or reach out via direct email."
+      );
     }
   };
+
+  const githubUrl =
+    profile.socials.find((s) => s.platform === "github")?.url ||
+    "https://github.com/saurabhdixit93";
+  const linkedinUrl =
+    profile.socials.find((s) => s.platform === "linkedin")?.url ||
+    "https://www.linkedin.com/in/saurabhdixit93";
+  const whatsappUrl = profile.socials.find((s) => s.platform === "whatsapp")?.url;
+  const whatsappActive = isWhatsAppEnabled();
 
   return (
     <Section
       id={id}
-      annotation="// 10 · CONTACT & INITIATION"
+      annotation={contactContent.annotation}
       heading={
         <>
-          Let&apos;s build something{" "}
-          <span className="italic text-accent">resilient</span> together.
+          Initiate Contact &amp;{" "}
+          <span className="italic text-accent">Transmit Inquiries</span>
         </>
       }
-      subheading="Available for VP of Engineering roles, high-scale AI consulting, and technical advisory."
+      subheading={contactContent.subheading}
       withGrid
       withHairline
       withCornerMarks
@@ -98,13 +121,13 @@ export const Contact: React.FC<ContactProps> = ({
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pt-4">
         {/* Left Column: Contact Form */}
-        <div className="lg:col-span-7 bg-surface/80 border border-hairline p-6 md:p-8 relative">
+        <div className="lg:col-span-7 bg-surface/90 backdrop-blur-md border border-hairline p-6 sm:p-8 md:p-10 relative shadow-sm">
           <div className="flex items-center justify-between border-b border-hairline/60 pb-3 mb-6">
             <span className="font-mono text-xs uppercase tracking-wider text-muted">
-              // DISPATCH MESSAGE
+              {contactContent.form.dispatchHeader}
             </span>
-            <span className="font-mono text-[10px] text-accent">
-              TYPICAL REPLY &lt; 24H
+            <span className="font-mono text-[10px] text-accent font-semibold tracking-wider">
+              {contactContent.responsePromise}
             </span>
           </div>
 
@@ -114,10 +137,10 @@ export const Contact: React.FC<ContactProps> = ({
               className="p-6 bg-accent/10 border border-accent/40 rounded-sm text-center space-y-3"
             >
               <div className="font-mono text-xs text-accent font-semibold tracking-wider">
-                ✓ MESSAGE TRANSMITTED SUCCESSFULLY
+                {contactContent.form.successTitle}
               </div>
-              <p className="text-sm text-text/90">
-                Thank you for getting in touch. I review incoming engineering inquiries daily and will respond to your email within 24 hours.
+              <p className="text-sm text-text/90 leading-relaxed">
+                {contactContent.form.successMessage}
               </p>
               <Button
                 variant="outline"
@@ -125,7 +148,7 @@ export const Contact: React.FC<ContactProps> = ({
                 onClick={() => setStatus("idle")}
                 className="mt-4"
               >
-                Send another message
+                {contactContent.form.resetButtonText}
               </Button>
             </div>
           ) : (
@@ -135,7 +158,9 @@ export const Contact: React.FC<ContactProps> = ({
                 type="text"
                 name="website"
                 value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, website: e.target.value })
+                }
                 tabIndex={-1}
                 autoComplete="off"
                 className="hidden"
@@ -156,42 +181,70 @@ export const Contact: React.FC<ContactProps> = ({
                 <div>
                   <label
                     htmlFor="contact-name"
-                    className="block font-mono text-xs text-muted mb-1"
+                    className="block font-mono text-xs text-muted mb-1 uppercase tracking-wider"
                   >
-                    Your Name *
+                    {contactContent.form.name.label}
                   </label>
                   <input
                     id="contact-name"
+                    name="name"
                     type="text"
                     required
-                    placeholder="e.g. Alex Mercer"
+                    disabled={status === "submitting"}
+                    placeholder={contactContent.form.name.placeholder}
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 bg-bg/80 border border-hairline rounded-sm font-sans text-sm text-text placeholder:text-muted/50 focus:outline-none focus:border-accent"
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby={
+                      fieldErrors.name ? "contact-name-error" : undefined
+                    }
+                    className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50"
                   />
                   {fieldErrors.name && (
-                    <p className="font-mono text-[10px] text-red-400 mt-1">{fieldErrors.name}</p>
+                    <p
+                      id="contact-name-error"
+                      role="alert"
+                      className="font-mono text-[10px] text-red-400 mt-1"
+                    >
+                      {fieldErrors.name}
+                    </p>
                   )}
                 </div>
 
                 <div>
                   <label
                     htmlFor="contact-email"
-                    className="block font-mono text-xs text-muted mb-1"
+                    className="block font-mono text-xs text-muted mb-1 uppercase tracking-wider"
                   >
-                    Your Email *
+                    {contactContent.form.email.label}
                   </label>
                   <input
                     id="contact-email"
+                    name="email"
                     type="email"
                     required
-                    placeholder="alex@company.com"
+                    disabled={status === "submitting"}
+                    placeholder={contactContent.form.email.placeholder}
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 bg-bg/80 border border-hairline rounded-sm font-sans text-sm text-text placeholder:text-muted/50 focus:outline-none focus:border-accent"
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    aria-invalid={Boolean(fieldErrors.email)}
+                    aria-describedby={
+                      fieldErrors.email ? "contact-email-error" : undefined
+                    }
+                    className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50"
                   />
                   {fieldErrors.email && (
-                    <p className="font-mono text-[10px] text-red-400 mt-1">{fieldErrors.email}</p>
+                    <p
+                      id="contact-email-error"
+                      role="alert"
+                      className="font-mono text-[10px] text-red-400 mt-1"
+                    >
+                      {fieldErrors.email}
+                    </p>
                   )}
                 </div>
               </div>
@@ -200,50 +253,81 @@ export const Contact: React.FC<ContactProps> = ({
               <div>
                 <label
                   htmlFor="contact-intent"
-                  className="block font-mono text-xs text-muted mb-1"
+                  className="block font-mono text-xs text-muted mb-1 uppercase tracking-wider"
                 >
-                  Discussion Intent *
+                  {contactContent.form.intent.label}
                 </label>
                 <select
                   id="contact-intent"
+                  name="intent"
+                  disabled={status === "submitting"}
                   value={formData.intent}
-                  onChange={(e) => setFormData({ ...formData, intent: e.target.value })}
-                  className="w-full px-3 py-2 bg-bg/80 border border-hairline rounded-sm font-sans text-sm text-text focus:outline-none focus:border-accent"
+                  onChange={(e) =>
+                    setFormData({ ...formData, intent: e.target.value })
+                  }
+                  aria-invalid={Boolean(fieldErrors.intent)}
+                  aria-describedby={
+                    fieldErrors.intent ? "contact-intent-error" : undefined
+                  }
+                  className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50"
                 >
-                  <option value="full-time">Full-Time Leadership / VP Role</option>
-                  <option value="consulting">AI & Distributed Systems Consulting</option>
-                  <option value="advisory">Technical Advisory & Code Review</option>
-                  <option value="collaboration">Open Source & Collaboration</option>
-                  <option value="general">General Engineering Inquiry</option>
+                  {contactContent.intents.map((item) => (
+                    <option key={item.value} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
                 </select>
+                {fieldErrors.intent && (
+                  <p
+                    id="contact-intent-error"
+                    role="alert"
+                    className="font-mono text-[10px] text-red-400 mt-1"
+                  >
+                    {fieldErrors.intent}
+                  </p>
+                )}
               </div>
 
               {/* Message Area */}
               <div>
                 <label
                   htmlFor="contact-message"
-                  className="block font-mono text-xs text-muted mb-1"
+                  className="block font-mono text-xs text-muted mb-1 uppercase tracking-wider"
                 >
-                  Message *
+                  {contactContent.form.message.label}
                 </label>
                 <textarea
                   id="contact-message"
+                  name="message"
                   required
                   rows={5}
-                  placeholder="Tell me about the system, scale requirements, or project scope..."
+                  disabled={status === "submitting"}
+                  placeholder={contactContent.form.message.placeholder}
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-3 py-2 bg-bg/80 border border-hairline rounded-sm font-sans text-sm text-text placeholder:text-muted/50 focus:outline-none focus:border-accent resize-y"
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
+                  aria-invalid={Boolean(fieldErrors.message)}
+                  aria-describedby={
+                    fieldErrors.message ? "contact-message-error" : undefined
+                  }
+                  className="w-full px-3 py-2 bg-surface border border-hairline focus:border-accent text-text placeholder:text-muted/60 rounded-sm font-sans text-sm focus:outline-none focus:ring-1 focus:ring-accent/50 transition-colors resize-y disabled:opacity-50"
                 />
                 {fieldErrors.message && (
-                  <p className="font-mono text-[10px] text-red-400 mt-1">{fieldErrors.message}</p>
+                  <p
+                    id="contact-message-error"
+                    role="alert"
+                    className="font-mono text-[10px] text-red-400 mt-1"
+                  >
+                    {fieldErrors.message}
+                  </p>
                 )}
               </div>
 
               {/* Submit CTA */}
               <div className="pt-2 flex items-center justify-between">
                 <span className="font-mono text-[11px] text-muted">
-                  * All communications treated under NDA
+                  {contactContent.form.disclaimer}
                 </span>
 
                 <Button
@@ -251,7 +335,9 @@ export const Contact: React.FC<ContactProps> = ({
                   variant="primary"
                   disabled={status === "submitting"}
                 >
-                  {status === "submitting" ? "Transmitting..." : "Send Message →"}
+                  {status === "submitting"
+                    ? contactContent.form.submittingButtonText
+                    : contactContent.form.submitButtonText}
                 </Button>
               </div>
             </form>
@@ -261,9 +347,9 @@ export const Contact: React.FC<ContactProps> = ({
         {/* Right Column: Direct Channels & Telemetry */}
         <div className="lg:col-span-5 space-y-6">
           {/* Direct Email Card */}
-          <div className="p-6 bg-surface/70 border border-hairline relative">
+          <div className="p-6 bg-surface/90 backdrop-blur-md border border-hairline relative shadow-sm">
             <span className="font-mono text-[10px] uppercase text-muted tracking-wider block mb-2">
-              // DIRECT INBOX
+              {contactContent.directChannels.inboxHeader}
             </span>
             <p className="font-mono text-sm text-text select-all font-medium mb-3">
               {profile.email}
@@ -274,18 +360,22 @@ export const Contact: React.FC<ContactProps> = ({
               onClick={handleCopyEmail}
               className="w-full font-mono text-xs"
             >
-              {copiedEmail ? "✓ Copied to clipboard" : "Copy email address"}
+              {copiedEmail
+                ? contactContent.directChannels.copiedButtonText
+                : contactContent.directChannels.copyButtonText}
             </Button>
           </div>
 
           {/* Availability & Local Time Card */}
           <div className="p-6 bg-surface/70 border border-hairline space-y-4">
             <span className="font-mono text-[10px] uppercase text-muted tracking-wider block">
-              // OPERATIONAL TELEMETRY
+              {contactContent.telemetry.header}
             </span>
 
             <div className="flex items-center justify-between border-b border-hairline/60 pb-3">
-              <span className="text-xs text-muted">Current Status:</span>
+              <span className="text-xs text-muted">
+                {contactContent.telemetry.statusLabel}
+              </span>
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -298,12 +388,18 @@ export const Contact: React.FC<ContactProps> = ({
             </div>
 
             <div className="flex items-center justify-between border-b border-hairline/60 pb-3">
-              <span className="text-xs text-muted">Base Location:</span>
-              <span className="font-mono text-xs text-text">{profile.location}</span>
+              <span className="text-xs text-muted">
+                {contactContent.telemetry.locationLabel}
+              </span>
+              <span className="font-mono text-xs text-text">
+                {profile.location}
+              </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted">Local Time (IST):</span>
+              <span className="text-xs text-muted">
+                {contactContent.telemetry.timeLabel}
+              </span>
               <ISTClock className="font-mono text-xs text-accent" />
             </div>
           </div>
@@ -311,12 +407,12 @@ export const Contact: React.FC<ContactProps> = ({
           {/* Social Profiles & Resume */}
           <div className="p-6 bg-surface/70 border border-hairline space-y-3">
             <span className="font-mono text-[10px] uppercase text-muted tracking-wider block mb-2">
-              // VERIFIED EXTERNAL PROFILES
+              {contactContent.resume.header}
             </span>
 
             <div className="grid grid-cols-2 gap-3">
               <a
-                href="https://github.com/saurabhdixit93"
+                href={githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-bg/70 border border-hairline hover:border-accent/60 transition-colors rounded-sm flex items-center justify-between font-mono text-xs text-text"
@@ -326,7 +422,7 @@ export const Contact: React.FC<ContactProps> = ({
               </a>
 
               <a
-                href="https://www.linkedin.com/in/saurabh-dixit-47a82b1b3/"
+                href={linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-bg/70 border border-hairline hover:border-accent/60 transition-colors rounded-sm flex items-center justify-between font-mono text-xs text-text"
@@ -334,14 +430,28 @@ export const Contact: React.FC<ContactProps> = ({
                 <span>LinkedIn</span>
                 <span className="text-accent">↗</span>
               </a>
+
+              {whatsappActive && (
+                <a
+                  href={whatsappUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-track="whatsapp_click"
+                  className="col-span-2 p-3 bg-bg/70 border border-hairline hover:border-accent/60 transition-colors rounded-sm flex items-center justify-between font-mono text-xs text-text"
+                >
+                  <span>WhatsApp</span>
+                  <span className="text-accent">↗</span>
+                </a>
+              )}
             </div>
 
             <a
-              href="/resume.pdf"
-              download
+              href={profile.resumePath || contactContent.resume.downloadPath}
+              download={contactContent.resume.fileName}
+              data-track="resume_download"
               className="mt-2 block p-3 bg-bg/70 border border-hairline hover:border-accent/60 transition-colors rounded-sm text-center font-mono text-xs text-text"
             >
-              Download Verified Resume (PDF) ↓
+              {contactContent.resume.buttonText}
             </a>
           </div>
         </div>
@@ -351,4 +461,3 @@ export const Contact: React.FC<ContactProps> = ({
 };
 
 export default Contact;
-

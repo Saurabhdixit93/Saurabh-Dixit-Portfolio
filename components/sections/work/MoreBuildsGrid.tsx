@@ -41,7 +41,7 @@ export function MoreBuildsGrid({ projects, className = "" }: MoreBuildsGridProps
           return (
             <article
               key={proj.slug}
-              className="relative rounded-xl border border-hairline bg-surface/80 p-6 flex flex-col justify-between hover:border-accent/50 hover:bg-surface transition-all duration-300 group shadow-sm"
+              className="relative rounded-xl border border-hairline bg-surface/90 backdrop-blur-md p-6 sm:p-7 flex flex-col justify-between hover:border-accent/60 hover:bg-surface transition-all duration-300 group shadow-sm"
               aria-labelledby={`build-${proj.slug}-title`}
             >
               {/* Corner marks */}

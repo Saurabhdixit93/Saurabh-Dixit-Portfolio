@@ -22,6 +22,7 @@ export const StackMap: React.FC<StackMapProps> = ({
   // Active inspected technology (hovered or pinned)
   const [activeTech, setActiveTech] = React.useState<string | null>(null);
   const [isPinned, setIsPinned] = React.useState(false);
+  const leaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Registered chip DOM nodes for dynamic SVG lines calculation
   const chipElementsRef = React.useRef<Map<string, HTMLButtonElement>>(new Map());
@@ -43,8 +44,19 @@ export const StackMap: React.FC<StackMapProps> = ({
     return getRelatedTechnologies(activeTech);
   }, [activeTech]);
 
+  // Clean up any pending timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current);
+    };
+  }, []);
+
   // Interaction handlers
   const handleSelectTech = (name: string) => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current);
+      leaveTimerRef.current = null;
+    }
     if (activeTech === name && isPinned) {
       // Toggle off if clicking the already pinned tech
       setActiveTech(null);
@@ -56,6 +68,10 @@ export const StackMap: React.FC<StackMapProps> = ({
   };
 
   const handleHoverTech = (name: string) => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current);
+      leaveTimerRef.current = null;
+    }
     if (!isPinned) {
       setActiveTech(name);
     }
@@ -63,11 +79,20 @@ export const StackMap: React.FC<StackMapProps> = ({
 
   const handleLeaveTech = () => {
     if (!isPinned) {
-      setActiveTech(null);
+      if (leaveTimerRef.current) {
+        clearTimeout(leaveTimerRef.current);
+      }
+      leaveTimerRef.current = setTimeout(() => {
+        setActiveTech(null);
+      }, 60);
     }
   };
 
   const handleClear = () => {
+    if (leaveTimerRef.current) {
+      clearTimeout(leaveTimerRef.current);
+      leaveTimerRef.current = null;
+    }
     setActiveTech(null);
     setIsPinned(false);
   };

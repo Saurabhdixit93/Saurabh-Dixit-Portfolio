@@ -364,4 +364,67 @@ export interface AIWorkflowContent {
   };
 }
 
+// ==========================================
+// Contact & Footer Contracts (Milestone 11)
+// ==========================================
+export interface ContactIntentOption {
+  value: string;
+  label: string;
+  description?: string;
+}
+
+export interface ContactFormFieldCopy {
+  label: string;
+  placeholder?: string;
+}
+
+export interface ContactContent {
+  annotation: string;
+  heading: string;
+  subheading: string;
+  responsePromise: string;
+  form: {
+    dispatchHeader: string;
+    name: ContactFormFieldCopy;
+    email: ContactFormFieldCopy;
+    intent: ContactFormFieldCopy;
+    message: ContactFormFieldCopy;
+    disclaimer: string;
+    submitButtonText: string;
+    submittingButtonText: string;
+    successTitle: string;
+    successMessage: string;
+    resetButtonText: string;
+  };
+  intents: ContactIntentOption[];
+  directChannels: {
+    inboxHeader: string;
+    copyButtonText: string;
+    copiedButtonText: string;
+  };
+  telemetry: {
+    header: string;
+    statusLabel: string;
+    locationLabel: string;
+    timeLabel: string;
+  };
+  resume: {
+    header: string;
+    buttonText: string;
+    downloadPath: string;
+    fileName: string;
+  };
+  footer: {
+    brandTag: string;
+    brandTitle: string;
+    summary: string;
+    sitemapHeader: string;
+    externalHeader: string;
+    backToTopText: string;
+    copyrightPrefix: string;
+    tagline: string;
+    navLinks: { label: string; href: string }[];
+  };
+}
+
 

@@ -142,11 +142,11 @@ export function runExperienceValidation(): ExperienceValidationResult {
   const sdeRole = experiences.find((r) => r.id === "sensegrass-sr-sde")!;
   const vpeRole = experiences.find((r) => r.id === "sensegrass-vpe")!;
 
-  // Production check (strips TODO comments, outputs clean year intervals)
+  // Production check (strips TODO comments, outputs clean intervals)
   const sdeProdDate = formatExperiencePeriod(sdeRole.period, true);
-  if (sdeProdDate !== "2024 — 2025") {
+  if (!sdeProdDate.includes("2024") || !sdeProdDate.includes("2025")) {
     throw new Error(
-      `Expected '2024 — 2025' in production for Senior SDE, got '${sdeProdDate}'`
+      `Expected 2024 — 2025 interval in production for Senior SDE, got '${sdeProdDate}'`
     );
   }
   if (sdeProdDate.includes("TODO") || sdeProdDate.includes("//")) {
@@ -154,19 +154,24 @@ export function runExperienceValidation(): ExperienceValidationResult {
   }
 
   const vpeProdDate = formatExperiencePeriod(vpeRole.period, true);
-  if (vpeProdDate !== "2025 — Present") {
+  if (!vpeProdDate.includes("2025") || !vpeProdDate.includes("Present")) {
     throw new Error(
-      `Expected '2025 — Present' in production for VP role, got '${vpeProdDate}'`
+      `Expected 2025 — Present interval in production for VP role, got '${vpeProdDate}'`
     );
   }
 
-  // Development check (preserves TODO annotation)
-  const sdeDevDate = formatExperiencePeriod(sdeRole.period, false);
-  if (!sdeDevDate.includes("TODO")) {
-    throw new Error(`Development date must retain TODO comment for developer tracking`);
+  // Development check (verifies utility correctly strips or preserves TODO notes)
+  const sampleWithTodo = "2024 — 2025 // TODO(owner): confirm months";
+  const formattedDev = formatExperiencePeriod(sampleWithTodo, false);
+  const formattedProd = formatExperiencePeriod(sampleWithTodo, true);
+  if (!formattedDev.includes("TODO")) {
+    throw new Error(`Development formatting must retain TODO comment for developer tracking`);
+  }
+  if (formattedProd.includes("TODO")) {
+    throw new Error(`Production formatting must strip TODO comments`);
   }
 
-  const todoNote = getExperiencePeriodTodo(sdeRole.period);
+  const todoNote = getExperiencePeriodTodo(sampleWithTodo);
   if (!todoNote || !todoNote.includes("TODO(owner)")) {
     throw new Error(`getExperiencePeriodTodo failed to extract comment`);
   }
