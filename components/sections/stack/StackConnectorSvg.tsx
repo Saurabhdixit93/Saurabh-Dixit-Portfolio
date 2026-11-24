@@ -75,11 +75,16 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
             continue;
           }
 
+          // Connect from border edge to border edge so lines never sit directly over chip text or icons
+          const isDownward = targetCenter.y > activeCenter.y;
+          const startY = isDownward ? activeCenter.y + 14 : activeCenter.y - 14;
+          const endY = isDownward ? targetCenter.y - 14 : targetCenter.y + 14;
+
           calculatedLines.push({
             startX: activeCenter.x,
-            startY: activeCenter.y,
+            startY,
             endX: targetCenter.x,
-            endY: targetCenter.y,
+            endY,
             targetName: techName,
           });
         }
@@ -125,7 +130,7 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
     <svg
       aria-hidden="true"
       style={{ pointerEvents: "none" }}
-      className={`pointer-events-none absolute inset-0 w-full h-full z-10 hidden md:block select-none ${className}`}
+      className={`pointer-events-none absolute inset-0 w-full h-full z-0 hidden md:block select-none ${className}`}
     >
       <defs>
         <filter id="connector-glow" x="-20%" y="-20%" width="140%" height="140%">

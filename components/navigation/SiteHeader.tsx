@@ -405,7 +405,7 @@ export function SiteHeader({ className = "" }: SiteHeaderProps) {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="fixed inset-0 top-14 sm:top-16 z-[9999] h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] w-full bg-bg text-text border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden"
+              className="fixed inset-x-0 top-14 sm:top-16 bottom-0 z-[9999] h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] w-full bg-bg text-text bg-[#0B0D10]/98 [data-theme=paper]:bg-[#F3F0E8]/98 backdrop-blur-2xl border-t border-hairline flex flex-col justify-between p-6 sm:p-8 overflow-y-auto lg:hidden shadow-2xl"
               role="dialog"
               aria-modal="true"
               aria-label="Mobile Navigation Menu"

@@ -301,7 +301,7 @@ export const assistantKnowledge: AssistantKnowledgeEntry[] = [
       'What is his email or LinkedIn?',
     ],
     content:
-      'Saurabh is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and select technical advisory engagements. Email: smartds2550@gmail.com. LinkedIn: https://www.linkedin.com/in/saurabhdixit93. GitHub: https://github.com/saurabhdixit93. Resume: /resume.pdf. Location: India (IST, UTC+5:30).',
+      'Saurabh is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and select technical advisory engagements. Email: [smartds2550@gmail.com](mailto:smartds2550@gmail.com). LinkedIn: [LinkedIn](https://www.linkedin.com/in/saurabhdixit93). GitHub: [GitHub](https://github.com/saurabhdixit93). Resume: [Resume (PDF)](/resume.pdf). Location: India (IST, UTC+5:30).',
     keywords: [
       'Contact',
       'Email',
@@ -310,6 +310,117 @@ export const assistantKnowledge: AssistantKnowledgeEntry[] = [
       'Resume',
       'Availability',
       'Open to opportunities',
+    ],
+  },
+  {
+    id: 'kb-certifications',
+    category: 'profile',
+    topic: 'Professional Certifications & Accreditations',
+    questionPatterns: [
+      'What certifications does Saurabh have?',
+      'Has he completed any accredited courses?',
+      'Show me his credentials and certifications.',
+      'Is he certified in full-stack or frontend?',
+    ],
+    content:
+      'Saurabh holds 3 verified industry credentials: 1) Micro1 Talent Certification (Nov 2025, microl.ai/apply-as-talent); 2) Pro5.ai Frontend Engineering Certification (Jul 2024, ID: 38756230258); 3) Coding Ninjas Full Stack Web Development (Jul 2023, ID: 3edda2132ea34344). These validate his core competencies across modern full-stack web engineering and UI development.',
+    keywords: [
+      'Certifications',
+      'Micro1',
+      'Pro5.ai',
+      'Coding Ninjas',
+      'Full Stack',
+      'Credentials',
+      'Accreditation',
+    ],
+  },
+  {
+    id: 'kb-project-yieldsync',
+    category: 'projects',
+    topic: 'YieldSync Agritech Platform (Sensegrass)',
+    questionPatterns: [
+      'What is YieldSync?',
+      'What IoT or agritech projects has he worked on?',
+      'Tell me about farm automation and sensor telemetry at Sensegrass.',
+    ],
+    content:
+      'YieldSync by Sensegrass (Feb 2024) is an agritech platform delivering real-time farm data processing and agronomy intelligence. Saurabh engineered end-to-end automation workflows, robust API pipelines for sensor data ingestion and cross-platform synchronization, and integrated AI-driven decision-making for crop yield predictions and farm management.',
+    keywords: [
+      'YieldSync',
+      'Sensegrass',
+      'Agritech',
+      'Sensors',
+      'Telemetry',
+      'Yield Prediction',
+      'IoT',
+      'Data Ingestion',
+    ],
+  },
+  {
+    id: 'kb-project-email-agent',
+    category: 'projects',
+    topic: 'AI Email Automation Agent',
+    questionPatterns: [
+      'What is the AI Email Automation Agent?',
+      'Has he built email automation workflows?',
+      'How does his AI email agent work?',
+    ],
+    content:
+      'The AI Email Automation Agent (May 2025) is an automated communication system built with Next.js and OpenAI. It features intelligent, context-aware email generation, integrated SMTP and SendGrid pipelines for automated triggers, and an intuitive UI for drafting, previewing, and templating recurring communication workflows with high consistency.',
+    keywords: [
+      'AI Email Agent',
+      'Email Automation',
+      'SendGrid',
+      'SMTP',
+      'OpenAI',
+      'Next.js',
+      'Productivity',
+    ],
+  },
+  {
+    id: 'kb-experience-kenmark',
+    category: 'experience',
+    topic: 'Junior Node.js Developer at Kenmark ITan Solutions',
+    questionPatterns: [
+      'What did Saurabh do at Kenmark ITan Solutions?',
+      'Tell me about his first software role.',
+      'What was his work in 2022-2023?',
+    ],
+    content:
+      'At Kenmark ITan Solutions (Oct 2022 — Oct 2023), Saurabh served as Junior Node.js Developer. He developed core backend services and RESTful APIs using Node.js and Express, constructed internal automation workflows for data processing, and worked extensively with SQL databases (schema design, query optimization, and performance tuning).',
+    keywords: [
+      'Kenmark ITan Solutions',
+      'Junior Node.js Developer',
+      'Express',
+      'Node.js',
+      'REST APIs',
+      'SQL',
+      '2022',
+      '2023',
+    ],
+  },
+  {
+    id: 'kb-education-bundelkhand',
+    category: 'profile',
+    topic: 'Academic Foundation — Bundelkhand University Jhansi',
+    questionPatterns: [
+      'Where did Saurabh go to college or university?',
+      'What is his degree and educational background?',
+      'What did he study at Bundelkhand University?',
+      'When did he graduate from college?',
+    ],
+    content:
+      'Saurabh graduated in July 2022 with a Bachelor of Science (B.Sc.) in Mathematics Education / Mathematics & Science from Bundelkhand University, Jhansi (UP, India). His rigorous training in discrete mathematics, numerical analysis, and scientific computing underpins his deterministic approach to distributed systems and AI guardrails.',
+    keywords: [
+      'Education',
+      'Bundelkhand University',
+      'Jhansi',
+      'Bachelor of Science',
+      'BSc',
+      'Maths',
+      'Mathematics',
+      '2019-2022',
+      'College',
     ],
   },
   {

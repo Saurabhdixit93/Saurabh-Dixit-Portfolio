@@ -22,10 +22,14 @@ export const StackMap: React.FC<StackMapProps> = ({
   // Active inspected technology (hovered or pinned)
   const [activeTech, setActiveTech] = React.useState<string | null>(null);
   const [isPinned, setIsPinned] = React.useState(false);
-  const leaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const leaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   // Registered chip DOM nodes for dynamic SVG lines calculation
-  const chipElementsRef = React.useRef<Map<string, HTMLButtonElement>>(new Map());
+  const chipElementsRef = React.useRef<Map<string, HTMLButtonElement>>(
+    new Map(),
+  );
 
   const registerChipRef = React.useCallback(
     (key: string, el: HTMLButtonElement | null) => {
@@ -35,7 +39,7 @@ export const StackMap: React.FC<StackMapProps> = ({
         chipElementsRef.current.delete(key);
       }
     },
-    []
+    [],
   );
 
   // Derive related technologies for currently active node
@@ -84,7 +88,7 @@ export const StackMap: React.FC<StackMapProps> = ({
       }
       leaveTimerRef.current = setTimeout(() => {
         setActiveTech(null);
-      }, 150);
+      }, 250);
     }
   };
 
@@ -113,7 +117,7 @@ export const StackMap: React.FC<StackMapProps> = ({
   const orderedCategories = React.useMemo(() => {
     const order = ["ai-llm", "frontend", "backend", "data", "devops-infra"];
     return [...stackCategories].sort(
-      (a, b) => order.indexOf(a.id) - order.indexOf(b.id)
+      (a, b) => order.indexOf(a.id) - order.indexOf(b.id),
     );
   }, []);
 
@@ -141,10 +145,7 @@ export const StackMap: React.FC<StackMapProps> = ({
         />
 
         {/* 5-Tier Interactive Diagram Container */}
-        <div
-          ref={containerRef}
-          className="relative space-y-4"
-        >
+        <div ref={containerRef} className="relative space-y-4">
           {/* Dynamic SVG Bézier Overlay (Desktop) */}
           <StackConnectorSvg
             containerRef={containerRef}

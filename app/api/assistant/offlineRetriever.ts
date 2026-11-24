@@ -4,10 +4,10 @@ import { profile } from '@/content/profile';
 export function buildMailtoLink(
   email: string = profile.email,
   subject: string = 'Inquiry via Systems Blueprint Portfolio',
-  body: string = 'Hi Saurabh,\n\nI was reviewing your Systems Blueprint portfolio (https://www.saurabhdixit93.site) and wanted to connect regarding:\n\n'
+  body: string = 'Hi Saurabh,\n\nI was reviewing your Systems Blueprint portfolio and wanted to connect regarding:\n\n'
 ): string {
-  const encSubject = encodeURIComponent(subject);
-  const encBody = encodeURIComponent(body);
+  const encSubject = encodeURIComponent(subject).replace(/\(/g, '%28').replace(/\)/g, '%29');
+  const encBody = encodeURIComponent(body).replace(/\(/g, '%28').replace(/\)/g, '%29');
   return `mailto:${email}?subject=${encSubject}&body=${encBody}`;
 }
 
@@ -125,14 +125,31 @@ export function findBestKnowledgeMatch(query: string): string {
   const normalized = query.toLowerCase().trim();
   const cleanQ = normalized.replace(/[^a-z0-9\s]/gi, '').trim();
 
-  // Conversational Intent: Casual Acknowledgments (e.g., "ok", "okkk", "cool", "got it", "thanks")
-  if (/^(ok+|okk+|cool|nice|got it|great|thanks|thank you|perfect|sounds good|alright|fine|k|sure|cheers)[\s!.]*$/i.test(normalized)) {
-    return `Glad to help! You can ask me anything about Saurabh's engineering leadership at Sensegrass, verified system metrics (+35% velocity, 3× AI scale), architecture case studies ([#work]), 5-tier technical stack ([#stack]), or how to contact him ([#contact]).`;
+  // Casual Acknowledgments ("ok", "okay", "got it", "alright", "cool", "sure", "fine")
+  if (/^(ok+|okay|got it|alright|cool|fine|k|sure|noted|understood|nice|perfect|sounds good)[\s!.]*$/i.test(normalized)) {
+    return `Understood! What would you like to explore next? You can ask about Saurabh's engineering leadership at Sensegrass, verified system metrics (+35% velocity, -45% incidents), architecture case studies ([#work]), or tech stack ([#stack]).`;
   }
 
-  // Conversational Intent: Friendly Greetings (e.g., "hi", "hello", "hey")
+  // Gratitude & Thanks ("thanks", "thank you", "thx", "ok thanks")
+  if (
+    /^(ok\s+)?(thanks|thank you|thx)(\s+(a lot|so much|saurabh|bro|man|for help|for your help|for that))?[\s!.]*$/i.test(normalized) ||
+    /^(cool|great|awesome|perfect|nice)\s+(thanks|thank you)[\s!.]*$/i.test(normalized) ||
+    /^(thanks|thank you|thx)[\s!.]*$/i.test(normalized)
+  ) {
+    return `Glad I could help! Feel free to ask anything else about Saurabh's architecture work, or connect directly on [LinkedIn](https://www.linkedin.com/in/saurabhdixit93) or via email at [${profile.email}](${buildMailtoLink()}).`;
+  }
+
+  // Conversational Intent: Friendly Greetings (e.g., "hi", "hello", "hey", "how are you")
   if (/^(hi+|hello+|hey+|hola|namaste|good (morning|afternoon|evening)|howdy|greetings)[\s!.]*$/i.test(normalized)) {
     return `Hello! I am Saurabh's verified portfolio assistant. I can answer inquiries about his role as VP of Engineering at Sensegrass, verified metrics (+35% velocity, -45% incidents), production architecture case studies ([#work]), tech stack ([#stack]), and availability ([#contact]). What would you like to know?`;
+  }
+
+  if (/^(how are you|how's it going|how are you doing|sup|what's up)[\s!.]*$/i.test(normalized)) {
+    return `I'm operating at 100% capacity and ready to answer any questions about Saurabh Dixit's engineering background, verified metrics (+35% velocity, 3× AI scale), production case studies ([#work]), or availability ([#contact]). How can I assist you today?`;
+  }
+
+  if (/^(what can you do|help|what do you know|options|commands)[\s!.]*$/i.test(normalized)) {
+    return `I can give you verified details on Saurabh's background as VP of Engineering at Sensegrass, verified system metrics (+35% velocity, -45% incidents), architecture case studies ([#work]), 5-tier technical stack ([#stack]), resume credentials ([#about]), or how to contact him ([#contact]). What would you like to explore?`;
   }
 
   // Identity / Overview / Bio
@@ -198,7 +215,7 @@ export function findBestKnowledgeMatch(query: string): string {
       'Architecture & Engineering Inquiry',
       'Hi Saurabh,\n\nI am reaching out regarding engineering opportunities and technical collaboration:\n\n'
     );
-    return `You can contact Saurabh directly via email at [${profile.email}](${contactMailto}), connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93), or review his code on GitHub (https://github.com/saurabhdixit93). He is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and technical advisory ([#contact]).\n\nSource: Inquiries & Advisory ([#contact])`;
+    return `You can contact Saurabh directly via email at [${profile.email}](${contactMailto}), connect on [LinkedIn](https://www.linkedin.com/in/saurabhdixit93), or review his code on [GitHub](https://github.com/saurabhdixit93). He is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and technical advisory ([#contact]).\n\nSource: Inquiries & Advisory ([#contact])`;
   }
 
   // Fast path for canonical suggested prompts
@@ -216,11 +233,54 @@ export function findBestKnowledgeMatch(query: string): string {
       'Engineering Leadership & Advisory Opportunity',
       'Hi Saurabh,\n\nI would like to discuss potential leadership or advisory roles with you:\n\n'
     );
-    return `Saurabh is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and select technical advisory engagements. You can reach out directly via email at [${profile.email}](${rolesMailto}) or connect on LinkedIn (https://www.linkedin.com/in/saurabhdixit93).\n\nSource: Contact & Availability ([#contact])`;
+    return `Saurabh is currently open to high-impact leadership roles, VP/Staff engineering opportunities, and select technical advisory engagements. You can reach out directly via email at [${profile.email}](${rolesMailto}) or connect on [LinkedIn](https://www.linkedin.com/in/saurabhdixit93).\n\nSource: Contact & Availability ([#contact])`;
   }
 
   if (normalized.includes('strongest project') || normalized.includes('flagship') || normalized.includes('best project')) {
     return `Saurabh's flagship project is the Enterprise AI Code Review Platform, an asynchronous worker pipeline combining rule-based linting with LLM reasoning for automated pull request analysis. Built with Next.js, TypeScript, Node.js, MongoDB, and Redis, it processes webhooks with sub-second feedback and zero token waste.\n\nSource: Enterprise AI Code Review Platform ([#work])`;
+  }
+
+  // Certifications & Accreditations (from verified resume)
+  if (
+    normalized.includes('certification') ||
+    normalized.includes('certificate') ||
+    normalized.includes('micro1') ||
+    normalized.includes('pro5') ||
+    normalized.includes('coding ninjas') ||
+    normalized.includes('accreditation')
+  ) {
+    return `Saurabh holds 3 verified professional certifications: 1) Micro1 Talent Certification (Nov 2025, microl.ai/apply-as-talent); 2) Pro5.ai Frontend Engineering Certification (Jul 2024, ID: 38756230258); 3) Coding Ninjas Full Stack Web Development (Jul 2023, ID: 3edda2132ea34344). These credentials affirm his mastery of modern full-stack web architectures.\n\nSource: Resume Certifications & Credentials ([#about])`;
+  }
+
+  // YieldSync by Sensegrass (from verified resume)
+  if (
+    normalized.includes('yieldsync') ||
+    normalized.includes('farm data') ||
+    normalized.includes('agritech') ||
+    normalized.includes('sensor telemetry') ||
+    normalized.includes('agronomy')
+  ) {
+    return `YieldSync by Sensegrass (Feb 2024) is an agritech system where Saurabh built end-to-end automation workflows for farm data processing and agronomy insights. He engineered real-time API synchronization pipelines across IoT sensors and integrated AI-driven decision models for crop yield prediction and farm management recommendations.\n\nSource: YieldSync Platform ([#work])`;
+  }
+
+  // AI Email Automation Agent (from verified resume)
+  if (
+    normalized.includes('email automation') ||
+    normalized.includes('email agent') ||
+    normalized.includes('sendgrid') ||
+    normalized.includes('smtp')
+  ) {
+    return `The AI Email Automation Agent (May 2025) is an automated system developed with Next.js and OpenAI for intelligent, context-aware email generation. Saurabh integrated SMTP and SendGrid for workflow-based triggers and built an interactive drafting and templating interface that automates repetitive communication tasks with high accuracy.\n\nSource: AI Email Automation Agent ([#work])`;
+  }
+
+  // Kenmark ITan Solutions (from verified resume)
+  if (
+    normalized.includes('kenmark') ||
+    normalized.includes('junior node') ||
+    normalized.includes('first job') ||
+    normalized.includes('2022')
+  ) {
+    return `At Kenmark ITan Solutions (Oct 2022 — Oct 2023), Saurabh worked as Junior Node.js Developer. He developed core backend services and RESTful APIs with Node.js and Express, constructed internal automation workflows that reduced manual data processing overhead, and optimized SQL database schemas and queries for higher performance.\n\nSource: Career Progression ([#experience])`;
   }
 
   // General keyword and question-pattern scoring across all 15 entries

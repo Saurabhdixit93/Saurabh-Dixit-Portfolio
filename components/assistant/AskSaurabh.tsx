@@ -271,23 +271,56 @@ export const AskSaurabh: React.FC = () => {
     }
   };
 
-  // Render markdown-like link citations and dynamic clickable mailto links in assistant responses
+  // Render markdown-like link citations, dynamic clickable mailto links, and formatted external links
   const renderFormattedContent = (content: string) => {
-    // Matches [#section], Markdown link [text](url), or raw email address
-    const linkRegex = /\[(.*?)\]\((.*?)\)|\[(#\w+)\]|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
+    // 1. Matches section anchors [#section]
+    // 2. Matches Markdown links [text](url) - strictly non-empty text without brackets
+    // 3. Matches parenthesized or bare URLs (https://...) or https://...
+    // 4. Matches raw email addresses
+    const linkRegex =
+      /\[(#[a-zA-Z0-9_-]+)\]|\[([^\[\]\n]+)\]\(([^)\n]+)\)|(?:\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s)]+))|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
     let match: RegExpExecArray | null;
 
     while ((match = linkRegex.exec(content)) !== null) {
       if (match.index > lastIndex) {
-        parts.push(content.substring(lastIndex, match.index));
+        let textBefore = content.substring(lastIndex, match.index);
+        // If this match is a parenthesized raw URL like "LinkedIn (https://...)", trim redundant preceding label
+        const rawUrl = match[4] || match[5];
+        if (rawUrl) {
+          if (rawUrl.includes("linkedin.com") && /(?:on\s+|at\s+)?LinkedIn\s*$/i.test(textBefore)) {
+            textBefore = textBefore.replace(/(?:on\s+|at\s+)?LinkedIn\s*$/i, (m) =>
+              m.startsWith("on ") ? "on " : m.startsWith("at ") ? "at " : ""
+            );
+          } else if (rawUrl.includes("github.com") && /(?:on\s+|at\s+)?GitHub\s*$/i.test(textBefore)) {
+            textBefore = textBefore.replace(/(?:on\s+|at\s+)?GitHub\s*$/i, (m) =>
+              m.startsWith("on ") ? "on " : m.startsWith("at ") ? "at " : ""
+            );
+          }
+        }
+        if (textBefore) {
+          parts.push(textBefore);
+        }
       }
 
-      if (match[2]) {
+      if (match[1]) {
+        // [#section]
+        const anchor = match[1];
+        parts.push(
+          <a
+            key={match.index}
+            href={anchor}
+            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs font-semibold"
+            onClick={() => closeAssistant()}
+          >
+            [{anchor}]
+          </a>
+        );
+      } else if (match[2] && match[3]) {
         // [text](url)
-        const text = match[1];
-        const url = match[2];
+        const text = match[2];
+        const url = match[3];
         const isMailto = url.startsWith("mailto:");
         const isExternal = url.startsWith("http") || isMailto;
         parts.push(
@@ -308,23 +341,48 @@ export const AskSaurabh: React.FC = () => {
             {isExternal && !isMailto && <ExternalLink className="w-3 h-3 ml-0.5" />}
           </a>
         );
-      } else if (match[3]) {
-        // [#section]
-        const anchor = match[3];
+      } else if (match[4] || match[5]) {
+        // Parenthesized or bare raw URL
+        const rawUrl = match[4] || match[5];
+        let label = "External Link";
+        if (rawUrl.includes("linkedin.com")) {
+          label = "LinkedIn";
+        } else if (rawUrl.includes("github.com")) {
+          label = "GitHub";
+        } else if (rawUrl.endsWith(".pdf") || rawUrl.includes("resume")) {
+          label = "Resume (PDF)";
+        } else if (rawUrl.includes("reactchatawebpp")) {
+          label = "React Chat App Demo";
+        } else if (rawUrl.includes("youtube-converter")) {
+          label = "YouTube Converter Demo";
+        } else {
+          try {
+            label = new URL(rawUrl).hostname.replace(/^www\./, "");
+          } catch {
+            label = "Link";
+          }
+        }
+
         parts.push(
           <a
             key={match.index}
-            href={anchor}
-            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs font-semibold"
-            onClick={() => closeAssistant()}
+            href={rawUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline underline-offset-2 hover:text-accent/80 font-mono text-xs inline-flex items-center gap-1 font-semibold transition-colors"
           >
-            {anchor}
+            <span>{label}</span>
+            <ExternalLink className="w-3 h-3 ml-0.5" />
           </a>
         );
-      } else if (match[4]) {
+      } else if (match[6]) {
         // Raw email address detected: auto-convert to interactive mailto link with pre-filled subject & body
-        const email = match[4];
-        const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent("Inquiry via Systems Blueprint Portfolio")}&body=${encodeURIComponent("Hi Saurabh,\n\nI was reviewing your Systems Blueprint portfolio and wanted to connect regarding:\n\n")}`;
+        const email = match[6];
+        const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(
+          "Inquiry via Systems Blueprint Portfolio"
+        )}&body=${encodeURIComponent(
+          "Hi Saurabh,\n\nI was reviewing your Systems Blueprint portfolio and wanted to connect regarding:\n\n"
+        )}`;
         parts.push(
           <a
             key={match.index}
@@ -435,7 +493,7 @@ export const AskSaurabh: React.FC = () => {
                         </span>
                       </div>
                       <p className="font-mono text-[11px] text-muted">
-                        Grounded on 15 verified portfolio entries
+                        Grounded on verified portfolio & resume facts
                       </p>
                     </div>
                   </div>

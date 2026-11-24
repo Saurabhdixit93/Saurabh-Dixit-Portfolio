@@ -13,14 +13,14 @@
   [data-theme="graphite"],
   .dark {
     /* Blueprint Semantic Tokens (Graphite) */
-    --bg: #0B0D10;
-    --surface: #12161B;
-    --line: #222A33;
-    --text: #E9EDF1;
-    --muted: #8A95A3;
-    --accent: #FF6A2B;
-    --accent-2: #4DE1C1;
-    --accent-contrast: #0B0D10;
+    --bg: #0b0d10;
+    --surface: #12161b;
+    --line: #222a33;
+    --text: #e9edf1;
+    --muted: #8a95a3;
+    --accent: #ff6a2b;
+    --accent-2: #4de1c1;
+    --accent-contrast: #0b0d10;
 
     /* Legacy / shadcn color mappings for backwards compatibility */
     --background: 220 20% 5%;
@@ -46,14 +46,14 @@
   [data-theme="paper"],
   .light {
     /* Blueprint Semantic Tokens (Paper) */
-    --bg: #F3F0E8;
-    --surface: #FFFFFF;
-    --line: #D9D4C7;
-    --text: #0E1116;
-    --muted: #5C6672;
-    --accent: #B8390B;
+    --bg: #f3f0e8;
+    --surface: #ffffff;
+    --line: #d9d4c7;
+    --text: #0e1116;
+    --muted: #5c6672;
+    --accent: #b8390b;
     --accent-2: #087360;
-    --accent-contrast: #FFFFFF;
+    --accent-contrast: #ffffff;
 
     /* Legacy / shadcn color mappings for Paper */
     --background: 43 27% 93%;
@@ -110,20 +110,26 @@
   body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-family:
+      var(--font-sans),
+      system-ui,
+      -apple-system,
+      sans-serif;
     min-height: 100vh;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   ::selection {
     background-color: var(--accent);
-    color: #0B0D10;
+    color: #0b0d10;
   }
 
   [data-theme="paper"] ::selection,
   .light ::selection {
     background-color: var(--accent);
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   :focus-visible {
@@ -163,10 +169,18 @@
     border-color: var(--line);
   }
 
-  .border-t-hairline { border-top: 1px solid var(--line); }
-  .border-b-hairline { border-bottom: 1px solid var(--line); }
-  .border-l-hairline { border-left: 1px solid var(--line); }
-  .border-r-hairline { border-right: 1px solid var(--line); }
+  .border-t-hairline {
+    border-top: 1px solid var(--line);
+  }
+  .border-b-hairline {
+    border-bottom: 1px solid var(--line);
+  }
+  .border-l-hairline {
+    border-left: 1px solid var(--line);
+  }
+  .border-r-hairline {
+    border-right: 1px solid var(--line);
+  }
 
   /* Corner Registration Marks */
   .corner-marks {
@@ -205,10 +219,30 @@
     z-index: 10;
   }
 
-  .corner-mark-tl { top: -1px; left: -1px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
-  .corner-mark-tr { top: -1px; right: -1px; border-top: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
-  .corner-mark-bl { bottom: -1px; left: -1px; border-bottom: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
-  .corner-mark-br { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+  .corner-mark-tl {
+    top: -1px;
+    left: -1px;
+    border-top: 1.5px solid var(--accent);
+    border-left: 1.5px solid var(--accent);
+  }
+  .corner-mark-tr {
+    top: -1px;
+    right: -1px;
+    border-top: 1.5px solid var(--accent);
+    border-right: 1.5px solid var(--accent);
+  }
+  .corner-mark-bl {
+    bottom: -1px;
+    left: -1px;
+    border-bottom: 1.5px solid var(--accent);
+    border-left: 1.5px solid var(--accent);
+  }
+  .corner-mark-br {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 1.5px solid var(--accent);
+    border-right: 1.5px solid var(--accent);
+  }
 
   /* Monospace Annotation */
   .annotation {
@@ -254,4 +288,16 @@
   .animate-pipeline-shimmer {
     animation: pipeline-shimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
+}
+
+/* Prevent SVG overlays, lines, dots, and filters from intercepting mouse hit-tests and causing hover flicker */
+svg.pointer-events-none,
+svg.pointer-events-none * {
+  pointer-events: none !important;
+}
+
+/* Prevent SVG overlays, lines, dots, and filters from intercepting mouse hit-tests and causing hover flicker */
+svg.pointer-events-none,
+svg.pointer-events-none * {
+  pointer-events: none !important;
 }
