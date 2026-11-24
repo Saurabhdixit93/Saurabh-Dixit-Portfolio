@@ -219,4 +219,39 @@
     text-transform: uppercase;
     color: var(--muted);
   }
+
+  /* Hardware-accelerated continuous infinite marquee */
+  @keyframes marquee-scroll {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .animate-marquee-infinite {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 26s linear infinite;
+    will-change: transform;
+  }
+
+  .animate-marquee-infinite:hover {
+    animation-play-state: paused;
+  }
+
+  /* Pipeline shimmer pulse */
+  @keyframes pipeline-shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-pipeline-shimmer {
+    animation: pipeline-shimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
 }

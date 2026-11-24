@@ -116,23 +116,8 @@ export const SignalStrip: React.FC<SignalStripProps> = ({
         aria-hidden="true"
       />
 
-      {/* Marquee Track Container (Framer Motion Web Animations API loop) */}
-      <motion.div
-        className="flex w-max"
-        animate={shouldReduceMotion ? { x: 0 } : { x: ["0%", "-50%"] }}
-        transition={
-          shouldReduceMotion
-            ? {}
-            : {
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 28,
-                  ease: "linear",
-                },
-              }
-        }
-      >
+      {/* Marquee Track Container (Continuous 60fps Hardware-Accelerated CSS Loop) */}
+      <div className="flex w-max animate-marquee-infinite">
         {/* Track 1: Primary */}
         <div className="flex items-center shrink-0 space-x-3 sm:space-x-4 pr-3 sm:pr-4">
           {items.map((item) => (
@@ -187,7 +172,7 @@ export const SignalStrip: React.FC<SignalStripProps> = ({
             </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

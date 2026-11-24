@@ -13,135 +13,58 @@ export const AIPipelineDiagram: React.FC = () => {
     <div className="space-y-6">
       {/* Title & Pipeline Overview */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-hairline/60">
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-xs uppercase tracking-wider text-accent font-semibold">
+        <div className="flex items-center gap-2.5">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent shadow-[0_0_8px_var(--accent)]" />
+          </span>
+          <span className="font-mono text-xs uppercase tracking-wider text-accent font-bold">
             [SYS.PIPELINE]
           </span>
           <span className="font-mono text-xs text-muted">
             Bounded Reasoning to Production Delivery
           </span>
         </div>
-        <span className="font-mono text-[11px] text-muted">
-          Continuous Invariant Enforcement
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-mono text-[11px] text-text font-medium">
+            Continuous Invariant Enforcement
+          </span>
+        </div>
       </div>
 
-      {/* SVG Circuit Connector for Desktop (md+) with Continuous Traveling Electrons */}
-      <div className="hidden md:block relative w-full px-6 py-2">
-        <svg
-          viewBox="0 0 1000 36"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-8 overflow-visible"
-          aria-hidden="true"
-        >
-          <defs>
-            <filter
-              id="packet-glow-accent"
-              x="-50%"
-              y="-50%"
-              width="200%"
-              height="200%"
-            >
-              <feDropShadow
-                dx="0"
-                dy="0"
-                stdDeviation="3"
-                floodColor="#FF6A2B"
-                floodOpacity="0.8"
-              />
-            </filter>
-            <filter
-              id="packet-glow-cyan"
-              x="-50%"
-              y="-50%"
-              width="200%"
-              height="200%"
-            >
-              <feDropShadow
-                dx="0"
-                dy="0"
-                stdDeviation="3"
-                floodColor="#4DE1C1"
-                floodOpacity="0.8"
-              />
-            </filter>
-          </defs>
+      {/* High-Tech Animated Circuit Rail & Stage Dots */}
+      <div className="relative w-full py-3 space-y-3">
+        {/* Continuous Traveling Shimmer Progress Rail */}
+        <div className="relative w-full h-1.5 bg-surface/90 rounded-full overflow-hidden border border-hairline/80">
+          <div className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-accent to-transparent animate-pipeline-shimmer" />
+        </div>
 
-          {/* Base circuit rail */}
-          <line
-            x1="50"
-            y1="18"
-            x2="950"
-            y2="18"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeDasharray="4 4"
-            className="text-border-hairline"
-          />
-
-          {/* Animated signal pulses across pipeline stages */}
-          {!prefersReducedMotion && (
-            <>
-              {/* Pulse 1: Signal Orange */}
-              <circle
-                cx="50"
-                cy="18"
-                r="4"
-                fill="#FF6A2B"
-                filter="url(#packet-glow-accent)"
-              >
-                <animate
-                  attributeName="cx"
-                  values="50;950"
-                  dur="3.2s"
-                  repeatCount="indefinite"
+        {/* 4 Interactive Node Stage Indicators with Synchronized Pulse */}
+        <div className="grid grid-cols-4 gap-2 relative z-10 px-2 sm:px-6">
+          {stages.map((stage, idx) => (
+            <div key={stage.step} className="flex flex-col items-center text-center space-y-1.5">
+              {/* Concentric Radar Node Dot */}
+              <div className="relative flex items-center justify-center">
+                <span
+                  className="absolute w-6 h-6 rounded-full bg-accent/25 animate-ping"
+                  style={{ animationDelay: `${idx * 0.4}s`, animationDuration: "2.4s" }}
                 />
-              </circle>
-              {/* Pulse 2: High-contrast Cyan */}
-              <circle
-                cx="50"
-                cy="18"
-                r="3"
-                fill="#4DE1C1"
-                filter="url(#packet-glow-cyan)"
-              >
-                <animate
-                  attributeName="cx"
-                  values="50;950"
-                  dur="3.2s"
-                  begin="1.6s"
-                  repeatCount="indefinite"
-                />
-              </circle>
-            </>
-          )}
-
-          {/* 4 Stage Nodes on Circuit with Pulsing Radar Rings */}
-          {[125, 375, 625, 875].map((cx, idx) => (
-            <g key={idx}>
-              {!prefersReducedMotion && (
-                <circle
-                  cx={cx}
-                  cy="18"
-                  r="12"
-                  fill="none"
-                  stroke="#FF6A2B"
-                  strokeWidth="1"
-                  className="animate-ping opacity-50"
-                />
-              )}
-              <circle
-                cx={cx}
-                cy="18"
-                r="7"
-                className="fill-bg stroke-accent"
-                strokeWidth="2"
-              />
-              <circle cx={cx} cy="18" r="2.5" className="fill-accent" />
-            </g>
+                <span
+                  className="relative w-3.5 h-3.5 rounded-full bg-surface border-2 border-accent shadow-[0_0_8px_var(--accent)] flex items-center justify-center"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                </span>
+              </div>
+              <span className="font-mono text-[10px] text-accent font-semibold tracking-wider">
+                {stage.code}
+              </span>
+              <span className="font-mono text-[9px] text-muted hidden sm:inline">
+                STEP 0{stage.step}
+              </span>
+            </div>
           ))}
-        </svg>
+        </div>
       </div>
 
       {/* 4 Pipeline Stage Cards Grid with High-Contrast Backdrop Blur */}

@@ -211,18 +211,18 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             <h2 id="metrics-heading" className="sr-only">
               Verified Architectural Metrics
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {caseStudy.metrics.map((m, mIdx) => (
                 <div
                   key={mIdx}
-                  className="relative p-5 rounded-lg border border-hairline bg-surface/80 backdrop-blur-sm"
+                  className="relative p-6 sm:p-7 rounded-xl border border-hairline bg-surface/80 backdrop-blur-sm"
                 >
                   <span className="corner-mark corner-mark-tl opacity-60" aria-hidden="true" />
                   <span className="corner-mark corner-mark-br opacity-60" aria-hidden="true" />
-                  <span className="font-mono text-[10px] text-accent uppercase tracking-wider block mb-1">
+                  <span className="font-mono text-[10px] text-accent uppercase tracking-wider block mb-1.5">
                     // {m.label}
                   </span>
-                  <div className="font-display text-2xl sm:text-3xl text-text font-normal mb-1">
+                  <div className="font-display text-2xl sm:text-3xl text-text font-normal mb-1.5">
                     {m.value}
                   </div>
                   {m.context && (
@@ -236,10 +236,10 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           </section>
         )}
 
-        <div className="space-y-16 max-w-5xl">
+        <div className="space-y-12 max-w-5xl">
           {/* Section 1: Problem Statement */}
-          <section aria-labelledby="problem-heading" className="space-y-4">
-            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+          <section aria-labelledby="problem-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
+            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
               // 01 · SYSTEM CONTEXT & PROBLEM
             </span>
             <h2 id="problem-heading" className="font-display text-2xl sm:text-3xl text-text font-normal">
@@ -249,11 +249,11 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               {caseStudy.problem.summary}
             </p>
             {caseStudy.problem.painPoints && caseStudy.problem.painPoints.length > 0 && (
-              <div className="p-4 rounded-lg border border-hairline bg-surface/60 space-y-2 mt-4">
-                <span className="font-mono text-[11px] text-text font-semibold uppercase block">
+              <div className="p-5 sm:p-6 rounded-lg border border-hairline bg-surface/70 space-y-3 mt-4">
+                <span className="font-mono text-xs text-text font-semibold uppercase block">
                   Core Architectural Bottlenecks:
                 </span>
-                <ul className="list-disc pl-5 space-y-1.5 font-mono text-xs text-muted">
+                <ul className="list-disc pl-5 space-y-2 font-mono text-xs text-muted">
                   {caseStudy.problem.painPoints.map((pt, pIdx) => (
                     <li key={pIdx}>{pt}</li>
                   ))}
@@ -264,8 +264,8 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           </section>
 
           {/* Section 2: Architectural Constraints */}
-          <section aria-labelledby="constraints-heading" className="space-y-4">
-            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+          <section aria-labelledby="constraints-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
+            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
               // 02 · ARCHITECTURAL CONSTRAINTS
             </span>
             <h2 id="constraints-heading" className="font-display text-2xl sm:text-3xl text-text font-normal">
@@ -275,7 +275,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               {constraintItems.map((cItem, cIdx) => (
                 <div
                   key={cIdx}
-                  className="p-4 rounded-lg border border-hairline bg-surface/50 font-mono text-xs text-muted leading-relaxed flex items-start gap-2.5"
+                  className="p-5 rounded-lg border border-hairline bg-surface/60 font-mono text-xs text-muted leading-relaxed flex items-start gap-3"
                 >
                   <ShieldAlert className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                   <span>{cItem}</span>
@@ -287,8 +287,8 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
           {/* Section 3: Role & Scope */}
           {caseStudy.roleResponsibilities && (
-            <section aria-labelledby="role-heading" className="space-y-4">
-              <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+            <section aria-labelledby="role-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
+              <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
                 // 03 · ROLE & RESPONSIBILITIES
               </span>
               <h2 id="role-heading" className="font-display text-2xl sm:text-3xl text-text font-normal">
@@ -297,11 +297,11 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               <p className="font-sans text-base text-muted leading-relaxed">
                 {caseStudy.roleResponsibilities.summary}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 {caseStudy.roleResponsibilities.responsibilities.map((resp, rIdx) => (
                   <div
                     key={rIdx}
-                    className="p-3.5 rounded-lg border border-hairline/80 bg-surface/40 font-mono text-xs text-text flex items-start gap-2"
+                    className="p-4 sm:p-5 rounded-lg border border-hairline/80 bg-surface/50 font-mono text-xs text-text flex items-start gap-3"
                   >
                     <span className="text-accent shrink-0">→</span>
                     <span>{resp}</span>
@@ -313,8 +313,8 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           )}
 
           {/* Section 4: Architecture Diagram */}
-          <section aria-labelledby="architecture-heading" className="space-y-4">
-            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+          <section aria-labelledby="architecture-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
+            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
               // 04 · SYSTEM TOPOLOGY & SIGNAL FLOW
             </span>
             <h2 id="architecture-heading" className="font-display text-2xl sm:text-3xl text-text font-normal">
@@ -325,18 +325,20 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 {caseStudy.architecture.summary}
               </p>
             )}
-            <ArchitectureDiagram
-              nodes={caseStudy.architecture.nodes}
-              edges={caseStudy.architecture.edges}
-              title={`${caseStudy.title} System Topology`}
-            />
+            <div className="pt-2">
+              <ArchitectureDiagram
+                nodes={caseStudy.architecture.nodes}
+                edges={caseStudy.architecture.edges}
+                title={`${caseStudy.title} System Topology`}
+              />
+            </div>
           </section>
 
           {/* Section 5: Key Decisions & Trade-offs */}
           {caseStudy.decisions && caseStudy.decisions.length > 0 && (
-            <section aria-labelledby="decisions-heading" className="space-y-6">
+            <section aria-labelledby="decisions-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-6">
               <div>
-                <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+                <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
                   // 05 · KEY DECISIONS & TRADE-OFFS
                 </span>
                 <h2 id="decisions-heading" className="font-display text-2xl sm:text-3xl text-text font-normal mt-1">
@@ -344,11 +346,11 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 </h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {caseStudy.decisions.map((decision, dIdx) => (
                   <div
                     key={dIdx}
-                    className="relative p-6 rounded-xl border border-hairline bg-surface/80 backdrop-blur-sm space-y-3"
+                    className="relative p-6 sm:p-7 rounded-xl border border-hairline bg-surface/80 backdrop-blur-sm space-y-4"
                   >
                     <span className="corner-mark corner-mark-tl opacity-60" aria-hidden="true" />
                     <span className="corner-mark corner-mark-tr opacity-60" aria-hidden="true" />
@@ -360,30 +362,30 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
                     {decision.context && (
                       <p className="font-sans text-sm text-muted">
-                        <strong className="text-text font-mono text-xs uppercase block mb-0.5">
+                        <strong className="text-text font-mono text-xs uppercase block mb-1">
                           Context:
                         </strong>
                         {decision.context}
                       </p>
                     )}
 
-                    <div className="p-3 bg-bg/80 border border-hairline/60 rounded-md font-mono text-xs text-text space-y-1">
+                    <div className="p-4 sm:p-5 bg-bg/90 border border-hairline/80 rounded-lg font-mono text-xs text-text space-y-1.5">
                       <span className="text-accent text-[10px] uppercase font-semibold block">
                         // DECISION / CHOICE
                       </span>
                       <p>{decision.choice || decision.decision}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 font-mono text-xs">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 font-mono text-xs">
                       {decision.considered && (
-                        <div className="p-3 rounded border border-hairline/40 bg-surface/30">
+                        <div className="p-4 rounded-lg border border-hairline/60 bg-surface/40">
                           <span className="text-muted text-[10px] uppercase block mb-1">
                             Alternative Considered:
                           </span>
                           <span className="text-muted">{decision.considered}</span>
                         </div>
                       )}
-                      <div className="p-3 rounded border border-accent/20 bg-accent/5">
+                      <div className="p-4 rounded-lg border border-accent/30 bg-accent/10">
                         <span className="text-accent text-[10px] uppercase block mb-1">
                           Trade-off Analysis:
                         </span>
@@ -397,8 +399,8 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           )}
 
           {/* Section 6: Results & Verification */}
-          <section aria-labelledby="results-heading" className="space-y-4">
-            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+          <section aria-labelledby="results-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
+            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
               // 06 · QUANTIFIABLE RESULTS & IMPACT
             </span>
             <h2 id="results-heading" className="font-display text-2xl sm:text-3xl text-text font-normal">
@@ -412,7 +414,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 {caseStudy.results.outcomes.map((outcome, oIdx) => (
                   <div
                     key={oIdx}
-                    className="p-4 rounded-lg border border-hairline bg-surface/50 font-mono text-xs text-text flex items-start gap-2.5"
+                    className="p-5 rounded-lg border border-hairline bg-surface/60 font-mono text-xs text-text flex items-start gap-3"
                   >
                     <span className="text-emerald-500 font-bold shrink-0">✓</span>
                     <span>{outcome}</span>
@@ -424,14 +426,14 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           </section>
 
           {/* Section 7: Technology Stack Breakdown */}
-          <section aria-labelledby="stack-heading" className="space-y-4">
-            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
+          <section aria-labelledby="stack-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
+            <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">
               // 07 · SYSTEM DEPENDENCIES & TECHNOLOGIES
             </span>
             <h2 id="stack-heading" className="font-display text-2xl sm:text-3xl text-text font-normal">
               Technical Stack Inventory
             </h2>
-            <div className="flex flex-wrap gap-2 pt-2">
+            <div className="flex flex-wrap gap-2.5 pt-2">
               {stackItems.map((tech) => (
                 <Tag key={tech} variant="default" size="md">
                   {tech}

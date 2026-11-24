@@ -24,6 +24,7 @@ export const GitGraphTimeline: React.FC<GitGraphTimelineProps> = ({
 
   const [nodeYs, setNodeYs] = useState<number[]>([40, 260, 480, 700]);
   const [containerHeight, setContainerHeight] = useState<number>(850);
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
 
   // Measure dynamic card positions to align SVG nodes with cards across viewports
   useEffect(() => {
@@ -48,13 +49,38 @@ export const GitGraphTimeline: React.FC<GitGraphTimelineProps> = ({
     return () => window.removeEventListener("resize", updatePositions);
   }, [items]);
 
-  // Scroll-linked progress for SVG path drawing & traveler rover traversal
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 80%", "end 30%"],
-  });
+  // Bulletproof native window scroll tracking for 60fps rover traversal
+  useEffect(() => {
+    let ticking = false;
+    const updateScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // Rover starts when top of container reaches 85% of screen, finishes at 25%
+      const start = vh * 0.85;
+      const end = vh * 0.25;
+      const total = rect.height + (start - end);
+      const current = start - rect.top;
+      const fraction = Math.min(1, Math.max(0, current / total));
+      setScrollProgress(fraction);
+      ticking = false;
+    };
 
-  const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
+    };
+
+    updateScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   return (
     <div ref={containerRef} className={`relative w-full ${className}`}>
@@ -63,7 +89,7 @@ export const GitGraphTimeline: React.FC<GitGraphTimelineProps> = ({
         {/* Left Rail: Git Branch SVG Spine */}
         <div className="relative shrink-0 select-none">
           <GitTrackSvg
-            progress={progress}
+            progress={scrollProgress}
             reducedMotion={Boolean(shouldReduceMotion)}
             nodeYs={nodeYs}
             height={containerHeight}

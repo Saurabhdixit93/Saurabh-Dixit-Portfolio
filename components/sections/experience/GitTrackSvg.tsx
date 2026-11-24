@@ -226,55 +226,76 @@ export const GitTrackSvg: React.FC<GitTrackSvgProps> = ({
         <rect x="-5" y="-1" width="10" height="2" fill="currentColor" className="text-muted/60" />
       </g>
 
-      {/* Prominent High-Tech Cyber Car / Rover Traveling on Scroll */}
+      {/* Prominent High-Tech Cyber Rover / Off-Road Toy Vehicle Driving on Scroll */}
       {!reducedMotion && (
         <g
           transform={`translate(${traveler.x}, ${traveler.y}) rotate(${traveler.angle})`}
-          className="transition-transform duration-75"
+          style={{ pointerEvents: "none" }}
         >
-          {/* Forward Headlight Beam Cone */}
+          {/* Forward High-Beam Headlight Cone (illuminates the track ahead) */}
           <polygon
-            points="6,-4 28,-11 28,11 6,4"
+            points="10,-6 42,-18 42,18 10,6"
             fill="url(#headlight-beam)"
-            opacity="0.9"
+            opacity="0.85"
           />
 
-          {/* Underglow Glow Shadow */}
-          <ellipse cx="0" cy="0" rx="12" ry="7" fill="#FF6A2B" opacity="0.35" filter="url(#accent-glow)" />
+          {/* Glowing Ground-Effect Neon Aura */}
+          <ellipse cx="0" cy="0" rx="16" ry="10" fill="#FF6A2B" opacity="0.4" filter="url(#accent-glow)" />
 
-          {/* Cyber Vehicle Chassis */}
+          {/* Off-Road Tires (4 Rugged Wheels with treads) */}
+          <rect x="-12" y="-11" width="7" height="3.5" rx="1" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="1" />
+          <rect x="5" y="-11" width="7" height="3.5" rx="1" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="1" />
+          <rect x="-12" y="7.5" width="7" height="3.5" rx="1" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="1" />
+          <rect x="5" y="7.5" width="7" height="3.5" rx="1" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="1" />
+
+          {/* Wheel Axle Bars */}
+          <line x1="-8.5" y1="-8" x2="-8.5" y2="8" stroke="#FF6A2B" strokeWidth="1.5" />
+          <line x1="8.5" y1="-8" x2="8.5" y2="8" stroke="#FF6A2B" strokeWidth="1.5" />
+
+          {/* Cyber Vehicle Armored Chassis */}
           <rect
-            x="-10"
-            y="-5.5"
-            width="20"
-            height="11"
-            rx="2.5"
+            x="-14"
+            y="-7.5"
+            width="28"
+            height="15"
+            rx="3.5"
             fill="#FF6A2B"
             stroke="#FFFFFF"
-            strokeWidth="1"
+            strokeWidth="1.2"
           />
 
-          {/* Aerodynamic Cockpit Windshield */}
+          {/* Angular Off-Road Bull-Bar / Front Bumper */}
+          <path
+            d="M 14 -5 L 17 -3 L 17 3 L 14 5"
+            fill="none"
+            stroke="#FFFFFF"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+
+          {/* Tinted Cockpit Windshield */}
           <polygon
-            points="-2,-4 5,-3 5,3 -2,4"
+            points="-4,-5.5 6,-4 6,4 -4,5.5"
             fill="#0B0D10"
             stroke="#FFD166"
-            strokeWidth="0.6"
+            strokeWidth="0.8"
           />
 
-          {/* Front & Rear Cyber Wheels */}
-          <rect x="-8.5" y="-7.5" width="4.5" height="2.2" rx="0.8" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="0.8" />
-          <rect x="4" y="-7.5" width="4.5" height="2.2" rx="0.8" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="0.8" />
-          <rect x="-8.5" y="5.3" width="4.5" height="2.2" rx="0.8" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="0.8" />
-          <rect x="4" y="5.3" width="4.5" height="2.2" rx="0.8" fill="#0B0D10" stroke="#FF6A2B" strokeWidth="0.8" />
+          {/* Roof Rack & Twin Spotlights */}
+          <rect x="-7" y="-5" width="10" height="10" rx="1.5" fill="none" stroke="#FFFFFF" strokeWidth="0.8" opacity="0.6" />
+          <circle cx="6" cy="-2.5" r="1.5" fill="#FFFFFF" />
+          <circle cx="6" cy="2.5" r="1.5" fill="#FFFFFF" />
 
-          {/* Flashing Roof Beacon Indicator */}
-          <circle cx="0" cy="0" r="2.2" fill="#FFFFFF" />
-          <circle cx="0" cy="0" r="1.2" fill="#FF6A2B" />
+          {/* Flashing Emergency Beacon (Amber) */}
+          <circle cx="-1" cy="0" r="2.5" fill="#FFD166" className="animate-ping opacity-75" />
+          <circle cx="-1" cy="0" r="1.5" fill="#FFFFFF" />
 
-          {/* Rear Twin Cyan Plasma Exhaust Trails */}
-          <circle cx="-11" cy="-2.5" r="1.2" fill="#4DE1C1" />
-          <circle cx="-11" cy="2.5" r="1.2" fill="#4DE1C1" />
+          {/* Rear Cyan Plasma Thruster Boosters */}
+          <rect x="-16" y="-3.5" width="3" height="2" rx="0.5" fill="#4DE1C1" />
+          <rect x="-16" y="1.5" width="3" height="2" rx="0.5" fill="#4DE1C1" />
+          {/* Exhaust Flames */}
+          <polygon points="-16,-2.5 -22,-2.5 -17,-3.5" fill="#4DE1C1" opacity="0.8" />
+          <polygon points="-16,2.5 -22,2.5 -17,1.5" fill="#4DE1C1" opacity="0.8" />
         </g>
       )}
     </svg>
