@@ -138,7 +138,7 @@ export const projects = [
     des: "Modern portfolio built with Next.js, Tailwind CSS, and Framer Motion, featuring dynamic Three.js components.",
     img: "/Project6.svg",
     iconLists: ["/next.svg", "/tail.svg", "/three.svg"],
-    link: "https://saurabh-dixit-portfolio.vercel.app/",
+    link: "https://saurabh-dixit.vercel.app/",
   },
 ];
 
@@ -290,7 +290,7 @@ const phoneNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 const message = "Hello! I would like to chat with you.";
 
 const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-  message
+  message,
 )}`;
 export const education = [
   {

@@ -27,6 +27,26 @@ const config = {
     },
     extend: {
       colors: {
+        // Blueprint Semantic Tokens ("The Systems Blueprint")
+        bg: "var(--bg)",
+        surface: "var(--surface)",
+        line: "var(--line)",
+        text: "var(--text)",
+        muted: "var(--muted)",
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-contrast)",
+        },
+        "accent-2": {
+          DEFAULT: "var(--accent-2)",
+          foreground: "var(--bg)",
+        },
+        accent2: {
+          DEFAULT: "var(--accent-2)",
+          foreground: "var(--bg)",
+        },
+
+        // Legacy / Component Tokens
         black: {
           DEFAULT: "#000",
           100: "#000319",
@@ -59,14 +79,6 @@ const config = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
@@ -75,6 +87,14 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        "font-display": ["var(--font-display)", "Georgia", "serif"],
+        "font-sans": ["var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
+        "font-mono": ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",

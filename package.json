@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "npx tsx __tests__/process_contact.test.ts && npx tsx __tests__/hero.test.ts && npx tsx __tests__/navigation.test.ts && npx tsx __tests__/content.test.ts && npx tsx __tests__/about_stack.test.ts && npx tsx __tests__/experience.test.ts && npx tsx __tests__/selected_work.test.ts && npx tsx __tests__/assistant.test.ts",
     "deploy": "vercel --prod"
   },
   "dependencies": {
@@ -29,7 +30,8 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.182.0",
     "three-globe": "^2.45.0",
-    "vercel": "^50.1.3"
+    "vercel": "^50.1.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
