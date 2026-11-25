@@ -19,7 +19,7 @@ export const GitCommitCard: React.FC<GitCommitCardProps> = ({
 
   return (
     <article
-      className={`relative bg-surface/80 backdrop-blur-md border border-hairline p-5 sm:p-6 transition-all duration-200 hover:border-accent/60 ${
+      className={`relative bg-surface border border-hairline p-5 sm:p-6 shadow-xl transition-all duration-200 hover:border-accent/60 ${
         item.git.isLive ? "border-l-2 border-l-emerald-400" : ""
       } ${className}`}
       aria-label={`${item.role} at ${item.company}`}

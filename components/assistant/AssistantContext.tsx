@@ -9,6 +9,7 @@ export interface AssistantContextValue {
   openAssistant: (prompt?: string, trigger?: string) => void;
   closeAssistant: () => void;
   toggleAssistant: () => void;
+  clearInitialPrompt: () => void;
 }
 
 const AssistantContext = createContext<AssistantContextValue | undefined>(undefined);
@@ -33,6 +34,10 @@ export const AssistantProvider: React.FC<AssistantProviderProps> = ({ children }
 
   const closeAssistant = useCallback(() => {
     setIsOpen(false);
+    setInitialPrompt(null);
+  }, []);
+
+  const clearInitialPrompt = useCallback(() => {
     setInitialPrompt(null);
   }, []);
 
@@ -68,6 +73,7 @@ export const AssistantProvider: React.FC<AssistantProviderProps> = ({ children }
         openAssistant,
         closeAssistant,
         toggleAssistant,
+        clearInitialPrompt,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from "framer-motion";
 import { GIT_EXPERIENCE_DATA, GitExperienceItem } from "./experienceGitData";
 import { GitTrackSvg } from "./GitTrackSvg";
 import { GitCommitCard } from "./GitCommitCard";
@@ -13,6 +13,52 @@ export interface GitGraphTimelineProps {
   className?: string;
 }
 
+interface StickyCommitDeckCardProps {
+  item: GitExperienceItem;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  isProduction: boolean;
+  shouldReduceMotion: boolean;
+  cardRef: (el: HTMLDivElement | null) => void;
+}
+
+const StickyCommitDeckCard: React.FC<StickyCommitDeckCardProps> = ({
+  item,
+  index,
+  total,
+  progress,
+  isProduction,
+  shouldReduceMotion,
+  cardRef,
+}) => {
+  // Each card scales down slightly as subsequent cards scroll up to cover it
+  const stepStart = index / total;
+  const stepEnd = Math.min(1, (index + 1) / total);
+  const targetScale = shouldReduceMotion || index === total - 1 ? 1 : 1 - (total - 1 - index) * 0.025;
+  const scale = useTransform(progress, [stepStart, stepEnd], [1, targetScale]);
+
+  const topOffset = 88 + index * 14;
+
+  return (
+    <div
+      ref={cardRef}
+      className="sticky will-change-transform"
+      style={{
+        top: `${topOffset}px`,
+        zIndex: index + 1,
+      }}
+    >
+      <motion.div
+        style={shouldReduceMotion ? undefined : { scale }}
+        className="origin-top transition-shadow duration-200"
+      >
+        <GitCommitCard item={item} isProduction={isProduction} />
+      </motion.div>
+    </div>
+  );
+};
+
 export const GitGraphTimeline: React.FC<GitGraphTimelineProps> = ({
   items = GIT_EXPERIENCE_DATA,
   isProduction = process.env.NODE_ENV === "production",
@@ -20,103 +66,73 @@ export const GitGraphTimeline: React.FC<GitGraphTimelineProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = Boolean(useReducedMotion());
 
-  const [nodeYs, setNodeYs] = useState<number[]>([40, 260, 480, 700]);
-  const [containerHeight, setContainerHeight] = useState<number>(850);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 75%", "end 85%"],
+  });
+
   const [scrollProgress, setScrollProgress] = useState<number>(0);
 
-  // Measure dynamic card positions to align SVG nodes with cards across viewports
   useEffect(() => {
-    function updatePositions() {
-      if (!containerRef.current) return;
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const measured = cardRefs.current.map((cardEl, idx) => {
-        if (!cardEl) return (idx + 1) * 200;
-        const cardRect = cardEl.getBoundingClientRect();
-        // Offset 32px to align circle with commit hash header bar
-        return Math.round(cardRect.top - containerRect.top + 32);
-      });
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      setScrollProgress(latest);
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress]);
 
-      if (measured.length > 0) {
-        setNodeYs(measured);
-      }
-      setContainerHeight(Math.round(containerRect.height));
-    }
-
-    updatePositions();
-    window.addEventListener("resize", updatePositions);
-    return () => window.removeEventListener("resize", updatePositions);
-  }, [items]);
-
-  // Bulletproof native window scroll tracking for 60fps rover traversal
-  useEffect(() => {
-    let ticking = false;
-    const updateScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // Rover starts when top of container reaches 85% of screen, finishes at 25%
-      const start = vh * 0.85;
-      const end = vh * 0.25;
-      const total = rect.height + (start - end);
-      const current = start - rect.top;
-      const fraction = Math.min(1, Math.max(0, current / total));
-      setScrollProgress(fraction);
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateScroll);
-        ticking = true;
-      }
-    };
-
-    updateScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
+  // Fixed proportional nodeYs for the sticky left Git Track SVG so all 4 commits
+  // stay visible in the sticky left rail as the rover drives from node 0 -> 3.
+  const stickyNodeYs = [44, 164, 284, 404];
 
   return (
     <div ref={containerRef} className={`relative w-full ${className}`}>
-      {/* Blueprint Layout: Left Git Graph Track + Right Commit Cards Stream */}
+      {/* Blueprint Layout: Sticky Left Git Graph Track + Cover-by-Cover Sticky Commit Cards */}
       <div className="relative flex items-start gap-3 sm:gap-6 md:gap-10">
-        {/* Left Rail: Git Branch SVG Spine */}
-        <div className="relative shrink-0 select-none">
+        {/* Left Rail: Sticky Git Branch SVG Spine */}
+        <div className="sticky top-24 shrink-0 select-none self-start hidden sm:block">
           <GitTrackSvg
             progress={scrollProgress}
-            reducedMotion={Boolean(shouldReduceMotion)}
-            nodeYs={nodeYs}
-            height={containerHeight}
+            reducedMotion={shouldReduceMotion}
+            nodeYs={stickyNodeYs}
+            height={460}
           />
         </div>
 
-        {/* Right Rail: Git Commit Cards Flow */}
-        <div className="flex-1 min-w-0 space-y-8 sm:space-y-12">
+        {/* Mobile Left Rail: Compact Sticky Git Track */}
+        <div className="sticky top-24 shrink-0 select-none self-start block sm:hidden">
+          <GitTrackSvg
+            progress={scrollProgress}
+            reducedMotion={shouldReduceMotion}
+            nodeYs={stickyNodeYs}
+            height={460}
+          />
+        </div>
+
+        {/* Right Rail: Cover-by-Cover Sticky Git Commit Cards Deck */}
+        <div className="flex-1 min-w-0 space-y-24 sm:space-y-32 pb-20">
           {items.map((item, index) => (
-            <div
+            <StickyCommitDeckCard
               key={item.id}
-              ref={(el) => {
+              item={item}
+              index={index}
+              total={items.length}
+              progress={scrollYProgress}
+              isProduction={isProduction}
+              shouldReduceMotion={shouldReduceMotion}
+              cardRef={(el) => {
                 cardRefs.current[index] = el;
               }}
-              className="relative"
-            >
-              <GitCommitCard
-                item={item}
-                isProduction={isProduction}
-              />
-            </div>
+            />
           ))}
         </div>
       </div>
 
       {/* Terminal Academic Foundation Footnote */}
-      <EducationFootnote />
+      <div className="mt-10 sm:mt-14">
+        <EducationFootnote />
+      </div>
     </div>
   );
 };

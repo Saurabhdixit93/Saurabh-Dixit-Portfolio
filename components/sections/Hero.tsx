@@ -150,8 +150,8 @@ export const Hero: React.FC<HeroProps> = ({ className = "" }) => {
             </div>
 
             {/* Right Column: 5-Node Animated SVG System Core Diagram */}
-            <div className="lg:col-span-6 flex justify-center lg:justify-end">
-              <SystemCoreDiagram />
+            <div className="lg:col-span-6 flex justify-center lg:justify-end w-full">
+              <SystemCoreDiagram className="w-full max-w-[660px]" />
             </div>
 
             {/* Verified Proof Metrics Grid (Mobile: stacked below diagram) */}

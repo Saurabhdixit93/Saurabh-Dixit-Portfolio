@@ -107,10 +107,26 @@ export function ArchitectureDiagram({
   nodes.forEach((n) => nodeMap.set(n.id, n));
 
   // Node dimensions
-  const nodeW = 136;
-  const nodeH = 56;
+  const nodeW = 148;
+  const nodeH = 58;
   const halfW = nodeW / 2;
   const halfH = nodeH / 2;
+
+  // Compute dynamic padded viewBox so no node or edge ever overflows or clips
+  const coords = nodes.map(getNodeCoordinates);
+  const padX = 36;
+  const padY = 36;
+  const minNodeX = coords.length > 0 ? Math.min(...coords.map((c) => c.cx)) : 100;
+  const maxNodeX = coords.length > 0 ? Math.max(...coords.map((c) => c.cx)) : 700;
+  const minNodeY = coords.length > 0 ? Math.min(...coords.map((c) => c.cy)) : 100;
+  const maxNodeY = coords.length > 0 ? Math.max(...coords.map((c) => c.cy)) : 320;
+
+  const vbMinX = Math.min(0, Math.floor(minNodeX - halfW - padX));
+  const vbMinY = Math.min(0, Math.floor(minNodeY - halfH - padY));
+  const vbMaxX = Math.max(800, Math.ceil(maxNodeX + halfW + padX));
+  const vbMaxY = Math.max(420, Math.ceil(maxNodeY + halfH + padY));
+  const vbWidth = vbMaxX - vbMinX;
+  const vbHeight = vbMaxY - vbMinY;
 
   // Compute Bezier path between two nodes
   const computePath = (fromNode: ArchitectureNode, toNode: ArchitectureNode) => {
@@ -183,10 +199,11 @@ export function ArchitectureDiagram({
       </div>
 
       {/* SVG Canvas */}
-      <div className="relative w-full overflow-x-auto">
+      <div className="relative w-full">
         <svg
-          viewBox="0 0 800 420"
-          className="w-full h-auto min-w-[680px] select-none"
+          viewBox={`${vbMinX} ${vbMinY} ${vbWidth} ${vbHeight}`}
+          className="w-full h-auto block select-none"
+          preserveAspectRatio="xMidYMid meet"
           role="img"
           aria-label={`${title} system architecture diagram`}
         >
@@ -239,19 +256,25 @@ export function ArchitectureDiagram({
 
           <style>
             {`
-              @media (prefers-reduced-motion: reduce) {
-                .diagram-signal-pulse {
-                  display: none !important;
-                }
-                .diagram-radar-ring {
-                  animation: none !important;
-                }
+              @keyframes archDash {
+                from { stroke-dashoffset: 24; }
+                to { stroke-dashoffset: 0; }
+              }
+              .arch-edge-flow {
+                animation: archDash 1.6s linear infinite !important;
               }
             `}
           </style>
 
           {/* Grid Background */}
-          <rect width="800" height="420" fill={`url(#grid-${diagramId})`} rx="8" />
+          <rect
+            x={vbMinX}
+            y={vbMinY}
+            width={vbWidth}
+            height={vbHeight}
+            fill={`url(#grid-${diagramId})`}
+            rx="8"
+          />
 
           {/* Edges */}
           <g className="edges-group">
@@ -279,9 +302,9 @@ export function ArchitectureDiagram({
                     fill="none"
                     stroke={edgeColor}
                     strokeWidth={isConnectedToHover ? 2 : 1.2}
-                    strokeDasharray={edge.animated === false ? "4,4" : undefined}
+                    strokeDasharray="6 6"
                     markerEnd={`url(#${isConnectedToHover ? `arrow-active-${diagramId}` : `arrow-${diagramId}`})`}
-                    className="transition-colors duration-200"
+                    className="transition-colors duration-200 arch-edge-flow"
                   />
 
                   {/* Traveling Pulse Along Path */}

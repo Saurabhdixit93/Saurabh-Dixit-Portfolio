@@ -30,7 +30,7 @@ interface ChatMessage {
 const SUGGESTED_PROMPTS = aiWorkflow.assistantTeaser.suggestedPrompts;
 
 export const AskSaurabh: React.FC = () => {
-  const { isOpen, closeAssistant, openAssistant, initialPrompt } = useAssistant();
+  const { isOpen, closeAssistant, openAssistant, initialPrompt, clearInitialPrompt } = useAssistant();
   const prefersReducedMotion = useReducedMotion();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -232,12 +232,17 @@ export const AskSaurabh: React.FC = () => {
     [input, isLoading, isStreaming, messages]
   );
 
-  // Trigger initial prompt if set via context
+  // Trigger initial prompt once if set via context
+  const handleSendRef = useRef(handleSend);
+  handleSendRef.current = handleSend;
+
   useEffect(() => {
     if (isOpen && initialPrompt) {
-      handleSend(initialPrompt);
+      const promptToRun = initialPrompt;
+      clearInitialPrompt();
+      handleSendRef.current(promptToRun);
     }
-  }, [isOpen, initialPrompt, handleSend]);
+  }, [isOpen, initialPrompt, clearInitialPrompt]);
 
   // Handle clear chat history
   const handleClearHistory = () => {

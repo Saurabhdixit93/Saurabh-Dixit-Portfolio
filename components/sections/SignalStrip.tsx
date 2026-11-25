@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
 export interface SignalItem {
   id: string;
@@ -96,28 +96,47 @@ export const SignalStrip: React.FC<SignalStripProps> = ({
   className = "",
   items = SIGNAL_ITEMS,
 }) => {
-  const shouldReduceMotion = useReducedMotion();
+  const [isPaused, setIsPaused] = React.useState(false);
 
   return (
     <div
       className={`relative w-full overflow-hidden border-y border-hairline bg-surface/50 backdrop-blur-md py-3 select-none ${className}`}
       role="region"
       aria-label="Live signals, verified engineering metrics, and core technologies"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
       {/* Blueprint Left Edge Fade Gradient */}
       <div
-        className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-bg via-bg/80 to-transparent z-10 motion-reduce:hidden"
+        className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-bg via-bg/80 to-transparent z-10"
         aria-hidden="true"
       />
 
       {/* Blueprint Right Edge Fade Gradient */}
       <div
-        className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-bg via-bg/80 to-transparent z-10 motion-reduce:hidden"
+        className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-bg via-bg/80 to-transparent z-10"
         aria-hidden="true"
       />
 
-      {/* Marquee Track Container (Continuous 60fps Hardware-Accelerated CSS Loop) */}
-      <div className="flex w-max animate-marquee-infinite">
+      {/* Marquee Track Container (Framer Motion 60fps Infinite Loop) */}
+      <motion.div
+        className="flex w-max"
+        animate={
+          isPaused
+            ? undefined
+            : {
+                x: ["0%", "-50%"],
+              }
+        }
+        transition={{
+          x: {
+            repeat: Infinity,
+            repeatType: "loop",
+            duration: 28,
+            ease: "linear",
+          },
+        }}
+      >
         {/* Track 1: Primary */}
         <div className="flex items-center shrink-0 space-x-3 sm:space-x-4 pr-3 sm:pr-4">
           {items.map((item) => (
@@ -172,7 +191,7 @@ export const SignalStrip: React.FC<SignalStripProps> = ({
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

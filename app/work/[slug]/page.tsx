@@ -118,11 +118,11 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
   return (
     <main id="main-content" tabIndex={-1} className="outline-none">
-      <article className="min-h-screen bg-bg text-text pt-24 pb-20 relative overflow-x-hidden selection:bg-accent/20 selection:text-accent">
+      <article className="min-h-screen bg-bg text-text pt-28 pb-24 sm:pt-32 sm:pb-28 relative overflow-x-hidden selection:bg-accent selection:text-white">
       {/* Background blueprint grid */}
       <div className="absolute inset-0 bg-blueprint-grid opacity-25 pointer-events-none" />
 
-      <Container size="default" className="relative z-10">
+      <Container size="default" className="relative z-10 px-5 sm:px-8 lg:px-12">
         {/* Breadcrumb Navigation */}
         <nav aria-label="Breadcrumb" className="mb-8">
           <Link
@@ -135,7 +135,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
         </nav>
 
         {/* Hero Section */}
-        <header className="border-b border-hairline pb-12 mb-12">
+        <header className="p-6 sm:p-8 lg:p-10 rounded-xl border border-hairline bg-surface/30 backdrop-blur-sm mb-12">
           {/* Eyebrow */}
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider">
@@ -241,7 +241,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           </section>
         )}
 
-        <div className="space-y-12 max-w-5xl">
+        <div className="space-y-12 w-full">
           {/* Section 1: Problem Statement */}
           <section aria-labelledby="problem-heading" className="p-6 sm:p-8 rounded-xl border border-hairline bg-surface/40 backdrop-blur-sm space-y-5">
             <span className="font-mono text-xs font-semibold text-accent uppercase tracking-wider block">

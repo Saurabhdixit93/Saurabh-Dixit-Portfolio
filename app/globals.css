@@ -85,25 +85,16 @@
   html {
     background-color: var(--bg);
     color: var(--text);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
+    scroll-behavior: smooth;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
     }
   }
 
@@ -123,7 +114,7 @@
 
   ::selection {
     background-color: var(--accent);
-    color: #0b0d10;
+    color: #ffffff;
   }
 
   [data-theme="paper"] ::selection,
@@ -253,41 +244,78 @@
     text-transform: uppercase;
     color: var(--muted);
   }
+}
 
-  /* Hardware-accelerated continuous infinite marquee */
-  @keyframes marquee-scroll {
-    0% {
-      transform: translate3d(0, 0, 0);
-    }
-    100% {
-      transform: translate3d(-50%, 0, 0);
-    }
+/* Hardware-accelerated continuous infinite marquee (top-level so Tailwind never purges) */
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
   }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
 
-  .animate-marquee-infinite {
-    display: flex;
-    width: max-content;
-    animation: marquee-scroll 26s linear infinite;
-    will-change: transform;
-  }
+.animate-marquee-infinite {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 28s linear infinite;
+  will-change: transform;
+}
 
-  .animate-marquee-infinite:hover {
-    animation-play-state: paused;
-  }
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
 
-  /* Pipeline shimmer pulse */
-  @keyframes pipeline-shimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
+/* Pipeline shimmer pulse */
+@keyframes pipeline-shimmer {
+  0% {
+    transform: translateX(-100%);
   }
+  100% {
+    transform: translateX(300%);
+  }
+}
 
-  .animate-pipeline-shimmer {
-    animation: pipeline-shimmer 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+.animate-pipeline-shimmer {
+  animation: pipeline-shimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Animated border tracer for AI pipeline cards */
+@keyframes border-beam-spin {
+  0% {
+    transform: rotate(0deg);
   }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.pipeline-card-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 260deg,
+    var(--accent) 310deg,
+    var(--accent-2) 345deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.pipeline-card-glow:hover::before {
+  opacity: 1;
 }
 
 /* Prevent SVG overlays, lines, dots, and filters from intercepting mouse hit-tests and causing hover flicker */

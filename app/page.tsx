@@ -22,7 +22,7 @@ const Home = () => {
       <main
         id="main-content"
         tabIndex={-1}
-        className="relative bg-bg text-text transition-colors duration-200 min-h-screen flex flex-col items-center overflow-x-hidden w-full outline-none"
+        className="relative bg-bg text-text transition-colors duration-200 min-h-screen flex flex-col items-center overflow-x-clip w-full outline-none"
       >
         {/* Milestone 5: Systems Blueprint Hero */}
         <Hero />
