@@ -31,7 +31,7 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
       className = "",
       ...props
     },
-    ref
+    ref,
   ) => {
     const headingId = id ? `${id}-heading` : undefined;
 
@@ -49,16 +49,30 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
           <div className="relative">
             {withCornerMarks && (
               <>
-                <span className="corner-mark corner-mark-tl" aria-hidden="true" />
-                <span className="corner-mark corner-mark-tr" aria-hidden="true" />
-                <span className="corner-mark corner-mark-bl" aria-hidden="true" />
-                <span className="corner-mark corner-mark-br" aria-hidden="true" />
+                <span
+                  className="corner-mark corner-mark-tl"
+                  aria-hidden="true"
+                />
+                <span
+                  className="corner-mark corner-mark-tr"
+                  aria-hidden="true"
+                />
+                <span
+                  className="corner-mark corner-mark-bl"
+                  aria-hidden="true"
+                />
+                <span
+                  className="corner-mark corner-mark-br"
+                  aria-hidden="true"
+                />
               </>
             )}
 
             {(annotation || heading || subheading || action) && (
               <header className="mb-10 md:mb-14">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-hairline">
+                <div
+                  className={`flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-hairline ${heading ? "px-3" : ""}`}
+                >
                   <div className="space-y-2">
                     {annotation && (
                       <div className="annotation">
@@ -86,7 +100,9 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
                     )}
                   </div>
 
-                  {action && <div className="flex items-center gap-3">{action}</div>}
+                  {action && (
+                    <div className="flex items-center gap-3">{action}</div>
+                  )}
                 </div>
               </header>
             )}
@@ -96,10 +112,9 @@ export const Section = React.forwardRef<HTMLElement, SectionProps>(
         </Container>
       </section>
     );
-  }
+  },
 );
 
 Section.displayName = "Section";
 
 export default Section;
-

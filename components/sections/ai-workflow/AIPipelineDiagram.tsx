@@ -65,17 +65,47 @@ export const AIPipelineDiagram: React.FC = () => {
               strokeWidth="1.5"
             />
             {/* Vertical drop lines from each node down toward its card */}
-            {[100, 300, 500, 700].map((cx) => (
-              <line
-                key={cx}
-                x1={cx}
-                y1="10"
-                x2={cx}
-                y2="52"
-                stroke="var(--line)"
-                strokeWidth="1.2"
-                strokeDasharray="3 3"
-              />
+            {[100, 300, 500, 700].map((cx, i) => (
+              <g key={cx}>
+                <line
+                  x1={cx}
+                  y1="10"
+                  x2={cx}
+                  y2="52"
+                  stroke="var(--line)"
+                  strokeWidth="1.2"
+                  strokeDasharray="3 3"
+                />
+                {!prefersReducedMotion && (
+                  <>
+                    <line
+                      x1={cx}
+                      y1="10"
+                      x2={cx}
+                      y2="52"
+                      stroke="var(--accent)"
+                      strokeWidth="1.6"
+                      strokeDasharray="6 10"
+                    >
+                      <animate
+                        attributeName="stroke-dashoffset"
+                        from="16"
+                        to="0"
+                        dur="1.4s"
+                        repeatCount="indefinite"
+                      />
+                    </line>
+                    <circle r="2.5" fill="var(--accent)">
+                      <animateMotion
+                        dur="1.8s"
+                        begin={`${i * 0.35}s`}
+                        repeatCount="indefinite"
+                        path={`M ${cx} 10 L ${cx} 52`}
+                      />
+                    </circle>
+                  </>
+                )}
+              </g>
             ))}
             {/* Animated glowing signal trace */}
             {!prefersReducedMotion && (
@@ -132,7 +162,7 @@ export const AIPipelineDiagram: React.FC = () => {
                 <span className="font-mono text-[10px] text-accent font-semibold tracking-wider bg-bg/80 px-1.5 rounded">
                   {stage.code}
                 </span>
-                <span className="font-mono text-[9px] text-muted hidden sm:inline">
+                <span className="font-mono text-[9px] text-muted hidden sm:inline bg-bg/85 px-1.5 rounded">
                   STEP 0{stage.step}
                 </span>
               </div>
@@ -141,25 +171,26 @@ export const AIPipelineDiagram: React.FC = () => {
         </div>
       </div>
 
-      {/* 4 Pipeline Stage Cards Grid with Animated Glowing Border Lines */}
+      {/* 4 Pipeline Stage Cards Grid with Corner Registration Marks & Unified Border Animation */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stages.map((stage, idx) => (
+        {stages.map((stage) => (
           <div
             key={stage.step}
-            className="pipeline-card-glow relative p-5 rounded-md bg-surface/95 backdrop-blur-md border border-hairline hover:border-accent/80 transition-all duration-300 flex flex-col justify-between space-y-3 group shadow-sm overflow-hidden"
+            className="relative p-5 rounded-none bg-surface/95 backdrop-blur-md border border-hairline transition-all duration-300 flex flex-col justify-between gap-3 group shadow-sm hover:shadow-[0_0_24px_rgba(255,106,43,0.12)]"
           >
-            {/* Animated Top Border Beam */}
-            {!prefersReducedMotion && (
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute top-0 left-0 h-[2px] w-1/2 bg-gradient-to-r from-transparent via-accent to-accent2 animate-pipeline-shimmer"
-                style={{ animationDelay: `${idx * 0.45}s` }}
-              />
-            )}
+            {/* Unified Perimeter Hover Border Trace (sits directly on the -1px border frame alongside corner marks) */}
+            <div className="pointer-events-none absolute -inset-[1px] z-10" aria-hidden="true">
+              <span className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-accent via-accent2 to-accent origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+              <span className="absolute top-0 right-0 bottom-0 w-[1.5px] bg-gradient-to-b from-accent via-accent2 to-accent origin-top scale-y-0 group-hover:scale-y-100 transition-transform duration-300 delay-75 ease-out" />
+              <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-gradient-to-l from-accent via-accent2 to-accent origin-right scale-x-0 group-hover:scale-x-100 transition-transform duration-300 delay-150 ease-out" />
+              <span className="absolute top-0 left-0 bottom-0 w-[1.5px] bg-gradient-to-t from-accent via-accent2 to-accent origin-bottom scale-y-0 group-hover:scale-y-100 transition-transform duration-300 delay-200 ease-out" />
+            </div>
 
-            {/* Blueprint Corner Registration Marks */}
-            <span className="corner-mark corner-mark-tl opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
-            <span className="corner-mark corner-mark-br opacity-70 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
+            {/* Blueprint Corner Registration Marks - flush on exact -1px corners */}
+            <span className="corner-mark corner-mark-tl opacity-85 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+            <span className="corner-mark corner-mark-tr opacity-85 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+            <span className="corner-mark corner-mark-bl opacity-85 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
+            <span className="corner-mark corner-mark-br opacity-85 group-hover:opacity-100 transition-opacity duration-300" aria-hidden="true" />
 
             {/* Header / Step code */}
             <div>
@@ -202,9 +233,9 @@ export const AIPipelineDiagram: React.FC = () => {
             </div>
 
             {/* Deliverable Tag */}
-            <div className="pt-2 border-t border-hairline/40 flex items-center gap-1.5 text-[10px] font-mono text-muted">
-              <FileCode2 className="w-3 h-3 text-accent shrink-0" />
-              <span className="truncate">{stage.deliverable}</span>
+            <div className="pt-2 border-t border-hairline/40 flex items-start gap-1.5 text-[10px] font-mono text-muted">
+              <FileCode2 className="w-3 h-3 text-accent shrink-0 mt-0.5" />
+              <span className="leading-snug">{stage.deliverable}</span>
             </div>
           </div>
         ))}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion, MotionValue, isMotionValue } from "framer-motion";
+import { motion, MotionValue, isMotionValue, useMotionValue } from "framer-motion";
 
 export interface GitTrackSvgProps {
   progress?: MotionValue<number> | number;
@@ -9,6 +9,8 @@ export interface GitTrackSvgProps {
   nodeYs?: number[];
   height?: number;
   className?: string;
+  activeIndex?: number;
+  onNodeClick?: (index: number) => void;
 }
 
 /**
@@ -76,6 +78,8 @@ export const GitTrackSvg: React.FC<GitTrackSvgProps> = ({
   reducedMotion = false,
   nodeYs = [60, 260, 480, 700],
   className = "",
+  activeIndex = -1,
+  onNodeClick,
 }) => {
   const xTrunk = 24;
   const xBranch = 60;
@@ -99,11 +103,14 @@ export const GitTrackSvg: React.FC<GitTrackSvgProps> = ({
   // Full continuous graph path for scroll-linked drawing
   const fullGraphPath = `${branchPath} ${forkPath.replace(/^M/, "L")} L ${xTrunk} ${yBottom}`;
 
-  const pathLengthValue = reducedMotion ? 1 : progress;
-
   // Scroll Traveler Car / Rover Position State
   const [traveler, setTraveler] = useState<{ x: number; y: number; angle: number }>(() =>
     computeGitTrackPosition(0, xBranch, xTrunk, y0, y2, y3, yBottom)
+  );
+
+  // Strict MotionValue<number> backing for style.pathLength so TypeScript never sees a raw number union
+  const internalPathLength = useMotionValue(
+    reducedMotion ? 1 : typeof progress === "number" ? progress : 1
   );
 
   const updateCar = useCallback(
@@ -116,24 +123,31 @@ export const GitTrackSvg: React.FC<GitTrackSvgProps> = ({
 
   useEffect(() => {
     if (isMotionValue(progress)) {
-      updateCar(progress.get());
+      const initial = progress.get();
+      internalPathLength.set(reducedMotion ? 1 : initial);
+      updateCar(initial);
       const unsub = progress.on("change", (latest) => {
+        internalPathLength.set(reducedMotion ? 1 : latest);
         updateCar(latest);
       });
       return () => unsub();
     } else if (typeof progress === "number") {
+      internalPathLength.set(reducedMotion ? 1 : progress);
       updateCar(progress);
     }
-  }, [progress, updateCar]);
+  }, [progress, reducedMotion, internalPathLength, updateCar]);
+
+  const activePathLength: MotionValue<number> =
+    !reducedMotion && isMotionValue(progress) ? progress : internalPathLength;
 
   return (
     <svg
       viewBox={`0 0 80 ${yBottom}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`w-20 overflow-visible select-none pointer-events-none ${className}`}
+      className={`w-20 overflow-visible select-none ${onNodeClick ? '' : 'pointer-events-none'} ${className}`}
       style={{ height: yBottom }}
-      aria-hidden="true"
+      aria-hidden={!onNodeClick}
     >
       <defs>
         {/* Glow filter for active nodes */}
@@ -171,7 +185,7 @@ export const GitTrackSvg: React.FC<GitTrackSvgProps> = ({
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          pathLength: pathLengthValue,
+          pathLength: activePathLength,
         }}
       />
 
@@ -195,30 +209,51 @@ export const GitTrackSvg: React.FC<GitTrackSvgProps> = ({
 
       {/* Commit Nodes */}
       {/* Node 0: VP of Engineering (HEAD / LIVE) */}
-      <g transform={`translate(${xBranch}, ${y0})`}>
+      <g transform={`translate(${xBranch}, ${y0})`} className="pointer-events-none">
         {!reducedMotion && (
           <circle r="12" fill="none" stroke="#34D399" strokeWidth="1.5" className="animate-ping opacity-60" />
         )}
-        <circle r="9" fill="none" stroke="#34D399" strokeWidth="1.5" opacity={0.7} />
-        <circle r="5" fill="#34D399" filter="url(#live-glow)" />
+        <circle
+          r="9"
+          fill="none"
+          stroke="#34D399"
+          strokeWidth={activeIndex === 0 ? "2" : "1.5"}
+          opacity={activeIndex === 0 ? 1 : 0.7}
+        />
+        <circle r={activeIndex === 0 ? "5.5" : "5"} fill="#34D399" filter="url(#live-glow)" />
       </g>
 
       {/* Node 1: Senior SDE */}
-      <g transform={`translate(${xBranch}, ${y1})`}>
-        <circle r="7" fill="var(--surface, #12151B)" stroke="var(--accent, #FF6A2B)" strokeWidth="2" />
-        <circle r="3" fill="var(--accent, #FF6A2B)" />
+      <g transform={`translate(${xBranch}, ${y1})`} className="pointer-events-none">
+        <circle
+          r={activeIndex === 1 ? "9" : "7"}
+          fill="var(--surface, #12151B)"
+          stroke="var(--accent, #FF6A2B)"
+          strokeWidth="2"
+        />
+        <circle r={activeIndex === 1 ? "4" : "3"} fill="var(--accent, #FF6A2B)" />
       </g>
 
       {/* Node 2: Full Stack Engineer (Branch Fork Origin) */}
-      <g transform={`translate(${xBranch}, ${y2})`}>
-        <circle r="7" fill="var(--surface, #12151B)" stroke="var(--accent, #FF6A2B)" strokeWidth="2" />
-        <circle r="3" fill="var(--accent, #FF6A2B)" />
+      <g transform={`translate(${xBranch}, ${y2})`} className="pointer-events-none">
+        <circle
+          r={activeIndex === 2 ? "9" : "7"}
+          fill="var(--surface, #12151B)"
+          stroke="var(--accent, #FF6A2B)"
+          strokeWidth="2"
+        />
+        <circle r={activeIndex === 2 ? "4" : "3"} fill="var(--accent, #FF6A2B)" />
       </g>
 
       {/* Node 3: Kenmark ITan Solutions (Trunk Commit) */}
-      <g transform={`translate(${xTrunk}, ${y3})`}>
-        <circle r="7" fill="var(--surface, #12151B)" stroke="var(--accent2, #4DE1C1)" strokeWidth="2" />
-        <circle r="3" fill="var(--accent2, #4DE1C1)" />
+      <g transform={`translate(${xTrunk}, ${y3})`} className="pointer-events-none">
+        <circle
+          r={activeIndex === 3 ? "9" : "7"}
+          fill="var(--surface, #12151B)"
+          stroke="var(--accent2, #4DE1C1)"
+          strokeWidth="2"
+        />
+        <circle r={activeIndex === 3 ? "4" : "3"} fill="var(--accent2, #4DE1C1)" />
       </g>
 
       {/* Terminal Root Commit Base */}

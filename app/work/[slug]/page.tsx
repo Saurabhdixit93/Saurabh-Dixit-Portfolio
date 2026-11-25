@@ -355,7 +355,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 {caseStudy.decisions.map((decision, dIdx) => (
                   <div
                     key={dIdx}
-                    className="relative p-6 sm:p-7 rounded-xl border border-hairline bg-surface/80 backdrop-blur-sm space-y-4"
+                    className="relative p-6 sm:p-7 rounded-xl border border-hairline bg-surface/80 backdrop-blur-sm flex flex-col gap-4"
                   >
                     <span className="corner-mark corner-mark-tl opacity-60" aria-hidden="true" />
                     <span className="corner-mark corner-mark-tr opacity-60" aria-hidden="true" />

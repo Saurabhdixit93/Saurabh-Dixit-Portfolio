@@ -21,7 +21,7 @@ export const contactSchema = z.object({
     .trim()
     .email("Please provide a valid email address"),
   intent: z.enum(CONTACT_INTENTS, {
-    errorMap: () => ({ message: "Please select a valid inquiry intent" }),
+    error: "Please select a valid inquiry intent",
   }),
   message: z
     .string()

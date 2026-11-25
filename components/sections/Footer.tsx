@@ -112,7 +112,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Credits & Telemetry */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] text-muted">
-          <div>
+          <div suppressHydrationWarning>
             © 2022–{currentYear} {contactContent.footer.copyrightPrefix}
           </div>
           <div className="flex items-center gap-2">

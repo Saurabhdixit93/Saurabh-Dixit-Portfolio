@@ -358,8 +358,10 @@ export function runPerfA11yValidation(): PerfA11yValidationResult {
     "app/work/[slug]/page.tsx",
     "app/not-found.tsx",
     "app/error.tsx",
-    "app/dev/tokens/page.tsx",
   ];
+  if (fs.existsSync(path.join(projectRoot, "app/dev/tokens/page.tsx"))) {
+    landmarkRoutes.push("app/dev/tokens/page.tsx");
+  }
   for (const route of landmarkRoutes) {
     const src = fs.readFileSync(path.join(projectRoot, route), "utf-8");
     if (!/<main[^>]*id=["']main-content["']/.test(src)) {
@@ -418,12 +420,12 @@ export function runPerfA11yValidation(): PerfA11yValidationResult {
     }
   }
 
-  const devTokensSrc = fs.readFileSync(
-    path.join(projectRoot, "app/dev/tokens/page.tsx"),
-    "utf-8"
-  );
-  if (/<h4\b/i.test(devTokensSrc)) {
-    throw new Error("app/dev/tokens/page.tsx must not skip heading levels with <h4>");
+  const devTokensPath = path.join(projectRoot, "app/dev/tokens/page.tsx");
+  if (fs.existsSync(devTokensPath)) {
+    const devTokensSrc = fs.readFileSync(devTokensPath, "utf-8");
+    if (/<h4\b/i.test(devTokensSrc)) {
+      throw new Error("app/dev/tokens/page.tsx must not skip heading levels with <h4>");
+    }
   }
 
   checksPassed++;

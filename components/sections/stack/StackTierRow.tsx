@@ -31,7 +31,7 @@ export const StackTierRow: React.FC<StackTierRowProps> = ({
 
   return (
     <div
-      className={`relative border border-hairline bg-surface/35 hover:bg-surface/50 transition-colors duration-200 p-4 sm:p-5 corner-marks ${className}`}
+      className={`relative border border-hairline bg-surface/40 hover:bg-surface/55 transition-colors duration-200 p-3.5 sm:p-5 corner-marks ${className}`}
     >
       {/* Corner Registration Marks */}
       <span className="corner-mark corner-mark-tl" aria-hidden="true" />
@@ -40,9 +40,9 @@ export const StackTierRow: React.FC<StackTierRowProps> = ({
       <span className="corner-mark corner-mark-br" aria-hidden="true" />
 
       {/* Tier Header Line */}
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 mb-3 border-b border-hairline/60">
-        <div className="flex items-center gap-2.5">
-          <span className="font-mono text-xs text-accent font-semibold px-2 py-0.5 border border-accent/30 bg-accent/5 rounded-sm">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 mb-3 border-b border-hairline/60">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          <span className="font-mono text-[11px] sm:text-xs text-accent font-semibold px-2 py-0.5 border border-accent/30 bg-accent/5 rounded-sm shrink-0">
             {tierBadge}
           </span>
           <h3 className="font-mono text-xs sm:text-sm font-semibold tracking-wide text-text uppercase">
@@ -50,13 +50,13 @@ export const StackTierRow: React.FC<StackTierRowProps> = ({
           </h3>
         </div>
 
-        <p className="font-sans text-xs text-muted max-w-xl">
+        <p className="font-sans text-xs text-muted max-w-xl leading-relaxed">
           {category.description}
         </p>
       </div>
 
-      {/* Chips Cloud / Tier Flow */}
-      <div className="flex flex-wrap items-center gap-2.5 pt-1">
+      {/* Chips Cloud / Tier Flow: Responsive symmetrical 2-col grid on mobile, inline flex-wrap on sm+ */}
+      <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-2.5 pt-1">
         {category.items.map((item: StackItem) => {
           // Determine chip state
           let chipState: StackChipState = "idle";

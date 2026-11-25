@@ -372,7 +372,7 @@ export const Contact: React.FC<ContactProps> = ({
           </div>
 
           {/* Availability & Local Time Card */}
-          <div className="p-6 bg-surface/70 border border-hairline space-y-4">
+          <div className="p-6 bg-surface/90 backdrop-blur-md border border-hairline space-y-4 shadow-sm">
             <span className="font-mono text-[10px] uppercase text-muted tracking-wider block">
               {contactContent.telemetry.header}
             </span>
@@ -410,7 +410,7 @@ export const Contact: React.FC<ContactProps> = ({
           </div>
 
           {/* Social Profiles & Resume */}
-          <div className="p-6 bg-surface/70 border border-hairline space-y-3">
+          <div className="p-6 bg-surface/90 backdrop-blur-md border border-hairline space-y-3 shadow-sm">
             <span className="font-mono text-[10px] uppercase text-muted tracking-wider block mb-2">
               {contactContent.resume.header}
             </span>

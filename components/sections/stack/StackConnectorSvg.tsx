@@ -33,7 +33,12 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
   }, []);
 
   const calculateConnections = React.useCallback(() => {
-    if (!mounted || !containerRef.current || !activeTech || relatedTechs.length === 0) {
+    if (
+      !mounted ||
+      !containerRef.current ||
+      !activeTech ||
+      relatedTechs.length === 0
+    ) {
       setLines([]);
       return;
     }
@@ -42,14 +47,15 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
     const calculatedLines: LineEndpoint[] = [];
 
     // Find active element(s) matching activeTech (supporting multi-node instances like TypeScript)
-    const activeCenters: Array<{ x: number; y: number }> = [];
-    for (const [key, el] of Array.from(chipElements.entries())) {
+    const activeCenters: Array<{ x: number; y: number; halfH: number }> = [];
+    for (const [, el] of Array.from(chipElements.entries())) {
       const techName = el.getAttribute("data-tech-name");
       if (techName === activeTech) {
         const rect = el.getBoundingClientRect();
         activeCenters.push({
           x: rect.left - containerRect.left + rect.width / 2,
           y: rect.top - containerRect.top + rect.height / 2,
+          halfH: rect.height / 2,
         });
       }
     }
@@ -60,13 +66,14 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
     }
 
     // Find related element(s) matching any in relatedTechs
-    for (const [key, el] of Array.from(chipElements.entries())) {
+    for (const [, el] of Array.from(chipElements.entries())) {
       const techName = el.getAttribute("data-tech-name");
       if (techName && relatedTechs.includes(techName)) {
         const rect = el.getBoundingClientRect();
         const targetCenter = {
           x: rect.left - containerRect.left + rect.width / 2,
           y: rect.top - containerRect.top + rect.height / 2,
+          halfH: rect.height / 2,
         };
 
         for (const activeCenter of activeCenters) {
@@ -75,10 +82,14 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
             continue;
           }
 
-          // Connect from border edge to border edge so lines never sit directly over chip text or icons
+          // Connect cleanly to chip top/bottom border edges across both desktop and mobile chip heights
           const isDownward = targetCenter.y > activeCenter.y;
-          const startY = isDownward ? activeCenter.y + 14 : activeCenter.y - 14;
-          const endY = isDownward ? targetCenter.y - 14 : targetCenter.y + 14;
+          const startY = isDownward
+            ? activeCenter.y + activeCenter.halfH
+            : activeCenter.y - activeCenter.halfH;
+          const endY = isDownward
+            ? targetCenter.y - targetCenter.halfH
+            : targetCenter.y + targetCenter.halfH;
 
           calculatedLines.push({
             startX: activeCenter.x,
@@ -130,11 +141,17 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
     <svg
       aria-hidden="true"
       style={{ pointerEvents: "none" }}
-      className={`pointer-events-none absolute inset-0 w-full h-full z-0 hidden md:block select-none ${className}`}
+      className={`pointer-events-none absolute inset-0 w-full h-full z-20 block select-none ${className}`}
     >
       <defs>
-        <filter id="connector-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2" result="blur" />
+        <filter
+          id="connector-glow"
+          x="-20%"
+          y="-20%"
+          width="140%"
+          height="140%"
+        >
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
       </defs>
@@ -153,21 +170,29 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
               d={pathData}
               fill="none"
               stroke="var(--accent)"
-              strokeWidth="3"
-              strokeOpacity="0.25"
+              strokeWidth="3.5"
+              strokeOpacity="0.34"
               filter="url(#connector-glow)"
               style={{ pointerEvents: "none" }}
             />
-            {/* Crisp dashed connector line */}
+            {/* Crisp animated connector line above tier cards */}
             <path
               d={pathData}
               fill="none"
               stroke="var(--accent)"
-              strokeWidth="1.5"
-              strokeDasharray="4 4"
-              strokeOpacity="0.85"
+              strokeWidth="1.8"
+              strokeDasharray="6 4"
+              strokeOpacity="0.95"
               style={{ pointerEvents: "none" }}
-            />
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                from="20"
+                to="0"
+                dur="1.4s"
+                repeatCount="indefinite"
+              />
+            </path>
             {/* Terminal start dot */}
             <circle
               cx={line.startX}
@@ -181,7 +206,7 @@ export const StackConnectorSvg: React.FC<StackConnectorSvgProps> = ({
             <circle
               cx={line.endX}
               cy={line.endY}
-              r="3"
+              r="3.5"
               fill="var(--accent)"
               className="drop-shadow-[0_0_6px_var(--accent)]"
               style={{ pointerEvents: "none" }}

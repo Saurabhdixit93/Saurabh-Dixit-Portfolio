@@ -145,7 +145,7 @@ export const StackMap: React.FC<StackMapProps> = ({
         />
 
         {/* 5-Tier Interactive Diagram Container */}
-        <div ref={containerRef} className="relative space-y-4">
+        <div ref={containerRef} className="relative flex flex-col gap-4">
           {/* Dynamic SVG Bézier Overlay (Desktop) */}
           <StackConnectorSvg
             containerRef={containerRef}
@@ -171,8 +171,8 @@ export const StackMap: React.FC<StackMapProps> = ({
         </div>
 
         {/* Architectural Legend & Helper Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-hairline/60 text-[11px] font-mono text-muted">
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3 sm:gap-4 pt-3 border-t border-hairline/60 text-[11px] font-mono text-muted px-2 pb-2">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-accent shadow-[0_0_4px_rgba(255,106,43,0.6)]" />
               <span>Core Production Standard</span>
@@ -187,8 +187,8 @@ export const StackMap: React.FC<StackMapProps> = ({
             </span>
           </div>
 
-          <div className="text-muted/80">
-            // TAB OR CLICK TO PIN · ESC TO RESET
+          <div className="text-muted/80 text-[10px] sm:text-[11px]">
+            // TAP, TAB OR CLICK TO PIN · ESC TO RESET
           </div>
         </div>
       </div>

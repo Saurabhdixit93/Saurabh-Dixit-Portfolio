@@ -204,35 +204,36 @@
 
   .corner-mark {
     position: absolute;
-    width: 7px;
-    height: 7px;
+    width: 10px;
+    height: 10px;
+    margin: 0 !important;
     pointer-events: none;
-    z-index: 10;
+    z-index: 20;
   }
 
   .corner-mark-tl {
     top: -1px;
     left: -1px;
-    border-top: 1.5px solid var(--accent);
-    border-left: 1.5px solid var(--accent);
+    border-top: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
   }
   .corner-mark-tr {
     top: -1px;
     right: -1px;
-    border-top: 1.5px solid var(--accent);
-    border-right: 1.5px solid var(--accent);
+    border-top: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
   }
   .corner-mark-bl {
     bottom: -1px;
     left: -1px;
-    border-bottom: 1.5px solid var(--accent);
-    border-left: 1.5px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
   }
   .corner-mark-br {
     bottom: -1px;
     right: -1px;
-    border-bottom: 1.5px solid var(--accent);
-    border-right: 1.5px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
   }
 
   /* Monospace Annotation */
@@ -279,49 +280,6 @@
 
 .animate-pipeline-shimmer {
   animation: pipeline-shimmer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Animated border tracer for AI pipeline cards */
-@keyframes border-beam-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.pipeline-card-glow::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1px;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 260deg,
-    var(--accent) 310deg,
-    var(--accent-2) 345deg,
-    transparent 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.45;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-
-.pipeline-card-glow:hover::before {
-  opacity: 1;
-}
-
-/* Prevent SVG overlays, lines, dots, and filters from intercepting mouse hit-tests and causing hover flicker */
-svg.pointer-events-none,
-svg.pointer-events-none * {
-  pointer-events: none !important;
 }
 
 /* Prevent SVG overlays, lines, dots, and filters from intercepting mouse hit-tests and causing hover flicker */

@@ -234,7 +234,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     return new Response(
       JSON.stringify({
         error: 'Validation error',
-        details: parsed.error.errors.map((e) => ({
+        details: parsed.error.issues.map((e) => ({
           path: e.path.join('.'),
           message: e.message,
         })),

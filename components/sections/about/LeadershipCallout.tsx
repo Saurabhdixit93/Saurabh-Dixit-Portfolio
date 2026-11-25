@@ -13,7 +13,7 @@ export const LeadershipCallout: React.FC<LeadershipCalloutProps> = ({
 }) => {
   return (
     <div
-      className={`relative border border-hairline bg-surface/60 p-5 sm:p-6 corner-marks backdrop-blur-sm space-y-4 ${className}`}
+      className={`relative border border-hairline bg-surface/60 p-5 sm:p-6 corner-marks backdrop-blur-sm flex flex-col gap-4 ${className}`}
     >
       {/* Blueprint Corner Registration Marks */}
       <span className="corner-mark corner-mark-tl" aria-hidden="true" />

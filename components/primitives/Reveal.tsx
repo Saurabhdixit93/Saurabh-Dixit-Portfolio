@@ -25,7 +25,14 @@ export const Reveal: React.FC<RevealProps> = ({
   className = "",
   ...props
 }) => {
-  const shouldReduceMotion = useReducedMotion();
+  const reducedMotionPref = useReducedMotion();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const shouldReduceMotion = mounted ? Boolean(reducedMotionPref) : false;
 
   // Calculate direction offsets
   const getInitialPosition = () => {
