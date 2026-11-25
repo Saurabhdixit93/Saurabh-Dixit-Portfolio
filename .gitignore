@@ -33,3 +33,5 @@ logs/
 Thumbs.db
 
 tsconfig.tsbuildinfo
+# Local dev-only routes
+app/dev/tokens/
