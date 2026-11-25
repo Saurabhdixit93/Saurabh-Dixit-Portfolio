@@ -126,7 +126,7 @@ export function findBestKnowledgeMatch(query: string): string {
   const cleanQ = normalized.replace(/[^a-z0-9\s]/gi, '').trim();
 
   // Casual Acknowledgments ("ok", "okay", "got it", "alright", "cool", "sure", "fine")
-  if (/^(ok+|okay|got it|alright|cool|fine|k|sure|noted|understood|nice|perfect|sounds good)[\s!.]*$/i.test(normalized)) {
+  if (/^(ok+|okay|got it|alright|cool|fine|k+|kk+|sure|noted|understood|nice|perfect|sounds good|theek hai|thik hai|thik h|accha|achha|sahi hai|haan|ha|hnn|yep|yup|yo)[\s!.]*$/i.test(normalized)) {
     return `Understood! What would you like to explore next? You can ask about Saurabh's engineering leadership at Sensegrass, verified system metrics (+35% velocity, -45% incidents), architecture case studies ([#work]), or tech stack ([#stack]).`;
   }
 

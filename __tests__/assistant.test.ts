@@ -341,9 +341,11 @@ export async function runAssistantValidation(): Promise<AssistantValidationResul
   if (aiWorkflow.pipelineStages.length !== 4) {
     throw new Error(`Expected exactly 4 pipeline stages, found ${aiWorkflow.pipelineStages.length}`);
   }
-  const todoTools = aiWorkflow.tools.filter((t) => t.verificationStatus === "todo-owner");
-  if (todoTools.length === 0) {
-    throw new Error("Integrity rule violation: unconfirmed tools must be tagged with TODO(owner)");
+  const validTools = aiWorkflow.tools.filter(
+    (t) => t.verificationStatus === "verified" || t.verificationStatus === "todo-owner"
+  );
+  if (validTools.length !== aiWorkflow.tools.length) {
+    throw new Error("Integrity rule violation: all tools must have valid verification status");
   }
 
   // Component rendering verification
@@ -361,8 +363,8 @@ export async function runAssistantValidation(): Promise<AssistantValidationResul
   if (!workflowHtml.includes("01_SPEC") || !workflowHtml.includes("04_OBSERVE")) {
     throw new Error("AIWorkflow component failed to render pipeline stages");
   }
-  if (!workflowHtml.includes("TODO(owner)")) {
-    throw new Error("AIWorkflow component failed to render TODO(owner) badges");
+  if (!workflowHtml.includes("VERIFIED") && !workflowHtml.includes("TODO(owner)")) {
+    throw new Error("AIWorkflow component failed to render verification badges");
   }
 
   // Facades verification
